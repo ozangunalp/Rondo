@@ -5,11 +5,11 @@
 	<!-- Coordinates -->
 	<groupId>fr.liglab.adele.rondo</groupId>
 	<artifactId>rondo-parent</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<!-- Description -->
-	<name>Rondo - Parent</name>
+	<name>Rondo Parent</name>
 
 	<!-- Properties -->
 	<properties>

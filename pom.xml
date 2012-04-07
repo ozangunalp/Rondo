@@ -7,11 +7,11 @@
   <!-- Project coordinates -->
   <groupId>fr.liglab.adele.rondo</groupId>
   <artifactId>fr.liglab.adele.rondo.reactor</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <!-- Project description -->
-  <name>Rondo :: Reactor Project</name>
+  <name>Rondo - Reactor Project</name>
 
   <!-- List of sub-projects. -->
   <modules>

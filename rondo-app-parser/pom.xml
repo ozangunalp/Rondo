@@ -6,17 +6,18 @@
 	<parent>
 		<groupId>fr.liglab.adele.rondo</groupId>
 		<artifactId>rondo-parent</artifactId>
+		<relativePath>../rondo-parent</relativePath>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 
 	<!-- Coordinates -->
-	<groupId>fr.liglab.adele.rondo</groupId>
+	<groupId>fr.liglab.adele.rondo.test</groupId>
 	<artifactId>rondo-app-parser</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<!-- Description -->
-	<name>Rondo - Application Parser</name>
+	<name>Rondo Application Parser</name>
 
 	<!-- Dependencies -->
 	<dependencies>
@@ -27,7 +28,7 @@
 		<dependency>
 			<groupId>fr.liglab.adele.rondo</groupId>
 			<artifactId>rondo-core</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.0.1-SNAPSHOT</version>
 			<type>bundle</type>
 		</dependency>
 		<dependency>
@@ -46,27 +47,16 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-SymbolicName>${project.name}</Bundle-SymbolicName>
-						<Private-Package>${private.packages}</Private-Package>
-						<Import-Package>${import.packages}</Import-Package>
-						<Export-Package>${export.packages}</Export-Package>
+						<Private-Package>fr.liglab.adele.rondo.parser.impl</Private-Package>
 					</instructions>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-ipojo-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>ipojo-bundle</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>

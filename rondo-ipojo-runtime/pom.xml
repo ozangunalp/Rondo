@@ -6,17 +6,18 @@
 	<parent>
 		<groupId>fr.liglab.adele.rondo</groupId>
 		<artifactId>rondo-parent</artifactId>
-		<version>0.1-SNAPSHOT</version>
+		<relativePath>../rondo-parent</relativePath>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<!-- Coordinates -->
 	<groupId>fr.liglab.adele.rondo</groupId>
 	<artifactId>rondo-ipojo-runtime</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
 	<!-- Description -->
-	<name>Rondo - iPOJO Runtime</name>
+	<name>Rondo iPOJO Runtime</name>
 
 	<!-- Dependencies -->
 	<dependencies>
@@ -35,10 +36,6 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Private-Package>${private.packages}</Private-Package>
-						<Import-Package>${import.packages}</Import-Package>
-						<Export-Package>${export.packages}</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

@@ -2,10 +2,10 @@ package fr.liglab.adele.rondo;
 
 import java.io.File;
 
-import fr.liglab.adele.rondo.model.Application;
+import fr.liglab.adele.rondo.model.Rondo;
 
 public interface RondoParser {
 
-	Application parse(File file);
+	Rondo parse(File file);
 
 }

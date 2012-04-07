@@ -3,7 +3,7 @@
 
   <xsd:import namespace="fr.liglab.adele.rondo.core" schemaLocation="rondo-commons.xsd"/>
   
-  <xsd:element  name="configuration" type="Configuration"/>
+<!--   <xsd:element  name="configuration" type="Configuration"/>
   <xsd:element  name="ConfigurationServiceDependency" type="ConfigurationServiceDependency"/>
   <xsd:element  name="ConfigurationDataPublishing" type="ConfigurationDataPublishing"/>
   <xsd:element  name="ConfigurationDataConsuming" type="ConfigurationDataConsuming"/>
@@ -13,8 +13,14 @@
   <xsd:element  name="import" type="Import"/>
   <xsd:element  name="binding" type="Binding"/>
   <xsd:element  name="application" type="Application"/>
-  <xsd:element  name="applicationFragment" type="ApplicationFragment"/>
-  <xsd:element name="rondo" type="Rondo"/>
+  <xsd:element  name="applicationFragment" type="ApplicationFragment"/> -->
+  <xsd:element name="rondo">
+  	<xsd:complexType>
+  		<xsd:sequence>
+  			<xsd:element maxOccurs="unbounded" minOccurs="1" name="application" type="Application"/>
+  		</xsd:sequence>
+  	</xsd:complexType>
+  </xsd:element>
   
   
   
@@ -122,10 +128,5 @@
         <xsd:attribute name="type" type="xsd:string" use="required"/>
       </xsd:extension>
     </xsd:complexContent>
-  </xsd:complexType>
-  <xsd:complexType name="Rondo">
-  	<xsd:sequence>
-  		<xsd:element maxOccurs="unbounded" minOccurs="1" name="application" type="Application"/>
-  	</xsd:sequence>
   </xsd:complexType>
 </xsd:schema>
