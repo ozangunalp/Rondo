@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Project coordinates -->
+  <groupId>fr.liglab.adele.rondo</groupId>
+  <artifactId>fr.liglab.adele.rondo.reactor</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <!-- Project description -->
+  <name>Rondo :: Reactor Project</name>
+
+  <!-- List of sub-projects. -->
+  <modules>
+	<module>rondo-parent</module>
+	<module>rondo-core</module>
+	<module>rondo-app-parser</module>
+	<module>rondo-ipojo-runtime</module>
+  </modules>
+
+  <!-- Avoid reactor deployment -->
+  <build>
+	<plugins>
+	  <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-deploy-plugin</artifactId>
+		<version>2.5</version>
+		<configuration>
+		  <skip>true</skip>
+		</configuration>
+	  </plugin>
+	</plugins>
+  </build>
+</project>
