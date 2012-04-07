@@ -24,6 +24,17 @@
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.ipojo.annotations</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>fr.liglab.adele.rondo</groupId>
+			<artifactId>rondo-core</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<type>bundle</type>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<!-- Build -->
@@ -35,7 +46,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-SymbolicName>${project.name}</Bundle-SymbolicName>
 						<Private-Package>${private.packages}</Private-Package>
 						<Import-Package>${import.packages}</Import-Package>
 						<Export-Package>${export.packages}</Export-Package>
@@ -57,8 +68,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 		</plugins>

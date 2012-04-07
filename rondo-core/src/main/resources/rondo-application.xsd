@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="fr.liglab.adele.rondo.application" xmlns:rondocommons="fr.liglab.adele.rondo.core" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="fr.liglab.adele.rondo.application">
+
+  <xsd:import namespace="fr.liglab.adele.rondo.core" schemaLocation="rondo-commons.xsd"/>
+  
+  <xsd:element  name="configuration" type="Configuration"/>
+  <xsd:element  name="ConfigurationServiceDependency" type="ConfigurationServiceDependency"/>
+  <xsd:element  name="ConfigurationDataPublishing" type="ConfigurationDataPublishing"/>
+  <xsd:element  name="ConfigurationDataConsuming" type="ConfigurationDataConsuming"/>
+  <xsd:element  name="ConfigurationServiceProviding" type="ConfigurationServiceProviding"/>
+  <xsd:element  name="ConfigurationProperty" type="ConfigurationProperty"/>
+  <xsd:element  name="component" type="Component"/>
+  <xsd:element  name="import" type="Import"/>
+  <xsd:element  name="binding" type="Binding"/>
+  <xsd:element  name="application" type="Application"/>
+  <xsd:element  name="applicationFragment" type="ApplicationFragment"/>
+  <xsd:element name="rondo" type="Rondo"/>
+  
+  
+  
+  <xsd:complexType name="Configuration">
+    <xsd:choice maxOccurs="unbounded" minOccurs="1" >
+      <xsd:element name="provides" type="ConfigurationServiceProviding"/>
+      <xsd:element name="dependency" type="ConfigurationServiceDependency"/>
+      <xsd:element name="dataPublish" type="ConfigurationDataPublishing"/>
+      <xsd:element name="dataConsume" type="ConfigurationDataConsuming"/>
+      <xsd:element name="property" type="ConfigurationProperty"/>
+    </xsd:choice>
+  </xsd:complexType>
+  <xsd:complexType name="ConfigurationElement">
+  	<xsd:complexContent>
+  		<xsd:extension base="rondocommons:Element">
+  			<xsd:sequence>
+  				<xsd:element  maxOccurs="unbounded" minOccurs="0" name="property" type="rondocommons:PropertyValue"/>
+  			</xsd:sequence>
+  		</xsd:extension>
+  	</xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ConfigurationServiceDependency">
+    <xsd:complexContent>
+      <xsd:extension base="ConfigurationElement">
+        <xsd:attribute name="filter" type="rondocommons:Filter"/>
+        <xsd:attribute name="scope" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ConfigurationDataPublishing">
+    <xsd:complexContent>
+      <xsd:extension base="ConfigurationElement">
+        <xsd:attribute name="scope" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ConfigurationDataConsuming">
+    <xsd:complexContent>
+      <xsd:extension base="ConfigurationElement">
+        <xsd:attribute name="filter" type="rondocommons:Filter"/>
+        <xsd:attribute name="scope" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ConfigurationServiceProviding">
+    <xsd:complexContent>
+      <xsd:extension base="ConfigurationElement">
+        <xsd:attribute name="scope" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ConfigurationProperty">
+    <xsd:complexContent>
+      <xsd:extension base="rondocommons:PropertyValue"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Component">
+    <xsd:complexContent>
+      <xsd:extension base="rondocommons:Element">
+        <xsd:sequence>
+          <xsd:element name="policy" type="rondocommons:PolicyConfiguration"/>
+          <xsd:element name="configuation" type="Configuration"/>
+        </xsd:sequence>
+        <xsd:attribute name="implementationFilter" type="rondocommons:Filter"/>
+        <xsd:attribute name="specification" type="xsd:anyURI"/>
+        <xsd:attribute name="implementation" type="xsd:anyURI"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Import">
+    <xsd:complexContent>
+      <xsd:extension base="rondocommons:Element">
+        <xsd:sequence>
+          <xsd:element name="policy" type="rondocommons:PolicyConfiguration"/>
+          <xsd:element name="configuration" type="Configuration"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Binding">
+    <xsd:attribute name="dependencyInstance" type="rondocommons:Identifier"/>
+    <xsd:attribute name="serviceInstance" type="rondocommons:Identifier"/>
+    <xsd:attribute name="dependency" type="rondocommons:Identifier"/>
+    <xsd:attribute name="service" type="rondocommons:Identifier"/>
+  </xsd:complexType>
+  <xsd:complexType name="Application">
+    <xsd:complexContent>
+      <xsd:extension base="rondocommons:Element">
+        <xsd:choice maxOccurs="unbounded" minOccurs="1">
+          <xsd:element name="import" type="Import"/>
+          <xsd:element name="binding" type="Binding"/>
+          <xsd:element name="fragment" type="ApplicationFragment"/>
+        </xsd:choice>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ApplicationFragment">
+    <xsd:complexContent>
+      <xsd:extension base="rondocommons:Element">
+        <xsd:sequence>
+          <xsd:element maxOccurs="1" name="policy" type="rondocommons:PolicyConfiguration"/>
+          <xsd:element  maxOccurs="unbounded" minOccurs="0" name="component" type="Component"/>
+          <xsd:element  maxOccurs="unbounded" minOccurs="0" name="binding" type="Binding"/>
+        </xsd:sequence>
+        <xsd:attribute name="type" type="xsd:string" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Rondo">
+  	<xsd:sequence>
+  		<xsd:element maxOccurs="unbounded" minOccurs="1" name="application" type="Application"/>
+  	</xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

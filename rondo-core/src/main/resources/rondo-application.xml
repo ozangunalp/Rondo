@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rondo:rondo xmlns:rondo="http://rondoapplicationmodel/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://rondoapplicationmodel/1.0 rondo-application.xsd ">
+  <application name="">
+  
+    <fragment name="" type="">
+    	<policy name="">
+    		<property name="" value=""/>
+    	</policy>
+    	<component name="">
+    		<policy name="">
+    			
+    		</policy>
+    		<configuation>
+    			<provides name="" scope="">
+    				<property name="" value=""/>
+    			</provides>
+    		</configuation>
+    	</component>
+    </fragment>
+    
+    <import name="">
+    	<policy name="">
+    		<property name="" value=""/>
+    	</policy>
+    	<configuration>
+    		<property name="" value=""/>
+    	</configuration>
+    </import>
+    
+  </application>
+</rondo:rondo>

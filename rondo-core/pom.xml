@@ -42,7 +42,11 @@
 						<Bundle-SymbolicName>${project.name}</Bundle-SymbolicName>
 						<Private-Package>${private.packages}</Private-Package>
 						<Import-Package>${import.packages}</Import-Package>
-						<Export-Package>${export.packages}</Export-Package>
+						<Export-Package>
+							fr.liglab.adele.rondo;
+							fr.liglab.adele.rondo.model
+						
+						</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
