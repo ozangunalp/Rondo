@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.Test;
 
 import fr.liglab.adele.rondo.RondoParser;
+import fr.liglab.adele.rondo.exception.RondoParserException;
 import fr.liglab.adele.rondo.model.Application;
 import fr.liglab.adele.rondo.model.Rondo;
 import fr.liglab.adele.rondo.parser.impl.RondoJAXBParserImpl;
@@ -17,7 +18,7 @@ import fr.liglab.adele.rondo.parser.impl.RondoJAXBParserImpl;
 public class ParserTest {
 
 	@Test
-	public void testXMLLoading() {
+	public void testXMLLoading() throws RondoParserException {
 		File f = new File("src/test/resources/rondo-application.xml");
 		assertNotNull(f);
 		RondoParser parser = new RondoJAXBParserImpl();

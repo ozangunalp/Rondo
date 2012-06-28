@@ -12,6 +12,7 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 
 import fr.liglab.adele.rondo.RondoParser;
+import fr.liglab.adele.rondo.exception.RondoParserException;
 import fr.liglab.adele.rondo.model.ObjectFactory;
 import fr.liglab.adele.rondo.model.Rondo;
 
@@ -36,14 +37,16 @@ public class RondoJAXBParserImpl implements RondoParser {
 	}
 
 	@Override
-	public Rondo parse(File file) {
+	public Rondo parse(File file) throws RondoParserException {
 		try {
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
-			Rondo como = (Rondo) unmarshaller.unmarshal(file);
-			return como;
+			Rondo rondo = (Rondo) unmarshaller.unmarshal(file);
+			return rondo;
 		} catch (JAXBException e) {
+			// TODO
 			e.printStackTrace();
-			return null;
+			throw new RondoParserException();
+
 		}
 	}
 

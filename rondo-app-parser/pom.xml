@@ -7,11 +7,11 @@
 		<groupId>fr.liglab.adele.rondo</groupId>
 		<artifactId>rondo-parent</artifactId>
 		<relativePath>../rondo-parent</relativePath>
-		<version>0.1-SNAPSHOT</version>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<!-- Coordinates -->
-	<groupId>fr.liglab.adele.rondo.test</groupId>
+	<groupId>fr.liglab.adele.rondo</groupId>
 	<artifactId>rondo-app-parser</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
@@ -29,7 +29,10 @@
 			<groupId>fr.liglab.adele.rondo</groupId>
 			<artifactId>rondo-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<type>bundle</type>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

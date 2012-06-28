@@ -1,5 +1,6 @@
-<rondo:rondo xmlns:rondo="fr.liglab.adele.rondo.application" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<rondo:rondo xmlns:rondo="fr.liglab.adele.rondo.application" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="fr.liglab.adele.rondo.application rondo-application.xsd">
   <application name="app1">
+  
     <import name="">
       <policy name=""/>
       <configuration>
