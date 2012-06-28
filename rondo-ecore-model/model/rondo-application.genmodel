@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/rondo-ecore-model/src"
+    modelPluginID="rondo-ecore-model" modelName="Rondo-application" importerID="org.eclipse.xsd.ecore.importer"
+    complianceLevel="6.0" copyrightFields="false">
+  <foreignModel>../../rondo-core/src/main/resources/rondo-application.xsd</foreignModel>
+  <genPackages prefix="Rondo" basePackage="fr.liglab.adele" resource="XML" disposableProviderFactory="true"
+      ecorePackage="rondo1.ecore#/">
+    <genDataTypes ecoreDataType="rondo1.ecore#//Filter"/>
+    <genDataTypes ecoreDataType="rondo1.ecore#//Identifier"/>
+    <genDataTypes ecoreDataType="rondo1.ecore#//JavaIdentifier"/>
+    <genDataTypes ecoreDataType="rondo1.ecore#//JavaQualifiedName"/>
+    <genDataTypes ecoreDataType="rondo1.ecore#//JavaQualifiedNameList"/>
+    <genDataTypes ecoreDataType="rondo1.ecore#//PropertyName"/>
+    <genClasses ecoreClass="rondo1.ecore#//DocumentRoot">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute rondo1.ecore#//DocumentRoot/mixed"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference rondo1.ecore#//DocumentRoot/xMLNSPrefixMap"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference rondo1.ecore#//DocumentRoot/xSISchemaLocation"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo1.ecore#//DocumentRoot/element"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo1.ecore#//DocumentRoot/policy"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo1.ecore#//DocumentRoot/policyConfiguration"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo1.ecore#//DocumentRoot/property"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo1.ecore#//DocumentRoot/propertyValue"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="rondo1.ecore#//Element">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo1.ecore#//Element/name"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo1.ecore#//Policy">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo1.ecore#//Policy/property"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo1.ecore#//PolicyConfiguration">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo1.ecore#//PolicyConfiguration/property"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo1.ecore#//PolicyConfiguration/name"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo1.ecore#//Property">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo1.ecore#//Property/defaultValue"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo1.ecore#//Property/type"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo1.ecore#//PropertyValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo1.ecore#//PropertyValue/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo1.ecore#//PropertyValue/value"/>
+    </genClasses>
+  </genPackages>
+  <genPackages prefix="Rondo" basePackage="fr.liglab.adele" resource="XML" disposableProviderFactory="true"
+      ecorePackage="rondo.ecore#/">
+    <genClasses ecoreClass="rondo.ecore#//Application">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute rondo.ecore#//Application/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference rondo.ecore#//Application/import"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference rondo.ecore#//Application/binding"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference rondo.ecore#//Application/fragment"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo.ecore#//ApplicationFragment">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo.ecore#//ApplicationFragment/policy"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo.ecore#//ApplicationFragment/component"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo.ecore#//ApplicationFragment/binding"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//ApplicationFragment/type"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo.ecore#//Binding">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//Binding/dependency"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//Binding/dependencyInstance"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//Binding/service"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//Binding/serviceInstance"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo.ecore#//Component">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo.ecore#//Component/policy"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo.ecore#//Component/configuation"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//Component/implementation"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//Component/implementationFilter"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//Component/specification"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo.ecore#//Configuration">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute rondo.ecore#//Configuration/group"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference rondo.ecore#//Configuration/provides"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference rondo.ecore#//Configuration/dependency"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference rondo.ecore#//Configuration/dataPublish"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference rondo.ecore#//Configuration/dataConsume"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference rondo.ecore#//Configuration/property"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo.ecore#//ConfigurationDataConsuming">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//ConfigurationDataConsuming/filter"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//ConfigurationDataConsuming/scope"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo.ecore#//ConfigurationDataPublishing">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//ConfigurationDataPublishing/scope"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo.ecore#//ConfigurationElement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo.ecore#//ConfigurationElement/property"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo.ecore#//ConfigurationProperty"/>
+    <genClasses ecoreClass="rondo.ecore#//ConfigurationServiceDependency">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//ConfigurationServiceDependency/filter"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//ConfigurationServiceDependency/scope"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo.ecore#//ConfigurationServiceProviding">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//ConfigurationServiceProviding/scope"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo.ecore#//DocumentRoot">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute rondo.ecore#//DocumentRoot/mixed"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference rondo.ecore#//DocumentRoot/xMLNSPrefixMap"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference rondo.ecore#//DocumentRoot/xSISchemaLocation"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo.ecore#//DocumentRoot/rondo"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo.ecore#//Import">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo.ecore#//Import/policy"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo.ecore#//Import/configuration"/>
+    </genClasses>
+    <genClasses ecoreClass="rondo.ecore#//RondoType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference rondo.ecore#//RondoType/application"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
