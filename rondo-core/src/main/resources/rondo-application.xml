@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rondo:rondo xmlns:rondo="fr.liglab.adele.rondo.application" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="fr.liglab.adele.rondo.application rondo-application.xsd ">
-  <application name="app1">
-    <import name="">
-      <policy name="http://tempuri.org"/>
-      <configuration>
-        <provides name="" scope=""/>
-      </configuration>
-    </import>
-  </application>
+<rondo:rondo xmlns:rondo="fr.liglab.adele.rondo.application"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="fr.liglab.adele.rondo.application rondo-application.xsd ">
+	<application name="app1">
+		<fragment name="" type="">
+			<policy name="">
+				<property name="" value="" />
+			</policy>
+			<component name="" implementationFilter="">
+				<policy name="">
+					<property name="" value="" />
+				</policy>
+				<configuation>
+					<dependency name=""></dependency>
+					<property name="" value="" />
+				</configuation>
+			</component>
+		</fragment>
+		<import name="">
+			<policy name="http://tempuri.org" />
+			<configuration>
+				<provides name="" scope="" />
+			</configuration>
+		</import>
+	</application>
 </rondo:rondo>

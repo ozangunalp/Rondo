@@ -77,6 +77,7 @@
       <xsd:extension base="rondocommons:PropertyValue"/>
     </xsd:complexContent>
   </xsd:complexType>
+ 
   <xsd:complexType name="Component">
     <xsd:complexContent>
       <xsd:extension base="rondocommons:Element">
@@ -109,11 +110,11 @@
   <xsd:complexType name="Application">
     <xsd:complexContent>
       <xsd:extension base="rondocommons:Element">
-        <xsd:choice maxOccurs="unbounded" minOccurs="1">
-          <xsd:element name="import" type="Import"/>
-          <xsd:element name="binding" type="Binding"/>
-          <xsd:element name="fragment" type="ApplicationFragment"/>
-        </xsd:choice>
+        <xsd:sequence>
+          <xsd:element maxOccurs="unbounded" minOccurs="1" name="fragment" type="ApplicationFragment"/>
+          <xsd:element maxOccurs="unbounded" minOccurs="0" name="import" type="Import"/>
+          <xsd:element maxOccurs="unbounded" minOccurs="0" name="binding" type="Binding"/>
+        </xsd:sequence>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
