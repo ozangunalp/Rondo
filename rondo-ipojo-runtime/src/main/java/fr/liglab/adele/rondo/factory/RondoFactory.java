@@ -30,6 +30,7 @@ public abstract class RondoFactory extends ComponentFactory {
 
 	public RondoFactory(BundleContext context, Element element) throws ConfigurationException {
 		super(context, element);
+
 		componentName = element.getAttribute(NAME_STRING);
 		if (componentName == null) {
 			throw new ConfigurationException("Every " + getComponentType() + " component needs a name ");
@@ -40,6 +41,7 @@ public abstract class RondoFactory extends ComponentFactory {
 		} else {
 			namespace = Constants.DEFAULT_NAMESPACE;
 		}
+		addRequiresHandler();
 	}
 
 	public String getComponentName() {
@@ -58,6 +60,23 @@ public abstract class RondoFactory extends ComponentFactory {
 		this.namespace = namespace;
 	}
 
+	private void addRequiresHandler() {
+
+		// Add architecture if architecture != 'false'
+		String arch = m_componentMetadata.getAttribute("architecture");
+		if (arch == null || arch.equalsIgnoreCase("true")) {
+			RequiredHandler req = new RequiredHandler("architecture", null);
+			if (!m_requiredHandlers.contains(req)) {
+				m_requiredHandlers.add(req);
+			}
+		}
+
+		RequiredHandler reqd = new RequiredHandler("Requires", null);
+		if (!m_requiredHandlers.contains(reqd)) {
+			m_requiredHandlers.add(reqd);
+		}
+	}
+
 	@Override
 	public ComponentTypeDescription getComponentTypeDescription() {
 		// TODO Auto-generated method stub
@@ -73,19 +92,17 @@ public abstract class RondoFactory extends ComponentFactory {
 		@Override
 		public Dictionary getPropertiesToPublish() {
 			Dictionary dict = super.getPropertiesToPublish();
-			if (getClassName() != null) {
-				return super.getPropertiesToPublish();
-			}
-			dict.put(COMP_NAME, getComponentName());
-			dict.put(COMP_NAMESPACE, getNamespace());
+			dict.put(COMP_NAMESPACE, namespace);
+			dict.put(COMP_NAME, componentName);
+			dict.put("rondo.factory.type", getComponentType());
 			return dict;
-
 		}
 
 		@Override
 		public Element getDescription() {
 			Element element = super.getDescription();
-			element.addAttribute(new Attribute("Impl-Class", getClassName()));
+			element.addAttribute(new Attribute("Implementation-Class", getClassName()));
+			element.addAttribute(new Attribute("rondo-component-type", getComponentType()));
 			return element;
 		}
 
