@@ -2,7 +2,10 @@ package fr.liglab.adele.rondo;
 
 import java.util.Set;
 
+import fr.liglab.adele.rondo.exception.InvalidConfigurationException;
 import fr.liglab.adele.rondo.model.Application;
+import fr.liglab.adele.rondo.model.ApplicationFragment;
+import fr.liglab.adele.rondo.model.Import;
 
 public interface RondoApplicationContext {
 
@@ -22,7 +25,15 @@ public interface RondoApplicationContext {
 
 	Set<RondoFragmentContext> getFragments();
 
+	RondoFragmentContext createFragment(ApplicationFragment fragmentModel) throws InvalidConfigurationException;
+
+	void destroyFragment(RondoFragmentContext fragment);
+
 	Set<RondoImportContext> getImports();
+
+	RondoImportContext createImport(Import importModel) throws InvalidConfigurationException;
+
+	void destroyImport(RondoImportContext importModel);
 
 	void addApplicationStateListener(ApplicationStateListener listener);
 
@@ -31,4 +42,5 @@ public interface RondoApplicationContext {
 	public enum ApplicationState {
 		UNINSTALLED, INSTALLED, RESOLVED, STARTING, STOPPING, ACTIVE
 	}
+
 }

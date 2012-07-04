@@ -42,7 +42,9 @@
 					<instructions>
 						<Export-Package>
 							fr.liglab.adele.rondo,
-							fr.liglab.adele.rondo.model
+							fr.liglab.adele.rondo.model,
+							fr.liglab.adele.rondo.manager,
+							fr.liglab.adele.rondo.exception
 						</Export-Package>
 					</instructions>
 				</configuration>

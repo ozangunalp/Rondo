@@ -8,14 +8,22 @@ public interface RondoImportContext {
 
 	Import getImportModel();
 
-	void start();
+	void activate();
 
-	void stop();
+	void deactivate();
 
 	void resolve();
 
 	void dispose();
 
 	// Set<?> getImportedInstances();
+
+	void addImportStateListener(ImportStateListener listener);
+
+	void removeImportStateListener(ImportStateListener listener);
+
+	public enum ImportState {
+		RESOLVED, STOPPED, INVALID, VALID
+	}
 
 }

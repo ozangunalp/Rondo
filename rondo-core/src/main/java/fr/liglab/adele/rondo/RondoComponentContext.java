@@ -22,4 +22,10 @@ public interface RondoComponentContext {
 
 	void removeComponentStateListener(ComponentStateListener listener);
 
+	public enum ComponentState {
+		RESOLVED, STOPPED, INVALID, VALID
+	}
+
+	void setState(ComponentState newState);
+
 }
