@@ -8,6 +8,8 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.rondo.RondoFileManager;
 
@@ -20,6 +22,8 @@ import fr.liglab.adele.rondo.RondoFileManager;
 @Instantiate
 public class RondoFileInstaller implements ArtifactInstaller {
 
+	protected static Logger logger = LoggerFactory.getLogger("rondo.fileinstall.deployer");
+
 	BundleContext context;
 
 	@Requires
@@ -29,6 +33,7 @@ public class RondoFileInstaller implements ArtifactInstaller {
 		this.context = context;
 	}
 
+	@Override
 	public boolean canHandle(File file) {
 		if (file.getName().endsWith(".rondo")) {
 			return true;
@@ -36,15 +41,21 @@ public class RondoFileInstaller implements ArtifactInstaller {
 		return false;
 	}
 
+	@Override
 	public void install(File file) throws Exception {
+		logger.info("Installing file " + file.getName());
+		System.out.println("Installing file " + file.getName());
 		fileManager.loadFile(file);
 	}
 
+	@Override
 	public void uninstall(File file) throws Exception {
+		logger.info("Uninstalling file " + file.getName());
+		System.out.println("Uninstalling file " + file.getName());
 		fileManager.unloadFile(file);
-
 	}
 
+	@Override
 	public void update(File file) throws Exception {
 		fileManager.updateFile(file);
 	}
