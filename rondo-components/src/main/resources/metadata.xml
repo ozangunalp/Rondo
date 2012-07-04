@@ -1,0 +1,26 @@
+<rondo xmlns:rondo="fr.liglab.adele.rondo">
+	<application.policy name="simple-application-manager-policy"
+		classname="fr.liglab.adele.rondo.components.application.SimpleApplicationPolicy"
+		namespace="fr.liglab.adele.rondo">
+		<callback transition="validate" method="start" />
+		<callback transition="invalidate" method="stop" />
+		<requires field="architecture" />
+		<requires field="deployment" />
+		<requires field="applicationFactory" />
+		<properties propagation="true">
+			<property name="application.name" field="appName" />
+		</properties>
+	</application.policy>
+	<component.policy name="simple-component-manager-policy"
+		classname="fr.liglab.adele.rondo.components.component.SimpleComponentPolicy"
+		namespace="fr.liglag.adele.rondo">
+		<callback transition="validate" method="start" />
+		<callback transition="invalidate" method="stop" />
+		<requires field="architecture" />
+		<requires field="deployment" />
+		<requires field="compFactory" />
+		<properties propagation="true">
+			<property name="component.name" field="compName" />
+		</properties>
+	</component.policy>
+</rondo>
