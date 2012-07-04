@@ -1,0 +1,39 @@
+	
+	<rondo:rondo xmlns:rondo="fr.liglab.adele.rondo.application">
+		<application name="follow-me">
+			<context>
+				<property name="high-decibel" type="boolean" defaultValue="false"/>
+			</context>
+			<fragment name="static-fragment">
+				<policy name="core"/>
+				<component name="follow-me-comp" implementationFilter="(implementation=asddsgdsgsd)">
+					<policy name="something"/>
+					<configuration>
+						<requires id="dep" filter="(hohoho=asafg)"/>
+						<property name="haha" value="0"/>
+					</configuration>
+				</component>
+			</fragment>
+			<fragment name="user-prefs">
+				<policy name="core"/>
+				<component name="pref" implementationFilter="(implementation=asdfdasf)">
+					<policy name="something"/>
+					<configuration>
+						<requires id="dep" filter="(hohoho=asafg)"/>
+						<property name="haha" value="0"/>
+					</configuration>
+				</component>
+			</fragment>
+			<fragment name="priority-renderer">
+				<policy name="context-listener">
+					<property name="activate-when" value="(context/high-decibel=true)"/>
+				</policy>
+				...
+			</fragment>
+			<import name="media-renderers" protocol="upnp-renderer"/>
+			<import name="ir-presence-sensors" protocol="x2d-ir-presence"/>
+			<import name="bluetooth-presence-sensors" protocol="xml-rpc"/>
+		</application>
+	</rondo:rondo>
+	
+	

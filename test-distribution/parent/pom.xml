@@ -1,0 +1,156 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Coordinates -->
+  <groupId>fr.liglab.adele.rondo</groupId>
+  <artifactId>fr.liglab.adele.rondo.test-distribution.parent</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  
+  <!-- Project parent -->
+  <parent>
+    <groupId>fr.liglab.adele.rondo</groupId>
+    <artifactId>rondo-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../../rondo-parent</relativePath>
+  </parent>
+
+  <!-- Description -->
+  <name>Rondo :: Test-Distribution :: Parent project</name>
+  
+  <!-- Properties -->
+  <properties>
+    <distribution.version>${project.version}</distribution.version>
+    <felix.version>4.0.2</felix.version>
+  </properties>
+  
+  <!-- Dependencies version management -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.main</artifactId>
+        <version>${felix.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.eventadmin</artifactId>
+        <version>1.2.14</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.log</artifactId>
+        <version>1.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.configadmin</artifactId>
+        <version>1.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.prefs</artifactId>
+        <version>1.0.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.fileinstall</artifactId>
+        <version>3.2.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.gogo.shell</artifactId>
+        <version>0.10.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.gogo.runtime</artifactId>
+        <version>0.10.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.gogo.command</artifactId>
+        <version>0.12.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.ipojo.arch.gogo</artifactId>
+        <version>1.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.bundlerepository</artifactId>
+        <version>1.6.6</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.http.jetty</artifactId>
+        <version>2.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.http.whiteboard</artifactId>
+        <version>2.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.webconsole</artifactId>
+        <version>4.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.ipojo.webconsole</artifactId>
+        <version>1.6.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>org.apache.felix.webconsole.plugins.event</artifactId>
+        <version>1.0.2</version>
+      </dependency>
+	  <dependency>
+	    <groupId>commons-fileupload</groupId>
+	    <artifactId>commons-fileupload</artifactId>
+	    <version>1.2.2</version>
+	  </dependency>
+	  <dependency>
+	    <groupId>commons-io</groupId>
+	    <artifactId>commons-io</artifactId>
+	    <version>1.4</version>
+	  </dependency>
+	  <dependency>
+	    <groupId>org.apache.geronimo.bundles</groupId>
+	    <artifactId>json</artifactId>
+	    <version>20090211_1</version>
+	  </dependency>
+	  <dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-simple</artifactId>
+		<version>1.6.6</version>
+	  </dependency>
+      <!-- iPOJO Mrt Bundles -->
+	  <dependency>
+		<groupId>fr.imag.adele.mrt</groupId>
+		<artifactId>ipojo-mrt</artifactId>
+		<version>1.0.0</version>
+	  </dependency>	
+	  <dependency>
+		<groupId>fr.imag.adele.mrt</groupId>
+		<artifactId>ipojo-mrt-repository</artifactId>
+		<version>1.0.0</version>
+	  </dependency>
+	  <dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-log4j12</artifactId>
+		<version>1.6.6</version>
+	  </dependency>
+            <dependency>
+	<groupId>log4j</groupId>
+	<artifactId>log4j</artifactId>
+	<version>1.2.17</version>
+</dependency>
+    </dependencies>
+  </dependencyManagement>
+
+</project>

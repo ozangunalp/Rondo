@@ -1,0 +1,259 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Project coordinates -->
+  <groupId>fr.liglab.adele.rondo</groupId>
+  <artifactId>fr.liglab.adele.rondo.test-distribution.test</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  
+  <!-- Project parent -->
+  <parent>
+    <groupId>fr.liglab.adele.rondo</groupId>
+    <artifactId>fr.liglab.adele.rondo.test-distribution.parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../parent</relativePath>
+  </parent>
+
+  <!-- Project description -->
+  <name>Rondo :: Test-distribution :: Test</name>
+
+  <!-- Project dependencies -->
+  <dependencies>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+    </dependency>
+    <!-- <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.osgi.service.obr</artifactId>
+    </dependency> -->
+	<dependency>
+	    <groupId>commons-fileupload</groupId>
+	    <artifactId>commons-fileupload</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>commons-io</groupId>
+	    <artifactId>commons-io</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.apache.geronimo.bundles</groupId>
+	    <artifactId>json</artifactId>
+	</dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.gogo.shell</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.gogo.runtime</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.gogo.command</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.eventadmin</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.log</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.configadmin</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.prefs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.fileinstall</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.bundlerepository</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.ipojo</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.ipojo.arch.gogo</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.http.jetty</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.http.whiteboard</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.webconsole</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.ipojo.webconsole</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.webconsole.plugins.event</artifactId>
+    </dependency>
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-api</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-simple</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-log4j12</artifactId>
+	</dependency>
+	<dependency>
+	<groupId>log4j</groupId>
+	<artifactId>log4j</artifactId>
+</dependency>
+    <!-- Rondo bundles -->
+    <!-- <dependency>
+      <groupId>fr.liglab.adele.rondo</groupId>
+      <artifactId>rondo-app-deployer</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.rondo</groupId>
+      <artifactId>rondo-app-parser</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.rondo</groupId>
+      <artifactId>rondo-core</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.rondo</groupId>
+      <artifactId>rondo-ipojo-runtime</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency> -->
+
+<!-- iPOJO Mrt bundles -->
+	  <dependency>
+		<groupId>fr.imag.adele.mrt</groupId>
+		<artifactId>ipojo-mrt</artifactId>
+		<version>1.0.0</version>
+	  </dependency>
+	<dependency>
+		<groupId>fr.imag.adele.mrt</groupId>
+		<artifactId>ipojo-mrt-gogo-command</artifactId>
+		<version>1.0.0</version>
+	  </dependency>
+	  <dependency>
+		<groupId>fr.imag.adele.mrt</groupId>
+		<artifactId>ipojo-mrt-visu</artifactId>
+		<version>1.0.0</version>
+	  </dependency> 
+	<dependency>
+		<groupId>fr.imag.adele.repository</groupId>
+		<artifactId>OBRRepositoryAdmin</artifactId>
+		<version>1.0.1</version>
+	  </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+    <!-- Copy dependencies -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>      
+          <!-- Copy Felix framework in the 'bin' directory -->
+          <execution>
+            <id>copy-felix</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/bin</outputDirectory>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.felix</groupId>
+                  <artifactId>org.apache.felix.main</artifactId>
+                  <version>${felix.version}</version>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+          <!-- Copy bundles in the 'bundle' directory -->
+          <execution>
+            <id>copy-bundles</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/bundle</outputDirectory>
+              <excludeTransitive>true</excludeTransitive>
+            </configuration>
+          </execution>
+		  <!-- <execution>
+			<id>copy-local</id>
+			<phase>compile</phase>
+			<goals>
+				<goal>copy</goal>
+			</goals>
+			<configuration>
+				<outputDirectory>${basedir}/bundle</outputDirectory>
+				<localRepositoryDirectory>${localRepository}</localRepositoryDirectory>
+	              <artifactItems>
+	                <artifactItem>
+						<groupId>fr.imag.adele.mrt</groupId>
+						<artifactId>ipojo-mrt</artifactId>
+	                  	<version>1.0.0</version>
+	                </artifactItem>
+					<artifactItem>
+						<groupId>fr.imag.adele.mrt</groupId>
+						<artifactId>ipojo-mrt-repository</artifactId>
+	                  	<version>1.0.0</version>
+	                </artifactItem>
+	              </artifactItems>
+			</configuration>
+		  </execution> -->
+        </executions>
+      </plugin>
+      <!-- Rename Felix jar -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <move
+                  file="${basedir}/bin/org.apache.felix.main-${felix.version}.jar"
+                  toFile="${basedir}/bin/felix.jar" />
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
