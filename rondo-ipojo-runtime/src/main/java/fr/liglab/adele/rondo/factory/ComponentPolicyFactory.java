@@ -4,11 +4,11 @@ import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.metadata.Element;
 import org.osgi.framework.BundleContext;
 
-public class ComponentManagerFactory extends RondoFactory {
+public class ComponentPolicyFactory extends RondoFactory {
 
-	private final String COMPONENT_TYPE = "component";
+	private final String COMPONENT_TYPE = "component.policy";
 
-	public ComponentManagerFactory(BundleContext context, Element element) throws ConfigurationException {
+	public ComponentPolicyFactory(BundleContext context, Element element) throws ConfigurationException {
 		super(context, element);
 	}
 
