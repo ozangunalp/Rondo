@@ -9,17 +9,15 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 
 import fr.liglab.adele.rondo.RondoParser;
 import fr.liglab.adele.rondo.exception.RondoParserException;
 import fr.liglab.adele.rondo.model.ObjectFactory;
 import fr.liglab.adele.rondo.model.Rondo;
 
-@Component
+@Component(immediate = true)
 @Provides
 @Instantiate
-@StaticServiceProperty(name = "parser-type", value = "jaxb", type = "string")
 public class RondoJAXBParserImpl implements RondoParser {
 
 	private final String NAMESPACE = "fr.liglab.adele.rondo.model";
@@ -43,9 +41,7 @@ public class RondoJAXBParserImpl implements RondoParser {
 			Rondo rondo = (Rondo) unmarshaller.unmarshal(file);
 			return rondo;
 		} catch (JAXBException e) {
-			// TODO
-			e.printStackTrace();
-			throw new RondoParserException();
+			throw new RondoParserException(e.getMessage());
 
 		}
 	}

@@ -17,10 +17,12 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.liglab.adele.rondo.RondoContext;
+import fr.liglab.adele.rondo.RondoApplicationContext;
 import fr.liglab.adele.rondo.RondoFileManager;
 import fr.liglab.adele.rondo.RondoParser;
+import fr.liglab.adele.rondo.exception.InvalidConfigurationException;
 import fr.liglab.adele.rondo.exception.RondoParserException;
+import fr.liglab.adele.rondo.manager.ApplicationContextFactory;
 import fr.liglab.adele.rondo.model.Application;
 import fr.liglab.adele.rondo.model.Rondo;
 
@@ -42,7 +44,7 @@ public class RondoFileManagerImpl implements RondoFileManager {
 	RondoParser parser;
 
 	@Requires
-	RondoContext rondoContext;
+	ApplicationContextFactory rAppManager;
 
 	protected static Logger logger = LoggerFactory.getLogger("rondo.app.parser");
 
@@ -82,10 +84,13 @@ public class RondoFileManagerImpl implements RondoFileManager {
 
 	@Override
 	public void updateFile(File apps) {
-		// TODO diff
+		creator.removeFile(apps);
+		stopManagementFor(apps);
+		creator.addFile(apps);
 	}
 
-	public void startManagementFor(File file) {
+	public void startManagementFor(File file) throws InvalidConfigurationException {
+		System.out.println("Starting Management for " + file.getName());
 		List<Application> appsList = new ArrayList<Application>();
 		Rondo rondo = null;
 		try {
@@ -97,10 +102,9 @@ public class RondoFileManagerImpl implements RondoFileManager {
 
 		if (rondo != null && rondo.getApplication().size() > 0) {
 			for (Application application : rondo.getApplication()) {
-				rondoContext.createApplication(application);
-				// application
-				// TODO
-
+				RondoApplicationContext appContext = rAppManager.createApplication(application);
+				appsList.add(application);
+				appContext.start();
 			}
 			handledFiles.put(file, appsList);
 		} else {
@@ -109,13 +113,12 @@ public class RondoFileManagerImpl implements RondoFileManager {
 	}
 
 	public void stopManagementFor(File file) {
+		System.out.println("Stopping Management for " + file.getName());
 		List<Application> appList = null;
 		appList = handledFiles.remove(file);
 		if (appList != null) {
 			for (Application application : appList) {
-				rondoContext.destroyApplication(application);
-				// application
-				// TODO
+				rAppManager.destroyApplication(application);
 			}
 			appList.clear();
 		}
