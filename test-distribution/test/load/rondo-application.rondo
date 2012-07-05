@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rondo:rondo xmlns:rondo="fr.liglab.adele.rondo.application"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="fr.liglab.adele.rondo.application rondo-application.xsd ">
+	<application name="app1">
+		<fragment name="fragment1" type="">
+			<policy name="sadgfsad">
+				<property name="af" value="asdg" />
+			</policy>
+			<component name="component1" implementationFilter="(&amp;(name=Component1)(version=1.0.0))">
+				<policy name="simple">
+					<property name="" value="" />
+				</policy>
+				<configuation>
+					 <dependency name="2" filter="(factory.name=sfsgg)"/>
+						<provides name="fr.imag.adele.mrt.tests.services.Service1">
+							<property name="hop" value="hap"/>
+						</provides>
+					<property name="ServicePropertyMandatory" value="5"/>
+				</configuation>
+			</component>
+			<!-- <component name="component2" implementation="Component2">
+				<policy name="simple"/>
+				
+			</component> -->
+			<component name="component2" implementation="Component2">
+				<policy name="simple"/>
+			</component>
+		</fragment>
+		<import name="dg">
+			<policy name="http://tempuri.org" />
+			<configuration>
+				<provides name="g" scope="a" />
+			</configuration>
+		</import>
+	</application>
+</rondo:rondo>

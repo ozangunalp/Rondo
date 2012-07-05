@@ -126,27 +126,6 @@
 	<groupId>log4j</groupId>
 	<artifactId>log4j</artifactId>
 </dependency>
-    <!-- Rondo bundles -->
-    <!-- <dependency>
-      <groupId>fr.liglab.adele.rondo</groupId>
-      <artifactId>rondo-app-deployer</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>fr.liglab.adele.rondo</groupId>
-      <artifactId>rondo-app-parser</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>fr.liglab.adele.rondo</groupId>
-      <artifactId>rondo-core</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>fr.liglab.adele.rondo</groupId>
-      <artifactId>rondo-ipojo-runtime</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency> -->
 
 <!-- iPOJO Mrt bundles -->
 	  <dependency>
@@ -169,7 +148,119 @@
 		<artifactId>OBRRepositoryAdmin</artifactId>
 		<version>1.0.1</version>
 	  </dependency>
-  </dependencies>
+	<dependency>
+	<groupId>fr.imag.adele.repository</groupId>
+	<artifactId>OBRRepositoryAdminGogoCommand</artifactId>
+	<version>1.0.1</version>
+	</dependency>
+<!-- iCASA bundles -->
+<dependency>
+  <groupId>org.ow2.chameleon.handies</groupId>
+  <artifactId>annotations</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+</dependency>
+<dependency>
+  <groupId>org.ow2.chameleon.handies</groupId>
+  <artifactId>ipojo-log-handler</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.api.device</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.api.context</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.api.environment</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.api.portal</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.api.script</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.common.xercesImpl</artifactId>
+		<version>2.9.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.common.nextapp-echo3</artifactId>
+		<version>3.0-beta8-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.application.device-portlet</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.device.temperature</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.device.sound</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.device.simulated-environment</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.device.presence</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.device.power</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.device.light</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.service.context</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.service.portal</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.service.script-interpreter</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.tool.script-deployer</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>fr.liglab.adele.icasa.tool.portlet-handler</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	</dependencies>
+  
 
   <build>
     <plugins>
