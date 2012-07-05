@@ -19,6 +19,7 @@
 		<requires field="architecture" />
 		<requires field="deployment" />
 		<requires field="compFactory" />
+		<requires field="obrAdmin"/>
 		<properties propagation="true">
 			<property name="component.name" field="compName" />
 		</properties>
