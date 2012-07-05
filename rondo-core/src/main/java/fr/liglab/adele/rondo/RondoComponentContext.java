@@ -8,6 +8,8 @@ public interface RondoComponentContext {
 
 	Component getModel();
 
+	ComponentState getComponentState();
+
 	void activate();
 
 	void deactivate();

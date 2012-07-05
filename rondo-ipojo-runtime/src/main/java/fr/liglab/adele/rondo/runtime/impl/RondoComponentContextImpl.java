@@ -72,6 +72,12 @@ public class RondoComponentContextImpl extends AbstractRondoContext implements R
 	public void setState(ComponentState newState) {
 		state = newState;
 		notifyListeners();
+		System.out.println("Component" + compModel.getName() + "policy changes state :" + newState.name());
+	}
+
+	@Override
+	public ComponentState getComponentState() {
+		return this.state;
 	}
 
 	private void notifyListeners() {

@@ -26,6 +26,8 @@ public class RondoFragmentContextImpl extends AbstractRondoContext implements Ro
 	ApplicationFragment fragmentModel;
 	private final RondoGlobalContext rondo_context;
 
+	FragmentState state;
+
 	List<FragmentStateListener> listeners = new ArrayList<FragmentStateListener>();
 
 	public RondoFragmentContextImpl(ApplicationFragment fModel, BundleContext context, RondoGlobalContext rondo_context) {
@@ -84,6 +86,11 @@ public class RondoFragmentContextImpl extends AbstractRondoContext implements Ro
 			destroyComponent(c);
 		}
 		this.stopInstance();
+	}
+
+	@Override
+	public FragmentState getFragmentState() {
+		return this.state;
 	}
 
 	@Override

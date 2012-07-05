@@ -12,6 +12,8 @@ public interface RondoFragmentContext {
 
 	ApplicationFragment getFragmentModel();
 
+	FragmentState getFragmentState();
+
 	void activate();
 
 	void deactivate();
