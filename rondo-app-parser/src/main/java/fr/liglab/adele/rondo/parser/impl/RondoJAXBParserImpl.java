@@ -41,6 +41,7 @@ public class RondoJAXBParserImpl implements RondoParser {
 			Rondo rondo = (Rondo) unmarshaller.unmarshal(file);
 			return rondo;
 		} catch (JAXBException e) {
+			e.printStackTrace();
 			throw new RondoParserException(e.getMessage());
 
 		}
