@@ -1,4 +1,6 @@
-package fr.liglab.adele.rondo.infra;
+package fr.liglab.adele.rondo.infra.impl;
+
+import fr.liglab.adele.rondo.infra.model.Resource;
 
 import java.util.*;
 
@@ -8,7 +10,7 @@ import java.util.*;
  * Date: 4/25/13
  * Time: 11:05 AM
  */
-public abstract class AbstractResource<T extends AbstractResource<T>> {
+public abstract class AbstractResource<T extends AbstractResource<T>> implements Resource {
 
     private String name;
     private String state;

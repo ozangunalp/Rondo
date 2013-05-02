@@ -1,15 +1,18 @@
 package fr.liglab.adele.rondo.infra;
 
+import fr.liglab.adele.rondo.infra.impl.InfrastructureImpl;
+import fr.liglab.adele.rondo.infra.model.*;
+import fr.liglab.adele.rondo.infra.model.Package;
 import org.junit.Test;
 
 import java.util.Map;
 
-import static fr.liglab.adele.rondo.infra.AbstractResource.*;
-import static fr.liglab.adele.rondo.infra.Bundle.bundle;
-import static fr.liglab.adele.rondo.infra.Configuration.configuration;
-import static fr.liglab.adele.rondo.infra.File.file;
-import static fr.liglab.adele.rondo.infra.Infrastructure.infrastructure;
-import static fr.liglab.adele.rondo.infra.Package.aPackage;
+import static fr.liglab.adele.rondo.infra.impl.AbstractResource.*;
+import static fr.liglab.adele.rondo.infra.impl.BundleImpl.bundle;
+import static fr.liglab.adele.rondo.infra.impl.ConfigurationImpl.configuration;
+import static fr.liglab.adele.rondo.infra.impl.FileImpl.file;
+import static fr.liglab.adele.rondo.infra.impl.InfrastructureImpl.infrastructure;
+import static fr.liglab.adele.rondo.infra.impl.PackageImpl.aPackage;
 
 
 /**
@@ -23,7 +26,7 @@ public class TestInfrastructureBuilders {
 
     @Test
     public void testBuilder() {
-        Infrastructure inf = infrastructure()
+        InfrastructureImpl inf = infrastructure()
                 .resource(
                         bundle().name("bundle1")
                                 .source("some url")
@@ -56,7 +59,6 @@ public class TestInfrastructureBuilders {
                                         ))
                 );
 
-
         inf.resource(Bundle.class, "bundle1").dependsOn(Package.class, "package1")
                 .resource(Configuration.class, "conf name").dependsOn(File.class, "file").dependsOn(Bundle.class, "bundle2").dependsOn(Bundle.class, "bundle1");
 
@@ -65,7 +67,7 @@ public class TestInfrastructureBuilders {
         System.out.println(map);
         System.out.println(resource);
         System.out.println(inf.getResource(File.class, "file"));
-        for (Infrastructure.Dependency dependency : inf.getDependencies()) {
+        for (Dependency dependency : inf.getDependencies()) {
             System.out.println(dependency);
         }
 
