@@ -6,6 +6,8 @@ package fr.liglab.adele.rondo.infra.model;
  * Date: 4/29/13
  * Time: 4:26 PM
  */
-public interface Instance extends Resource {
+public interface Instance extends ResourceDeclaration {
+
+    public String factory();
 
 }

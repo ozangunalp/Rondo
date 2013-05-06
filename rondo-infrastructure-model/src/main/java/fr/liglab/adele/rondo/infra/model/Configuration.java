@@ -6,6 +6,6 @@ package fr.liglab.adele.rondo.infra.model;
  * Date: 4/29/13
  * Time: 4:22 PM
  */
-public interface Configuration extends Resource {
+public interface Configuration extends ResourceDeclaration {
 
 }

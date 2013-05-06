@@ -8,7 +8,7 @@ import fr.liglab.adele.rondo.infra.model.File;
  * Date: 4/25/13
  * Time: 10:55 AM
  */
-public class FileImpl extends AbstractResource<FileImpl> implements File {
+public class FileImpl extends AbstractResourceDeclaration<FileImpl> implements File {
 
     private String source;
 
@@ -27,20 +27,20 @@ public class FileImpl extends AbstractResource<FileImpl> implements File {
     }
 
     public String source() {
-        return source;
+        return (String) this.properties().get("source");
     }
 
     public String template() {
-        return template;
+        return (String) this.properties().get("template");
     }
 
     public FileImpl source(String source) {
-        this.source = source;
+        this.with("source").setto(source);
         return this;
     }
 
     public FileImpl template(String template) {
-        this.template = template;
+        this.with("template").setto(template);
         return this;
     }
 

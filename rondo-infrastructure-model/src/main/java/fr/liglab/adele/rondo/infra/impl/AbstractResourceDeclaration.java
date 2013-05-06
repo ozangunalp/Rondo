@@ -1,6 +1,6 @@
 package fr.liglab.adele.rondo.infra.impl;
 
-import fr.liglab.adele.rondo.infra.model.Resource;
+import fr.liglab.adele.rondo.infra.model.ResourceDeclaration;
 
 import java.util.*;
 
@@ -10,7 +10,7 @@ import java.util.*;
  * Date: 4/25/13
  * Time: 11:05 AM
  */
-public abstract class AbstractResource<T extends AbstractResource<T>> implements Resource {
+public abstract class AbstractResourceDeclaration<T extends AbstractResourceDeclaration<T>> implements ResourceDeclaration {
 
     private String name;
     private String state;
@@ -30,7 +30,7 @@ public abstract class AbstractResource<T extends AbstractResource<T>> implements
         return new Pair<K, V>(k, v);
     }
 
-    protected AbstractResource(String name) {
+    protected AbstractResourceDeclaration(String name) {
         this.name = name;
     }
 

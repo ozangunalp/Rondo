@@ -7,12 +7,13 @@ import org.junit.Test;
 
 import java.util.Map;
 
-import static fr.liglab.adele.rondo.infra.impl.AbstractResource.*;
+import static fr.liglab.adele.rondo.infra.impl.AbstractResourceDeclaration.*;
 import static fr.liglab.adele.rondo.infra.impl.BundleImpl.bundle;
 import static fr.liglab.adele.rondo.infra.impl.ConfigurationImpl.configuration;
 import static fr.liglab.adele.rondo.infra.impl.FileImpl.file;
 import static fr.liglab.adele.rondo.infra.impl.InfrastructureImpl.infrastructure;
 import static fr.liglab.adele.rondo.infra.impl.PackageImpl.aPackage;
+import static fr.liglab.adele.rondo.infra.impl.ServiceImpl.service;
 
 
 /**
@@ -56,8 +57,8 @@ public class TestInfrastructureBuilders {
                                         .with(
                                                 pair("osman", "value"),
                                                 pair("adsgsadg", 3)
-                                        ))
-                );
+                                        )))
+                .resource(service().objectClass(list("asdgadsg", "asdgadsgsdg")));
 
         inf.resource(Bundle.class, "bundle1").dependsOn(Package.class, "package1")
                 .resource(Configuration.class, "conf name").dependsOn(File.class, "file").dependsOn(Bundle.class, "bundle2").dependsOn(Bundle.class, "bundle1");

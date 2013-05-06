@@ -15,13 +15,13 @@ public interface Infrastructure {
 
     public List<ResourceReference> getResourceReferences();
 
-    public <T extends Resource> Map<String, T> getResources(Class<T> resourceType);
+    public <T extends ResourceDeclaration> Map<String, T> getResources(Class<T> resourceType);
 
-    public List<Resource> getResources();
+    public List<ResourceDeclaration> getResources();
 
-    public <T extends Resource> T getResource(Class<T> resourceType, String resourceName);
+    public <T extends ResourceDeclaration> T getResource(Class<T> resourceType, String resourceName);
 
-    public <T extends Resource> T getResource(ResourceReference<T> reference);
+    public <T extends ResourceDeclaration> T getResource(ResourceReference<T> reference);
 
 
 }

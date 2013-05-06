@@ -1,4 +1,4 @@
-package fr.liglab.adele.rondo.infra.deployer.processor;
+package fr.liglab.adele.rondo.infra.deployment.processor;
 
 /**
  * Created with IntelliJ IDEA.

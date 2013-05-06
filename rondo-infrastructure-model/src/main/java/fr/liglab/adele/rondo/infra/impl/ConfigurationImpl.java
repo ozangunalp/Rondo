@@ -8,7 +8,7 @@ import fr.liglab.adele.rondo.infra.model.Configuration;
  * Date: 4/25/13
  * Time: 10:45 AM
  */
-public class ConfigurationImpl extends AbstractResource<ConfigurationImpl> implements Configuration {
+public class ConfigurationImpl extends AbstractResourceDeclaration<ConfigurationImpl> implements Configuration {
 
     public static ConfigurationImpl configuration() {
         return new ConfigurationImpl(null);

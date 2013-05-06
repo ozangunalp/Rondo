@@ -8,7 +8,7 @@ import java.util.Map;
  * Date: 4/29/13
  * Time: 4:17 PM
  */
-public interface Resource {
+public interface ResourceDeclaration {
 
     public String name();
 

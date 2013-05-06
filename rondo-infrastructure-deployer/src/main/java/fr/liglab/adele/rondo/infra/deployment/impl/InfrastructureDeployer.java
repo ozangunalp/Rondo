@@ -1,10 +1,12 @@
-package fr.liglab.adele.rondo.infra.deployer.impl;
+package fr.liglab.adele.rondo.infra.deployment.impl;
 
-import fr.liglab.adele.rondo.infra.deployer.DependencyResolutionException;
-import fr.liglab.adele.rondo.infra.deployer.DeploymentHandle;
-import fr.liglab.adele.rondo.infra.deployer.DeploymentPlan;
-import fr.liglab.adele.rondo.infra.deployer.ManagedInfrastructure;
-import fr.liglab.adele.rondo.infra.deployer.processor.ResourceProcessor;
+import fr.liglab.adele.rondo.infra.deployment.DependencyResolutionException;
+import fr.liglab.adele.rondo.infra.deployment.DeploymentHandle;
+import fr.liglab.adele.rondo.infra.deployment.DeploymentPlan;
+import fr.liglab.adele.rondo.infra.deployment.ManagedInfrastructure;
+import fr.liglab.adele.rondo.infra.deployment.processor.ResourceProcessor;
+import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentCoordinator;
+import fr.liglab.adele.rondo.infra.deployment.transaction.impl.DeploymentCoordinatorImpl;
 import fr.liglab.adele.rondo.infra.model.Dependency;
 import fr.liglab.adele.rondo.infra.model.Infrastructure;
 import fr.liglab.adele.rondo.infra.model.ResourceReference;
@@ -23,7 +25,7 @@ import java.util.*;
  */
 @Component
 @Instantiate
-@Provides
+@Provides(specifications = {ManagedInfrastructure.class})
 public class InfrastructureDeployer implements ManagedInfrastructure {
 
     private BundleContext m_context;
@@ -35,6 +37,8 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
     private DeploymentHandle m_handle;
 
     private ServiceRegistration m_handleRegisteration;
+
+    private DeploymentCoordinatorImpl m_coordinator;
 
     public InfrastructureDeployer(BundleContext context) {
         this.m_context = context;
@@ -75,7 +79,7 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
 //        }
     }
 
-    @Bind(id = "processors", specification = "fr.liglab.adele.rondo.infra.processor.ResourceProcessor", aggregate = true, optional = true)
+    @Bind(id = "processors", specification = "fr.liglab.adele.rondo.infra.deployment.processor.ResourceProcessor", aggregate = true, optional = true)
     public void bindResourceProcessor(ServiceReference<ResourceProcessor> reference) {
         ResourceProcessor processor = m_context.getService(reference);
         String resourceType = (String) reference.getProperty("resource.type");
@@ -87,7 +91,6 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
         ResourceProcessor processor = m_context.getService(reference);
         processors.remove(processor);
     }
-
 
     @Override
     public Infrastructure getInfrastructureModel() {
@@ -104,6 +107,14 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
         return processors.get(type);
     }
 
+    @Override
+    public DeploymentCoordinator getCoordinator() {
+        if (this.m_coordinator == null) {
+            this.m_coordinator = new DeploymentCoordinatorImpl(30 * 10 * 1000L, null);
+        }
+        return this.m_coordinator;
+    }
+
     public DeploymentPlan calculateDeploymentPlan(Infrastructure newInfrastructure) throws DependencyResolutionException {
         DeploymentPlan deploymentPlan = new DeploymentPlan();
         List<Dependency> dependencies = newInfrastructure.getDependencies();
@@ -115,21 +126,21 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
         }
         // Level 0
         // find single resources
-        List<ResourceReference> resourceReferences = newInfrastructure.getResourceReferences();
+        LinkedList<ResourceReference> resourceReferences = new LinkedList<ResourceReference>(newInfrastructure.getResourceReferences());
         resourceReferences.removeAll(providers);
         resourceReferences.removeAll(requirers);
         // add single providers to the deployment plan
-        deploymentPlan.put(resourceReferences);
+        deploymentPlan.addAll(resourceReferences);
         // Level 1
         // find providers without dependency
         providers.removeAll(requirers);
         List<ResourceReference> satisfiedProviders = new ArrayList<ResourceReference>();
         satisfiedProviders.addAll(providers);
         // add providers without dependency to the deployment plan
-        deploymentPlan.put(new ArrayList<ResourceReference>(providers));
+        deploymentPlan.addAll(new LinkedList<ResourceReference>(providers));
         // Level 2 +
         while (!requirers.isEmpty()) {
-            List<ResourceReference> nextProviders = new ArrayList<ResourceReference>();
+            LinkedList<ResourceReference> nextProviders = new LinkedList<ResourceReference>();
             Set<ResourceReference> requirersToRemove = new HashSet<ResourceReference>();
             // iterate over requirer
             for (ResourceReference requirer : requirers) {
@@ -151,7 +162,7 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
                 throw new DependencyResolutionException("Dependency cannot be resolved");
             }
             requirers.removeAll(requirersToRemove);
-            deploymentPlan.put(nextProviders);
+            deploymentPlan.addAll(nextProviders);
             satisfiedProviders.addAll(nextProviders);
         }
         return deploymentPlan;

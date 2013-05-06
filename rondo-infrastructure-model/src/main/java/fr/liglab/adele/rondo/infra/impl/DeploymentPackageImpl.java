@@ -8,7 +8,7 @@ import fr.liglab.adele.rondo.infra.model.DeploymentPackage;
  * Date: 4/25/13
  * Time: 10:52 AM
  */
-public class DeploymentPackageImpl extends AbstractResource<DeploymentPackageImpl> implements DeploymentPackage {
+public class DeploymentPackageImpl extends AbstractResourceDeclaration<DeploymentPackageImpl> implements DeploymentPackage {
 
     private String source;
 
@@ -25,11 +25,11 @@ public class DeploymentPackageImpl extends AbstractResource<DeploymentPackageImp
     }
 
     public String source() {
-        return source;
+        return (String) this.properties().get("source");
     }
 
     public DeploymentPackageImpl source(String source) {
-        this.source = source;
+        this.with("source").setto(source);
         return this;
     }
 

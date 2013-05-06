@@ -1,4 +1,4 @@
-package fr.liglab.adele.rondo.infra.deployer;
+package fr.liglab.adele.rondo.infra.deployment;
 
 /**
  * Created with IntelliJ IDEA.
@@ -9,7 +9,7 @@ package fr.liglab.adele.rondo.infra.deployer;
 public interface DeploymentHandle {
 
     public enum DeploymentState {
-        CREATED, RUNNING, UNSUCCESSFUL, SUCCESSFUL
+        CREATED, DRYRUNNING, RUNNING, UNSUCCESSFUL, SUCCESSFUL
     }
 
     public DeploymentState getState();

@@ -6,7 +6,7 @@ package fr.liglab.adele.rondo.infra.model;
  * Date: 4/29/13
  * Time: 4:25 PM
  */
-public interface File extends Resource {
+public interface File extends ResourceDeclaration {
 
     public String source();
 

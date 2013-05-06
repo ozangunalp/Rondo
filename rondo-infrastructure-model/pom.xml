@@ -14,7 +14,6 @@
 
 
     <!-- Coordinates -->
-    <groupId>fr.liglab.adele.rondo</groupId>
     <artifactId>rondo-infrastructure-model</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
@@ -52,7 +51,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>fr.liglab.adele.rondo.infra</Export-Package>
+                        <Export-Package>fr.liglab.adele.rondo.infra.*</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -67,13 +66,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
             </plugin>
         </plugins>
     </build>

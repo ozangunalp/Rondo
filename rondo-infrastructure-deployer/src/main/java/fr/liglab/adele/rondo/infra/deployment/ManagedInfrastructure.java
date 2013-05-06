@@ -1,6 +1,7 @@
-package fr.liglab.adele.rondo.infra.deployer;
+package fr.liglab.adele.rondo.infra.deployment;
 
-import fr.liglab.adele.rondo.infra.deployer.processor.ResourceProcessor;
+import fr.liglab.adele.rondo.infra.deployment.processor.ResourceProcessor;
+import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentCoordinator;
 import fr.liglab.adele.rondo.infra.model.Infrastructure;
 
 /**
@@ -16,5 +17,7 @@ public interface ManagedInfrastructure {
     public DeploymentHandle getDeploymentHandle();
 
     public ResourceProcessor getResourceProcessor(String type);
+
+    public DeploymentCoordinator getCoordinator();
 
 }

@@ -6,7 +6,7 @@ package fr.liglab.adele.rondo.infra.model;
  * Date: 4/29/13
  * Time: 4:01 PM
  */
-public interface ResourceReference<T extends Resource> {
+public interface ResourceReference<T extends ResourceDeclaration> {
 
     public ResourceReference<T> adapt(Class<T> clazz);
 

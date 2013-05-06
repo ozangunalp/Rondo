@@ -2,7 +2,7 @@ package fr.liglab.adele.rondo.infra.impl;
 
 import fr.liglab.adele.rondo.infra.model.Dependency;
 import fr.liglab.adele.rondo.infra.model.Infrastructure;
-import fr.liglab.adele.rondo.infra.model.Resource;
+import fr.liglab.adele.rondo.infra.model.ResourceDeclaration;
 import fr.liglab.adele.rondo.infra.model.ResourceReference;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import java.util.*;
  */
 public class InfrastructureImpl implements Infrastructure {
 
-    private Map<Class, LinkedHashMap<String, AbstractResource>> resources = new HashMap<Class, LinkedHashMap<String, AbstractResource>>();
+    private Map<Class, LinkedHashMap<String, AbstractResourceDeclaration>> resources = new HashMap<Class, LinkedHashMap<String, AbstractResourceDeclaration>>();
     private LinkedList<DependencyImpl> dependencies = new LinkedList<DependencyImpl>();
     private List<ResourceReference> exports = new ArrayList<ResourceReference>();
 
@@ -43,7 +43,7 @@ public class InfrastructureImpl implements Infrastructure {
         return this;
     }
 
-    public <T extends AbstractResource<T>> InfrastructureImpl resource(T resource) {
+    public <T extends AbstractResourceDeclaration<T>> InfrastructureImpl resource(T resource) {
         // Get the first interface of the resource, it must be the type
         Class interFace = null;
         Class<?>[] interfaces = resource.getClass().getInterfaces();
@@ -52,9 +52,9 @@ public class InfrastructureImpl implements Infrastructure {
         } else {
             //TODO throw some exception
         }
-        LinkedHashMap<String, AbstractResource> map = resources.get(interFace);
+        LinkedHashMap<String, AbstractResourceDeclaration> map = resources.get(interFace);
         if (map == null) {
-            map = new LinkedHashMap<String, AbstractResource>();
+            map = new LinkedHashMap<String, AbstractResourceDeclaration>();
             resources.put(interFace, map);
         }
         String resourceName = resource.name();
@@ -67,38 +67,38 @@ public class InfrastructureImpl implements Infrastructure {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource> ResourceReferenceImpl<T> resource(Class<T> type, String name) {
+    public <T extends ResourceDeclaration> ResourceReferenceImpl<T> resource(Class<T> type, String name) {
         return new ResourceReferenceImpl(type, name);
     }
 
     // Getters
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource> T getResource(Class<T> resourceType, String resourceName) {
+    public <T extends ResourceDeclaration> T getResource(Class<T> resourceType, String resourceName) {
         T resource = null;
-        LinkedHashMap<String, AbstractResource> res = this.resources.get(resourceType);
+        LinkedHashMap<String, AbstractResourceDeclaration> res = this.resources.get(resourceType);
         if (res != null) {
-            Resource entity = res.get(resourceName);
+            ResourceDeclaration entity = res.get(resourceName);
             resource = (T) entity;
         }
         return resource;
     }
 
     @SuppressWarnings("unchecked")
-    public List<Resource> getResources() {
-        List<Resource> allResources = new ArrayList<Resource>();
-        for (LinkedHashMap<String, AbstractResource> resource : this.resources.values()) {
+    public List<ResourceDeclaration> getResources() {
+        List<ResourceDeclaration> allResources = new ArrayList<ResourceDeclaration>();
+        for (LinkedHashMap<String, AbstractResourceDeclaration> resource : this.resources.values()) {
             allResources.addAll(resource.values());
         }
         return allResources;
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Resource> Map<String, T> getResources(Class<T> resourceType) {
+    public <T extends ResourceDeclaration> Map<String, T> getResources(Class<T> resourceType) {
         Map<String, T> res = new HashMap<String, T>();
-        LinkedHashMap<String, AbstractResource> resType = this.resources.get(resourceType);
+        LinkedHashMap<String, AbstractResourceDeclaration> resType = this.resources.get(resourceType);
         if (resType != null) {
-            for (Map.Entry<String, AbstractResource> e : resType.entrySet()) {
+            for (Map.Entry<String, AbstractResourceDeclaration> e : resType.entrySet()) {
                 res.put(e.getKey(), (T) e.getValue().self());
             }
         }
@@ -108,7 +108,7 @@ public class InfrastructureImpl implements Infrastructure {
     @SuppressWarnings("unchecked")
     public List<ResourceReference> getResourceReferences() {
         List<ResourceReference> references = new ArrayList<ResourceReference>();
-        for (Map.Entry<Class, LinkedHashMap<String, AbstractResource>> resource : resources.entrySet()) {
+        for (Map.Entry<Class, LinkedHashMap<String, AbstractResourceDeclaration>> resource : resources.entrySet()) {
             Class clazz = resource.getKey();
             for (String key : resource.getValue().keySet()) {
                 references.add(new ResourceReferenceImpl(clazz, key));
@@ -117,7 +117,7 @@ public class InfrastructureImpl implements Infrastructure {
         return references;
     }
 
-    public <T extends Resource> T getResource(ResourceReference<T> reference) {
+    public <T extends ResourceDeclaration> T getResource(ResourceReference<T> reference) {
         return this.getResource(reference.type(), reference.name());
     }
 
@@ -135,7 +135,7 @@ public class InfrastructureImpl implements Infrastructure {
 
     // Inner classes
 
-    public class ResourceReferenceImpl<T extends Resource> implements ResourceReference {
+    public class ResourceReferenceImpl<T extends ResourceDeclaration> implements ResourceReference {
 
         private final Class<T> resourceType;
         private final String resourceName;
@@ -163,7 +163,7 @@ public class InfrastructureImpl implements Infrastructure {
             return this.resourceName;
         }
 
-        public <Y extends Resource> InfrastructureImpl dependsOn(Class<Y> resourceType, String resourceName) {
+        public <Y extends ResourceDeclaration> InfrastructureImpl dependsOn(Class<Y> resourceType, String resourceName) {
             return new DependencyImpl(this).dependsOn(new ResourceReferenceImpl<Y>(resourceType, resourceName));
         }
 
