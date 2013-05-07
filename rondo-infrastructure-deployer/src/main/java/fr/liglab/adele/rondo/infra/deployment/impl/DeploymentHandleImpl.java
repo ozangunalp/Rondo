@@ -95,6 +95,7 @@ public class DeploymentHandleImpl implements DeploymentHandle {
     private void callProcessors(DeploymentTransaction transaction) throws DeploymentException {
         for (ResourceReference resourceReference : this.m_plan) {
             Class type = resourceReference.type();
+            System.out.println(type.getName());
             ResourceProcessor processor = m_infrastructure.getResourceProcessor(type.getName());
             if (processor != null) {
                 ResourceDeclaration resource = m_infrastructure.getInfrastructureModel().getResource(resourceReference);
@@ -103,7 +104,7 @@ public class DeploymentHandleImpl implements DeploymentHandle {
                 transaction.addParticipant(participant);
                 // hurray if we come here!
             } else {
-                throw new DeploymentException("Resource processor for not found for resource type" + type.getName());
+                throw new DeploymentException("Resource processor not found for resource type " + type.getName());
             }
         }
         transaction.prepare();

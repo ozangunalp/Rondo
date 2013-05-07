@@ -10,8 +10,6 @@ import fr.liglab.adele.rondo.infra.model.Instance;
  */
 public class InstanceImpl extends AbstractResourceDeclaration<InstanceImpl> implements Instance {
 
-    private String factory;
-
     public static InstanceImpl instance() {
         return new InstanceImpl(null);
     }
@@ -31,11 +29,20 @@ public class InstanceImpl extends AbstractResourceDeclaration<InstanceImpl> impl
 
     @Override
     public String factory() {
-        return (String) this.properties().get("factory");
+        return (String) this.properties().get("factory.name");
+    }
+
+    public String factoryVersion() {
+        return (String) this.properties().get("factory.version");
     }
 
     public InstanceImpl factory(String factory) {
-        this.with("factory").setto(factory);
+        this.with("factory.name").setto(factory);
+        return this;
+    }
+
+    public InstanceImpl factoryVersion(String version) {
+        this.with("factory.version").setto(version);
         return this;
     }
 }

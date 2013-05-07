@@ -109,6 +109,7 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
                 try {
                     listIterator.next().commit();
                 } catch (Throwable t) {
+                    t.printStackTrace();
                     commitFailure = true;
                 }
             }

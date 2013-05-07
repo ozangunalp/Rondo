@@ -26,7 +26,7 @@ public class ConfigProcessor extends DefaultResourceProcessor {
     @Requires(optional = false)
     public EverestService m_everest;
 
-    @ServiceProperty(name = "resource.type")
+    @ServiceProperty(name = "resource.type", value = "fr.liglab.adele.rondo.infra.model.Configuration")
     public final String m_resourceType = "fr.liglab.adele.rondo.infra.model.Configuration";
 
     private final BundleContext m_context;

@@ -26,7 +26,7 @@ public class ComponentProcessor extends DefaultResourceProcessor {
     @Requires(optional = false)
     private EverestService m_everest;
 
-    @ServiceProperty(name = "resource.type")
+    @ServiceProperty(name = "resource.type", value = "fr.liglab.adele.rondo.infra.model.Component")
     public final String m_resourceType = "fr.liglab.adele.rondo.infra.model.Component";
 
     BundleContext m_context;
@@ -60,14 +60,13 @@ public class ComponentProcessor extends DefaultResourceProcessor {
 
             Resource component = null;
             try {
-                component = m_everest.process(new DefaultRequest(Action.READ, Path.from("/ipojo/factory/" + m_componentDef.name()), null));
+                component = m_everest.process(new DefaultRequest(Action.READ, Path.from("/ipojo/factory/").addElements(m_componentDef.name(), m_componentDef.version()), null));
                 if (component == null) {
-                    throw new DeploymentException("Package resource not found " + m_componentDef.name());
+                    throw new DeploymentException("Component resource not found " + m_componentDef.name());
                 } else {
                     //TODO log
-                    // we save the first corresponding package path
-                    //this.store(m_componentDef.name(),resources.get(0).getCanonicalPath());
-                    System.out.println("Package found: " + m_componentDef.name());
+                    this.store(m_componentDef.name(), component.getCanonicalPath());
+                    System.out.println("Component found: " + m_componentDef.name());
                     // nothing else to do here ..
                 }
             } catch (IllegalActionOnResourceException e) {
@@ -81,6 +80,5 @@ public class ComponentProcessor extends DefaultResourceProcessor {
         public void cleanup() {
             System.out.println("Nothing to clean up here " + m_componentDef.name());
         }
-
     }
 }

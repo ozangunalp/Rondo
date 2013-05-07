@@ -30,7 +30,7 @@ public class PackageProcessor extends DefaultResourceProcessor {
     @Requires(optional = false)
     public EverestService m_everest;
 
-    @ServiceProperty(name = "resource.type")
+    @ServiceProperty(name = "resource.type", value = "fr.liglab.adele.rondo.infra.model.Package")
     public final String m_resourceType = "fr.liglab.adele.rondo.infra.model.Package";
 
     BundleContext m_context;

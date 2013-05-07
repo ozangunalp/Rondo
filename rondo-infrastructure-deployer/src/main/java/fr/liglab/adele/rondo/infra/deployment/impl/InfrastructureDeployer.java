@@ -63,12 +63,14 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
         try {
             plan = calculateDeploymentPlan(m_currentInfrastructure);
             m_handle = new DeploymentHandleImpl(plan, this);
+            if (m_handleRegisteration != null) {
+                m_handleRegisteration.unregister();
+            }
             m_handleRegisteration = m_context.registerService(DeploymentHandle.class, m_handle, null);
         } catch (DependencyResolutionException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         // TODO check deployment plan against constraints ???
-        // and start to handle
     }
 
     @Unbind(id = "infrastructure")
@@ -83,6 +85,7 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
     public void bindResourceProcessor(ServiceReference<ResourceProcessor> reference) {
         ResourceProcessor processor = m_context.getService(reference);
         String resourceType = (String) reference.getProperty("resource.type");
+        System.out.println(resourceType);
         processors.put(resourceType, processor);
     }
 

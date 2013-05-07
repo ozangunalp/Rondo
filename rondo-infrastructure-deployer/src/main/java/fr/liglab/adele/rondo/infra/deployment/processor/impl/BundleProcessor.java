@@ -21,7 +21,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -42,7 +42,7 @@ public class BundleProcessor extends DefaultResourceProcessor {
     @Requires(optional = false)
     public EverestService m_everest;
 
-    @ServiceProperty(name = "resource.type")
+    @ServiceProperty(name = "resource.type", value = "fr.liglab.adele.rondo.infra.model.Bundle")
     public final String m_resourceType = "fr.liglab.adele.rondo.infra.model.Bundle";
 
     BundleContext m_context;
@@ -108,7 +108,7 @@ public class BundleProcessor extends DefaultResourceProcessor {
                 File deploymentDir = new File(directory, bundleDef.name());
                 deploymentDir.mkdirs();
                 File deploymentFile = null;
-                if (this.cachedBundle != null || !this.cachedBundle.exists()) { // if we have the bundle jar in cache we copy it to deployment directory
+                if (this.cachedBundle != null && this.cachedBundle.exists()) { // if we have the bundle jar in cache we copy it to deployment directory
                     // get file name
                     URL url = new URL(bundleDef.source());
                     String fileName = calculateFileName(url);
@@ -120,24 +120,30 @@ public class BundleProcessor extends DefaultResourceProcessor {
                 }
                 // here on we should have gotten the file to be deployed, or failed miserably
                 Resource bundles = m_everest.process(new DefaultRequest(Action.READ, Path.from("/osgi/bundles"), null));
-                List<Resource> resources = bundles.getResources(new ResourceFilter() {
-                    @Override
-                    public boolean accept(Resource resource) {
-                        String symbolicName = resource.getMetadata().get(Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE, String.class);
-                        Version version = resource.getMetadata().get(Constants.BUNDLE_VERSION_ATTRIBUTE, Version.class);
-                        String bundleLocation = resource.getMetadata().get("bundle-location", String.class);
-                        String state = resource.getMetadata().get("bundle-state", String.class);
-                        return bundleDef.symbolicName().endsWith(symbolicName) &&
-                                new Version(bundleDef.version()).equals(version) &&
-                                (!"UNINSTALLED".equals(state)) &&
-                                bundleDef.source().equals(bundleLocation);
+                Resource bundle = null;
+                Iterator<Resource> iterator = bundles.getResources().iterator();
+                while (iterator.hasNext() && bundle == null) {
+                    Resource next = iterator.next();
+                    if (new ResourceFilter() {
+                        @Override
+                        public boolean accept(Resource resource) {
+                            String symbolicName = resource.getMetadata().get(Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE, String.class);
+                            Version version = resource.getMetadata().get(Constants.BUNDLE_VERSION_ATTRIBUTE, Version.class);
+                            String bundleLocation = resource.getMetadata().get("bundle-location", String.class);
+                            String state = resource.getMetadata().get("bundle-state", String.class);
+                            return bundleDef.symbolicName().equals(symbolicName) &&
+                                    new Version(bundleDef.version()).equals(version) &&
+                                    (!("UNINSTALLED".equals(state))) &&
+                                    bundleDef.source().equals(bundleLocation);
+                        }
+                    }.accept(next)) {
+                        bundle = next;
                     }
-                });
-                if (!resources.isEmpty()) { // found at least one installed bundle that corresponds to the declaration
+                }
+                if (bundle != null) { // found at least one installed bundle that corresponds to the declaration
                     // take the first and look at its manifest
-                    Resource bundle = resources.get(0);
-
-                    ResourceMetadata headers = bundle.getResource("headers").getMetadata();
+                    Resource headersResource = bundle.getResource(bundle.getPath().addElements("headers").toString());
+                    ResourceMetadata headers = headersResource.getMetadata();
                     for (String key : bundleDef.properties().keySet()) {
                         if (headers.containsKey(key)) {
                             if (!headers.get(key).equals(bundleDef.properties().get(key))) {
@@ -163,6 +169,8 @@ public class BundleProcessor extends DefaultResourceProcessor {
                     result = m_everest.process(new DefaultRequest(Action.CREATE, Path.from("/osgi/bundles"), params));
                     if (result == null) {
                         throw new DeploymentException("Error on resource creating from source : " + bundleDef.source());
+                    } else {
+
                     }
                     //TODO can check bundle properties
                 }
@@ -193,6 +201,7 @@ public class BundleProcessor extends DefaultResourceProcessor {
                     System.out.println("failed to roll back");
                 }
             }
+
         }
 
         private File downloadAndVerifyBundle(File directory) throws DeploymentException {

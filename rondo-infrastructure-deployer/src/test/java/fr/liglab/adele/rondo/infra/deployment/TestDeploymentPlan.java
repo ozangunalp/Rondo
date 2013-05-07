@@ -32,7 +32,7 @@ public class TestDeploymentPlan {
                                 .source("http://apache.crihan.fr/dist//felix/org.apache.felix.fileinstall-3.2.6.jar")
                                 .state("active")
                                 .symbolicName("org.apache.felix.fileinstall")
-                                .version("3.2.5"))
+                                .version("3.2.6"))
 
 //                .resource(
 //                        file().name("file")
