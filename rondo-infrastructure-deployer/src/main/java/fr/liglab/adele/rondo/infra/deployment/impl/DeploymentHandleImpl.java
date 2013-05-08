@@ -52,10 +52,8 @@ public class DeploymentHandleImpl implements DeploymentHandle {
         DeploymentTransaction transaction = m_infrastructure.getCoordinator().create("infrastructure", DEPLOYMENT_TIMEOUT);
         // set up a working directory for the deployment
         File workingDir = new File("deployment", "cache");
-        File deploymentDir = new File("deployment", "artifacts");
         workingDir.mkdirs();
         transaction.store("working.dir", workingDir);
-        transaction.store("deployment.dir", deploymentDir);
         // start transaction
         try {
             this.callProcessors(transaction);
