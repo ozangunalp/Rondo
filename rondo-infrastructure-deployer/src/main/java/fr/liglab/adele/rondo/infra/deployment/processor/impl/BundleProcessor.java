@@ -162,20 +162,23 @@ public class BundleProcessor extends DefaultResourceProcessor {
                     }
                     //TODO can check bundle properties
                 } else { // Bundle does not exist should install it
+
                     Map<String, Object> params = new HashMap<String, Object>();
                     params.put("location", bundleDef.source());
-                    params.put("input", new FileInputStream(deploymentFile));
+                    params.put("input", new ByteArrayInputStream(FileUtils.readFileToByteArray(deploymentFile)));
                     params.put("newState", bundleDef.state());
                     result = m_everest.process(new DefaultRequest(Action.CREATE, Path.from("/osgi/bundles"), params));
                     if (result == null) {
                         throw new DeploymentException("Error on resource creating from source : " + bundleDef.source());
-                    } else {
-
+                    } else { // created, update to given state
+                        this.store(bundleDef.name(), result);
+                        Map<String, Object> updateParams = new HashMap<String, Object>();
+                        updateParams.put("newState", bundleDef.state());
+                        m_everest.process(new DefaultRequest(Action.UPDATE,result.getCanonicalPath(),updateParams));
                     }
                     //TODO can check bundle properties
                 }
                 //
-                this.store(bundleDef.name(), result);
             } catch (ResourceNotFoundException e) {
                 throw new DeploymentException("Error on finding Everest bundle resource");
             } catch (IllegalActionOnResourceException e) {
