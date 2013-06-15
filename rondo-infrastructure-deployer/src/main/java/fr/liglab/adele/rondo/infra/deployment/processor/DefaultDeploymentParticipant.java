@@ -3,6 +3,7 @@ package fr.liglab.adele.rondo.infra.deployment.processor;
 import fr.liglab.adele.rondo.infra.deployment.DeploymentException;
 import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentParticipant;
 import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentTransaction;
+import fr.liglab.adele.rondo.infra.model.ResourceDeclaration;
 
 import java.io.File;
 
@@ -12,12 +13,18 @@ import java.io.File;
  * Date: 5/3/13
  * Time: 12:50 AM
  */
-public class DefaultDeploymentParticipant implements DeploymentParticipant {
+public abstract class DefaultDeploymentParticipant implements DeploymentParticipant {
 
-    DeploymentTransaction m_coordination;
+    private final ResourceDeclaration m_resource;
+    private final DeploymentTransaction m_coordination;
 
-    public DefaultDeploymentParticipant(DeploymentTransaction m_coordination) {
+    public DefaultDeploymentParticipant(ResourceDeclaration resource, DeploymentTransaction m_coordination) {
         this.m_coordination = m_coordination;
+        this.m_resource = resource;
+    }
+
+    public String getParticipantId() {
+        return m_coordination.getId()+" - "+m_resource.name();
     }
 
     public void prepare() throws DeploymentException {/* default implementation does nothing*/}
@@ -27,6 +34,10 @@ public class DefaultDeploymentParticipant implements DeploymentParticipant {
     public void commit() throws DeploymentException {/* default implementation does nothing*/}
 
     public void rollback() {/* default implementation does nothing*/}
+
+    public DeploymentTransaction getTransaction(){
+        return m_coordination;
+    }
 
     public Object get(String key) {
         synchronized (this) {
@@ -39,11 +50,4 @@ public class DefaultDeploymentParticipant implements DeploymentParticipant {
             this.m_coordination.store(key, object);
         }
     }
-
-    public File getWorkingDirectory() {
-        synchronized (this) {
-            return (File) this.m_coordination.get("working.dir");
-        }
-    }
-
 }

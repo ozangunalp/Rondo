@@ -16,6 +16,8 @@ public interface ManagedInfrastructure {
 
     public DeploymentHandle getDeploymentHandle();
 
+    public void apply(DeploymentHandle handle, DeploymentListener... listeners);
+
     public ResourceProcessor getResourceProcessor(String type);
 
     public DeploymentCoordinator getCoordinator();

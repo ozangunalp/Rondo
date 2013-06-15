@@ -13,6 +13,13 @@ import fr.liglab.adele.rondo.infra.model.ResourceDeclaration;
  */
 public interface ResourceProcessor {
 
+    /**
+     *
+     * @param resource
+     * @param transaction
+     * @return
+     * @throws DeploymentException
+     */
     public DeploymentParticipant process(ResourceDeclaration resource, DeploymentTransaction transaction) throws DeploymentException;
 
 }

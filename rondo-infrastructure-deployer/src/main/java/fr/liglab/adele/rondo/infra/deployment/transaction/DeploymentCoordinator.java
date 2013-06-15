@@ -12,8 +12,6 @@ public interface DeploymentCoordinator {
 
     DeploymentTransaction create(String name, int timeout);
 
-    void begin(String name, int timeout);
-
     DeploymentTransaction getTransaction();
 
     List<DeploymentTransaction> getTransactions();

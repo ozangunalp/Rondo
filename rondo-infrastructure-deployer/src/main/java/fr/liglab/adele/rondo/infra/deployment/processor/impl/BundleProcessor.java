@@ -4,6 +4,7 @@ import fr.liglab.adele.rondo.infra.deployment.DeploymentException;
 import fr.liglab.adele.rondo.infra.deployment.processor.DefaultDeploymentParticipant;
 import fr.liglab.adele.rondo.infra.deployment.processor.DefaultResourceProcessor;
 import fr.liglab.adele.rondo.infra.deployment.processor.ResourceProcessor;
+import fr.liglab.adele.rondo.infra.deployment.processor.ResourceState;
 import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentParticipant;
 import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentTransaction;
 import fr.liglab.adele.rondo.infra.deployment.util.DeploymentUtils;
@@ -39,7 +40,7 @@ import java.util.jar.Manifest;
 
 @Component
 @Instantiate
-@Provides(specifications = {ResourceProcessor.class})
+@Provides(specifications = ResourceProcessor.class)
 public class BundleProcessor extends DefaultResourceProcessor {
 
     @Requires(optional = false)
@@ -50,8 +51,6 @@ public class BundleProcessor extends DefaultResourceProcessor {
 
     BundleContext m_context;
 
-    //private boolean cachingEnabled;
-
     public BundleProcessor(BundleContext context) {
         super();
         this.m_context = context;
@@ -60,7 +59,7 @@ public class BundleProcessor extends DefaultResourceProcessor {
     @Override
     public DeploymentParticipant process(ResourceDeclaration resource, DeploymentTransaction transaction) throws DeploymentException {
         BundleDeploymentParticipant participant = new BundleDeploymentParticipant(resource, transaction);
-        addParticipant(participant);
+        this.addParticipant(participant);
         return participant;
     }
 
@@ -72,10 +71,12 @@ public class BundleProcessor extends DefaultResourceProcessor {
 
         private File cachedBundle = null;
 
-        private ImmutableResourceMetadata initialState = null;
+        private ResourceState initialBundleState;
+
+        private Resource bundle = null;
 
         public BundleDeploymentParticipant(ResourceDeclaration resource, DeploymentTransaction transaction) throws DeploymentException {
-            super(transaction);
+            super(resource,transaction);
             if (resource instanceof Bundle) {
                 bundleDef = (Bundle) resource;
             } else {
@@ -85,104 +86,63 @@ public class BundleProcessor extends DefaultResourceProcessor {
 
         @Override
         public void prepare() throws DeploymentException {
-            System.out.println("Preparing bundle: " + bundleDef.name());
+            // prepare cache directory
             File directory = (File) this.get("working.dir");
             cacheDirectory = new File(directory, "bundle-" + bundleDef.name());
             cacheDirectory.mkdirs();
-            this.cachedBundle = downloadAndVerifyBundle(cacheDirectory);
-
-            Resource bundle = null;
-            try {
-                bundle = findBundle();
-            } catch (ResourceNotFoundException e) {
-                // Well this should not have happened..
-            } catch (IllegalActionOnResourceException e) {
-                // this should not to happen
+            // first find the resource corresponding to bundle declaration
+            Resource bundle = findBundle();
+            if (bundle != null) {  // if you found it download & verify it from bundle-location
+                String bundleLocation = bundle.getMetadata().get("bundle-location", String.class);
+                File initialBundleFile = this.downloadAndVerifyBundle(cacheDirectory, bundleDef, bundleLocation);
+                if(initialBundleFile!= null){
+                    this.initialBundleState = new ResourceState(initialBundleFile,bundle);
+                }
+            } else if (this.initialBundleState==null) { // if you don't, download & verify it from bundle declaration source
+                this.cachedBundle = this.downloadAndVerifyBundle(cacheDirectory, bundleDef, bundleDef.source());
             }
-            if (bundle != null) {
-                this.initialState = new ImmutableResourceMetadata.Builder(bundle.getMetadata()).build();
-                // TODO we can save the bundle jar somewhere and do a checksum for verifying if it is exactly the same version
-                //File initialCached = initialState.getMetadata().get("local-cache",File.class);
-            }
-
         }
 
         @Override
         public void cleanup() {
-            System.out.println("cleaning up " + bundleDef.symbolicName());
             try {
                 FileUtils.deleteDirectory(cacheDirectory);
             } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             }
-            System.out.println("cached directory cleared : " + cacheDirectory.getPath());
         }
 
         @Override
         public void commit() throws DeploymentException {
-            System.out.println("commiting " + bundleDef.name());
-            Resource result = null;
             try {
-                // prepare deployment directory
-                File deploymentFile = null;
-                if (this.cachedBundle == null && !this.cachedBundle.exists()) { // if we don't have the bundle in cache we fail
-                    throw new DeploymentException(""); //TODO
-                } else {
-                    deploymentFile = this.cachedBundle;
+                if(initialBundleState!=null){
+                    bundle = initialBundleState.getResourceUsing(m_everest);
                 }
-                // here on we should have gotten the file to be deployed, or failed miserably
-                // try to find the bundle
-                Resource bundle = findBundle();
-                //TODO should relook here !!!!!!!!!!!!!
-
-                boolean update = false;
-                if (bundle != null) { // found at least one installed bundle that corresponds to the declaration
-                    // take the first and look at its manifest
-                    Resource headersResource = bundle.getResource(bundle.getPath().addElements("headers").toString());
-                    ResourceMetadata headers = headersResource.getMetadata();
-                    Map<Object, Object> map = (Map) headers;
-                    for (Map.Entry entry : map.entrySet()) {
-                        String keyString = entry.getKey().toString();
-                        if (headers.containsKey(keyString)) {
-                            if (!headers.get(keyString).equals(entry.getValue())) {
-                                throw new DeploymentException("Bundle property : " + keyString + " found in the manifest of the bundle "
-                                        + bundleDef.source() + " doesn't match given value :" + headers.get(keyString) + ", expected :" + entry.getValue());
-                            }
-                        }
+                if(bundle==null){
+                    if (this.cachedBundle == null || !this.cachedBundle.exists()) {
+                        throw new DeploymentException("Bundle did not existed and we could not prepared it");
                     }
-                    result = bundle;
-                    // update the bundle with inputStream
-                    update = true;
-
-                } else { // Bundle does not exist, should install it
-
                     Map<String, Object> params = new HashMap<String, Object>();
                     params.put("location", bundleDef.source());
-                    params.put("input", new ByteArrayInputStream(FileUtils.readFileToByteArray(deploymentFile)));
-                    result = m_everest.process(new DefaultRequest(Action.CREATE, Path.from("/osgi/bundles"), params));
-                    if (result == null) {
+                    params.put("input", new ByteArrayInputStream(FileUtils.readFileToByteArray(this.cachedBundle)));
+                    bundle = m_everest.process(new DefaultRequest(Action.CREATE, Path.from("/osgi/bundles"), params));
+                    if (bundle == null) {
                         throw new DeploymentException("Error on resource creating from source : " + bundleDef.source());
                     }
-
                 }
-                this.store(bundleDef.name(), result);
-                // had or created, try to update to given state
+                // Bundle was already installed or just installed, try to update to given state
                 Map<String, Object> updateParams = new HashMap<String, Object>();
-                if (update) {
-                    updateParams.put("input", new ByteArrayInputStream(FileUtils.readFileToByteArray(deploymentFile)));
-                    updateParams.put("update", true);
-                }
                 updateParams.put("newState", bundleDef.state());
-                result = m_everest.process(new DefaultRequest(Action.UPDATE, result.getCanonicalPath(), updateParams));
-                if (result == null) {
-                    throw new DeploymentException("Error on resource updating on path : " + bundle.getCanonicalPath());
+                Path canonicalPath = bundle.getCanonicalPath();
+                bundle = m_everest.process(new DefaultRequest(Action.UPDATE, canonicalPath, updateParams));
+                if (bundle == null) {
+                    throw new DeploymentException("Error on resource updating on path : " + canonicalPath);
                 }
                 // Last exit before hell!
                 //TODO can check bundle properties
-                if (!result.equals(checkBundle())) {
+                if(!bundleDef.state().equals(bundle.getMetadata().get("bundle-state", String.class))){
                     throw new DeploymentException("Cannot reach expected state " + bundleDef.name());
                 }
-
             } catch (ResourceNotFoundException e) {
                 throw new DeploymentException("Cannot find Everest bundle resource:" + e.getMessage());
             } catch (IllegalActionOnResourceException e) {
@@ -196,32 +156,26 @@ public class BundleProcessor extends DefaultResourceProcessor {
 
         @Override
         public void rollback() {
-            System.out.println("rolling back " + bundleDef.name());
-            Resource resource = (Resource) this.get(bundleDef.name());
             try {
-                if (initialState == null) {
-                    if (resource != null) {
-                        m_everest.process(new DefaultRequest(Action.DELETE, resource.getCanonicalPath(), null));
-                    }
+                if (initialBundleState == null) {
+                    m_everest.process(new DefaultRequest(Action.DELETE, bundle.getCanonicalPath(), null));
                 } else {
-                    System.out.println(initialState);
                     Map<String, Object> updateParams = new HashMap<String, Object>();
-                    updateParams.put("newState", initialState.get("bundle-state"));
-                    m_everest.process(new DefaultRequest(Action.UPDATE, resource.getCanonicalPath(), updateParams));
+                    updateParams.put("newState", initialBundleState.getResourceState().get("bundle-state"));
+                    updateParams.put("input", initialBundleState.getFile());
+                    m_everest.process(new DefaultRequest(Action.UPDATE, initialBundleState.getPath(), updateParams));
                 }
             } catch (IllegalActionOnResourceException e) {
-                //TODO log
                 System.out.println("failed to roll back");
             } catch (ResourceNotFoundException e) {
                 System.out.println("failed to roll back");
             }
-
         }
 
-        private File downloadAndVerifyBundle(File directory) throws DeploymentException {
+        private File downloadAndVerifyBundle(File directory, Bundle bundleDef, String urlString) throws DeploymentException {
             try {
                 // create file for cache and save url contents
-                URL url = new URL(bundleDef.source());
+                URL url = new URL(urlString);
                 String fileName = calculateFileName(url);
                 File jarCache = new File(directory, fileName);
                 IOUtils.copy(url.openStream(), new FileOutputStream(jarCache));
@@ -243,7 +197,6 @@ public class BundleProcessor extends DefaultResourceProcessor {
                 // check if the file contains the bundle with correct manifest
                 JarFile jarFile = new JarFile(jarCache);
                 Manifest manifest = jarFile.getManifest();
-                System.out.println(jarCache.getCanonicalPath());
                 Attributes mainAttributes = manifest.getMainAttributes();
                 Object headers = bundleDef.properties().get("headers");
                 if (headers instanceof Map) {
@@ -255,68 +208,45 @@ public class BundleProcessor extends DefaultResourceProcessor {
                                 // FAIL! should delete the downloaded file
                                 FileUtils.deleteDirectory(directory);
                                 throw new DeploymentException("Bundle header : " + keyString + "  found in the manifest of bundle "
-                                        + bundleDef.source() + " doesn't match given value :" + mainAttributes.getValue(keyString) + ", expected :" + entry.getValue());
+                                        + urlString + " doesn't match given value :" + mainAttributes.getValue(keyString) + ", expected :" + entry.getValue());
                             }
                         }
                     }
                 }
-
                 return jarCache;
             } catch (MalformedURLException e) {
-                throw new DeploymentException(e.getMessage() + " from " + bundleDef.source());
+                throw new DeploymentException("Malformed url " + bundleDef.source()+" : "+e.getMessage());
             } catch (IOException e) {
-                throw new DeploymentException(e.getMessage() + " from " + bundleDef.source());
+                throw new DeploymentException("Cannot get resource file from " + bundleDef.source()+" : "+e.getMessage());
             }
         }
 
-        private Resource findBundle() throws ResourceNotFoundException, IllegalActionOnResourceException {
-            Resource bundles = m_everest.process(new DefaultRequest(Action.READ, Path.from("/osgi/bundles"), null));
+        private Resource findBundle() {
             Resource bundle = null;
-            Iterator<Resource> iterator = bundles.getResources().iterator();
-            while (iterator.hasNext() && bundle == null) {
-                Resource next = iterator.next();
-                if (new ResourceFilter() {
-                    @Override
-                    public boolean accept(Resource resource) {
-                        String symbolicName = resource.getMetadata().get(Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE, String.class);
-                        Version version = resource.getMetadata().get(Constants.BUNDLE_VERSION_ATTRIBUTE, Version.class);
-                        String bundleLocation = resource.getMetadata().get("bundle-location", String.class);
-                        String state = resource.getMetadata().get("bundle-state", String.class);
-                        return (!("UNINSTALLED".equals(state))) &&
-                                bundleLocation.equals(bundleDef.source()) &&
-                                (bundleDef.symbolicName() == null ? true : symbolicName.equals(bundleDef.symbolicName())) &&
-                                (bundleDef.version() == null ? true : version.equals(new Version(bundleDef.version())))
-                                ;
-                    }
-                }.accept(next)) {
-                    bundle = next;
-                }
-            }
-            return bundle;
-        }
+            try{
+                Resource bundles = m_everest.process(new DefaultRequest(Action.READ, Path.from("/osgi/bundles"), null));
+                Iterator<Resource> iterator = bundles.getResources().iterator();
+                while (iterator.hasNext() && bundle == null) {
+                    Resource next = iterator.next();
+                    if (new ResourceFilter() {
 
-        private Resource checkBundle() throws ResourceNotFoundException, IllegalActionOnResourceException {
-            Resource bundles = m_everest.process(new DefaultRequest(Action.READ, Path.from("/osgi/bundles"), null));
-            Resource bundle = null;
-            Iterator<Resource> iterator = bundles.getResources().iterator();
-            while (iterator.hasNext() && bundle == null) {
-                Resource next = iterator.next();
-                if (new ResourceFilter() {
-                    @Override
-                    public boolean accept(Resource resource) {
-                        String symbolicName = resource.getMetadata().get(Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE, String.class);
-                        Version version = resource.getMetadata().get(Constants.BUNDLE_VERSION_ATTRIBUTE, Version.class);
-                        String bundleLocation = resource.getMetadata().get("bundle-location", String.class);
-                        String state = resource.getMetadata().get("bundle-state", String.class);
-                        return (bundleDef.state().equals(state)) &&
-                                bundleLocation.equals(bundleDef.source()) &&
-                                (bundleDef.symbolicName() == null ? true : symbolicName.equals(bundleDef.symbolicName())) &&
-                                (bundleDef.version() == null ? true : version.equals(new Version(bundleDef.version())))
-                                ;
+                        public boolean accept(Resource resource) {
+                            String symbolicName = resource.getMetadata().get(Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE, String.class);
+                            Version version = resource.getMetadata().get(Constants.BUNDLE_VERSION_ATTRIBUTE, Version.class);
+                            //String bundleLocation = resource.getMetadata().get("bundle-location", String.class);
+                            //String state = resource.getMetadata().get("bundle-state", String.class);
+                            return ((bundleDef.symbolicName() == null || symbolicName.equals(bundleDef.symbolicName())) &&
+                                    (bundleDef.version() == null || version.equals(new Version(bundleDef.version()))))
+                                    ;
+                        }
+                    }.accept(next)) {
+                        bundle = next;
                     }
-                }.accept(next)) {
-                    bundle = next;
                 }
+            } catch (ResourceNotFoundException e) {
+                // Well this should not have happened..
+            } catch (IllegalActionOnResourceException e) {
+                // this should not to happen
             }
             return bundle;
         }
@@ -326,7 +256,7 @@ public class BundleProcessor extends DefaultResourceProcessor {
             // lets look if url finishes with a filename
             String fileName = urlString.substring(urlString.lastIndexOf('/') + 1, urlString.length());
             if (!fileName.endsWith(".jar")) {
-                //else we create our file name
+                //else we create our file id
                 fileName = bundleDef.symbolicName() + "-" + bundleDef.version() + ".jar";
             }
             return fileName;

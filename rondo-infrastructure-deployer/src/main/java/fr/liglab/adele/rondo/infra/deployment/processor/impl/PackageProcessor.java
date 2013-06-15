@@ -13,6 +13,7 @@ import org.apache.felix.ipojo.everest.impl.DefaultRequest;
 import org.apache.felix.ipojo.everest.services.*;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
+import org.osgi.framework.wiring.BundleCapability;
 
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class PackageProcessor extends DefaultResourceProcessor {
         Package packageDef;
 
         public PackageDeploymentParticipant(ResourceDeclaration resource, DeploymentTransaction transaction) throws DeploymentException {
-            super(transaction);
+            super(resource,transaction);
             try {
                 this.packageDef = (Package) resource;
             } catch (Exception e) {
@@ -62,24 +63,16 @@ public class PackageProcessor extends DefaultResourceProcessor {
 
         @Override
         public void commit() throws DeploymentException {
-            System.out.println("Committing package" + packageDef.name());
+            PackageResourceFilter packageResourceFilter = new PackageResourceFilter(packageDef);
             Resource packages = null;
             try {
                 packages = m_everest.process(new DefaultRequest(Action.READ, Path.from("/osgi/packages"), null));
-                List<Resource> resources = packages.getResources(new ResourceFilter() {
-                    @Override
-                    public boolean accept(Resource resource) {
-                        String packageName = (String) resource.getMetadata().get("osgi.wiring.package");
-                        Version version = (Version) resource.getMetadata().get("version");
-                        return packageName.equals(packageDef.name()) && version.equals(new Version(packageDef.version()));
-                    }
-                });
+                List<Resource> resources = packages.getResources(packageResourceFilter);
                 if (resources.isEmpty()) {
                     throw new DeploymentException("Package resource not found " + packageDef.name());
                 } else {
                     //TODO log
                     // we save the first corresponding package path
-                    this.store(packageDef.name(), resources.get(0).getCanonicalPath());
                     System.out.println("Package found: " + packageDef.name());
                     // nothing else to do here ..
                 }
@@ -90,11 +83,29 @@ public class PackageProcessor extends DefaultResourceProcessor {
             }
         }
 
-        @Override
-        public void cleanup() {
-            System.out.println("Nothing to clean up here " + packageDef.name());
+    }
+
+    public class PackageResourceFilter implements ResourceFilter{
+
+        Package pkg;
+
+        public PackageResourceFilter(Package pkg) {
+            this.pkg = pkg;
         }
 
+        @Override
+        public boolean accept(Resource resource) {
+            if(resource.adaptTo(BundleCapability.class)==null){
+                return false;
+            }
+            String packageName = (String) resource.getMetadata().get("osgi.wiring.package");
+            boolean versionCheck = true;
+            Version version = (Version) resource.getMetadata().get("version");
+            if(pkg.version()!=null){
+                versionCheck = version.equals(new Version(pkg.version()));
+            }
+            return packageName.equals(pkg.name()) && versionCheck;
+        }
     }
 
 }

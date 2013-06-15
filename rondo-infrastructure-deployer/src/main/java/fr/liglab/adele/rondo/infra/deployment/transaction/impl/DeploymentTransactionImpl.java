@@ -32,6 +32,7 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
     private static final DeploymentException TIMEOUT = new DeploymentException("Timeout !");
 
     private final long m_id;
+
     private final String m_name;
 
     private final DeploymentCoordinatorImpl m_coordinator;
@@ -43,9 +44,9 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
     private volatile int m_state;
 
     private long m_deadline;
-    private TimerTask timeoutTask;
+    private TimerTask m_timeoutTask;
 
-    private int prepareIndex;
+    private int m_prepareIndex;
     private Throwable m_failReason;
 
     public DeploymentTransactionImpl(long id, DeploymentCoordinatorImpl deploymentCoordinator, String name, int timeout) {
@@ -58,6 +59,7 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
         this.m_deadline = (timeout > 0) ? System.currentTimeMillis() + timeout : 0;
         this.m_variables = new HashMap<String, Object>();
         this.m_initiatorThread = Thread.currentThread();
+        this.scheduleTimeout(m_deadline);
     }
 
     @Override
@@ -75,7 +77,7 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
         ListIterator<DeploymentParticipant> listIterator = this.m_participants.listIterator();
         while (listIterator.hasNext()) {
             // store the index of to be prepared participant
-            this.prepareIndex = listIterator.nextIndex();
+            this.m_prepareIndex = listIterator.nextIndex();
             listIterator.next().prepare();
         }
     }
@@ -85,12 +87,11 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
         if (startTermination()) {
             this.m_failReason = reason;
             // reverse iterate over participants and do a clean up
-            System.out.println("cleaning up from " + prepareIndex);
-            ListIterator<DeploymentParticipant> listIterator = this.m_participants.listIterator(prepareIndex);
+            System.out.println("cleaning up from " + m_prepareIndex);
+            ListIterator<DeploymentParticipant> listIterator = this.m_participants.listIterator(m_prepareIndex);
             while (listIterator.hasPrevious()) {
                 listIterator.previous().cleanup();
             }
-
             m_state = TERMINATED;
             synchronized (this) {
                 this.notifyAll();
@@ -104,21 +105,27 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
     public void end() throws DeploymentException {
         if (startTermination()) {
             boolean commitFailure = false;
-            ListIterator<DeploymentParticipant> listIterator = this.m_participants.listIterator();
+            ListIterator<DeploymentParticipant> listIterator = this.m_participants.listIterator(0);
             while (listIterator.hasNext() && !commitFailure) {
                 try {
                     listIterator.next().commit();
                 } catch (Throwable t) {
                     t.printStackTrace();
+                    this.m_failReason = t;
                     commitFailure = true;
                 }
             }
             if (commitFailure) {
                 //TODO log something here
-                System.out.println("Commit failed rolling back!");
+                System.out.println("Commit failed! Rolling back!");
                 startTermination();
                 while (listIterator.hasPrevious()) {
-                    listIterator.previous().rollback();
+                    DeploymentParticipant previous = listIterator.previous();
+                    try{
+                        previous.rollback();
+                    }catch (Throwable t){
+                        System.out.println("failed to rollback "+previous.getParticipantId());
+                    }
                 }
                 // should decide where to clean up
                 throw new DeploymentException("Transaction error on commit, rolled back to initial state");
@@ -206,19 +213,19 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
     }
 
     private void scheduleTimeout(final long deadline) {
-        if (timeoutTask != null) {
-            this.m_coordinator.schedule(timeoutTask, -1);
-            timeoutTask = null;
+        if (m_timeoutTask != null) {
+            this.m_coordinator.schedule(m_timeoutTask, -1);
+            m_timeoutTask = null;
         }
 
         if (deadline > System.currentTimeMillis()) {
-            timeoutTask = new TimerTask() {
+            m_timeoutTask = new TimerTask() {
                 @Override
                 public void run() {
                     DeploymentTransactionImpl.this.timeout();
                 }
             };
-            this.m_coordinator.schedule(timeoutTask, deadline);
+            this.m_coordinator.schedule(m_timeoutTask, deadline);
         }
     }
 }

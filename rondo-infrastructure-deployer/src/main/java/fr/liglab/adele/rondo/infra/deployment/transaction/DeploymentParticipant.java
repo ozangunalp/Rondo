@@ -10,6 +10,8 @@ import fr.liglab.adele.rondo.infra.deployment.DeploymentException;
  */
 public interface DeploymentParticipant {
 
+    public String getParticipantId();
+
     public void prepare() throws DeploymentException;
 
     public void cleanup();

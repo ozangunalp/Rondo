@@ -16,21 +16,12 @@ public class DeploymentCoordinatorImpl implements DeploymentCoordinator {
 
     private final AtomicLong m_ctr;
 
-    //private final ThreadLocal<Stack<DeploymentTransaction>> m_stackThreadLocal;
-
     private final HashMap<Long, DeploymentTransactionImpl> m_transactions;
 
     private final Timer m_coordinationTimer;
 
-    private long m_transactionTimeout;
-
-    private long m_participantTimeout;
-
-    public DeploymentCoordinatorImpl(Long transactionTimeout, Long participantTimeout) {
-        this.m_transactionTimeout = transactionTimeout == null ? 10 * 60 * 1000L : transactionTimeout;
-        this.m_participantTimeout = participantTimeout == null ? 10 * 30 * 1000L : participantTimeout;
+    public DeploymentCoordinatorImpl() {
         this.m_ctr = new AtomicLong();
-        //this.m_stackThreadLocal = new ThreadLocal<Stack<DeploymentTransaction>>();
         this.m_transactions = new HashMap<Long, DeploymentTransactionImpl>();
         this.m_coordinationTimer = new Timer("Transaction Timer", true);
     }
@@ -41,17 +32,6 @@ public class DeploymentCoordinatorImpl implements DeploymentCoordinator {
         DeploymentTransactionImpl newTransaction = new DeploymentTransactionImpl(id, this, name, timeout);
         m_transactions.put(id, newTransaction);
         return newTransaction;
-    }
-
-    @Override
-    public void begin(String name, int timeout) {
-
-//        Stack<DeploymentTransaction> transactionStack = m_stackThreadLocal.get();
-//        if(transactionStack==null){
-//            transactionStack = new Stack<DeploymentTransaction>();
-//            m_stackThreadLocal.set(transactionStack);
-//        }
-//        transactionStack.push(this.create(name,timeout));
     }
 
     @Override

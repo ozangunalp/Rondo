@@ -19,21 +19,55 @@ import java.util.List;
  */
 public class DeploymentHandleImpl implements DeploymentHandle {
 
-    private static final int DEPLOYMENT_TIMEOUT = 5 * 60 * 1000;
+    /**
+     *
+     */
+    private static final int DEFAULT_DEPLOYMENT_TIMEOUT = 0; // zero means unlimited power
 
-    ManagedInfrastructure m_infrastructure;
+    /**
+     *
+     */
+    private final int m_timeout;
 
-    DeploymentState m_currentState;
+    /**
+     *
+     */
+    private final DeploymentCustomizer m_customizer;
 
-    List<DeploymentListener> m_listeners;
+    /**
+     *
+     */
+    private ManagedInfrastructure m_infrastructure;
 
-    DeploymentPlan m_plan;
+    /**
+     *
+     */
+    private DeploymentPlan m_plan;
 
-    public DeploymentHandleImpl(DeploymentPlan plan, ManagedInfrastructure infra) {
+    /**
+     *
+     */
+    private DeploymentState m_currentState;
+
+    /**
+     *
+     */
+    private final List<DeploymentListener> m_listeners;
+
+    /**
+     *
+     * @param plan
+     * @param infra
+     * @param customizer
+     * @param deploymentTimeout
+     */
+    public DeploymentHandleImpl(DeploymentPlan plan, ManagedInfrastructure infra, DeploymentCustomizer customizer, int deploymentTimeout) {
         this.m_currentState = DeploymentState.CREATED;
         this.m_listeners = new ArrayList<DeploymentListener>();
         this.m_plan = plan;
         this.m_infrastructure = infra;
+        this.m_customizer = customizer;
+        this.m_timeout = deploymentTimeout>0 ? deploymentTimeout : DEFAULT_DEPLOYMENT_TIMEOUT;
     }
 
     @Override
@@ -49,14 +83,22 @@ public class DeploymentHandleImpl implements DeploymentHandle {
     @Override
     public void apply() {
         setState(DeploymentState.RUNNING);
-        DeploymentTransaction transaction = m_infrastructure.getCoordinator().create("infrastructure", DEPLOYMENT_TIMEOUT);
+        DeploymentTransaction transaction = m_infrastructure.getCoordinator().create("infrastructure", m_timeout);
+
         // set up a working directory for the deployment
         File workingDir = new File("deployment", "cache");
         workingDir.mkdirs();
         transaction.store("working.dir", workingDir);
+
+        // call customizer predeployment
+        DeploymentPlan deploymentPlan = this.m_plan;
+        if(m_customizer!=null){
+            deploymentPlan = m_customizer.preDeployment(this);
+        }
+
         // start transaction
         try {
-            this.callProcessors(transaction);
+            this.callProcessors(transaction, deploymentPlan);
         } catch (Throwable t) { // prepared processors are notified: they are supposed to clean up their mess...
             transaction.fail(t);
             //TODO log preparing error
@@ -71,7 +113,15 @@ public class DeploymentHandleImpl implements DeploymentHandle {
                 System.out.println("ended with ");
                 System.out.println(t.toString());
             } finally {
-
+                if(transaction.getFailure()==null){
+                    setState(DeploymentState.SUCCESSFUL);
+                } else {
+                    setState(DeploymentState.UNSUCCESSFUL);
+                }
+                // call customizer post deployment
+                if(m_customizer!=null){
+                    m_customizer.postDeployment(this);
+                }
             }
         }
     }
@@ -79,19 +129,55 @@ public class DeploymentHandleImpl implements DeploymentHandle {
     @Override
     public void dryRun() {
         setState(DeploymentState.DRYRUNNING);
-        DeploymentTransaction transaction = m_infrastructure.getCoordinator().create("infrastructure", DEPLOYMENT_TIMEOUT);
+        DeploymentTransaction transaction = m_infrastructure.getCoordinator().create("infrastructure", m_timeout);
+        DeploymentPlan deploymentPlan = m_plan;
+        if(m_customizer!=null){
+            deploymentPlan = m_customizer.preDeployment(this);
+        }
+        // start transaction
         try {
-            this.callProcessors(transaction);
+            this.callProcessors(transaction,deploymentPlan);
         } catch (Throwable t) {
             transaction.fail(t);
             t.printStackTrace();
         } // don't do commit this is a dry run!!!
-        transaction.fail(new DeploymentException("This is was a dry run! need to clean up"));
+        transaction.fail(new DeploymentException("This is was a dry run! Cleaned up preparing mess.."));
+        // call customizer post deployment
+        if(m_customizer!=null){
+            m_customizer.postDeployment(this);
+        }
+        System.out.println(transaction.getFailure().toString());
+        setState(DeploymentState.CREATED);
     }
 
+    @Override
+    public void cancel() {
+        if(m_currentState.equals(DeploymentState.RUNNING) || m_currentState.equals(DeploymentState.DRYRUNNING)){
+            // transaction.cancel;
 
-    private void callProcessors(DeploymentTransaction transaction) throws DeploymentException {
-        for (ResourceReference resourceReference : this.m_plan) {
+        }
+    }
+
+    /**
+     *
+     * @param newState
+     */
+    private void setState(DeploymentState newState) {
+        this.m_currentState = newState;
+        DeploymentEvent.Type type = (newState == DeploymentState.RUNNING) ? DeploymentEvent.Type.INSTALLING : DeploymentEvent.Type.COMPLETED;
+        for (DeploymentListener listener : m_listeners) {
+            listener.handleEvent(new DeploymentEvent(this, type));
+        }
+    }
+
+    /**
+     *
+     * @param transaction
+     * @throws DeploymentException
+     */
+    private void callProcessors(DeploymentTransaction transaction, DeploymentPlan deploymentPlan) throws DeploymentException {
+        // add participants to the transaction
+        for (ResourceReference resourceReference : deploymentPlan) {
             Class type = resourceReference.type();
             System.out.println(type.getName());
             ResourceProcessor processor = m_infrastructure.getResourceProcessor(type.getName());
@@ -119,16 +205,6 @@ public class DeploymentHandleImpl implements DeploymentHandle {
     public void unregisterListener(DeploymentListener listener) {
         synchronized (m_listeners) {
             m_listeners.remove(listener);
-        }
-    }
-
-    private void setState(DeploymentState newState) {
-        this.m_currentState = newState;
-        DeploymentEvent.Type type = (newState == DeploymentState.RUNNING) ? DeploymentEvent.Type.INSTALLING : DeploymentEvent.Type.COMPLETED;
-        synchronized (m_listeners) {
-            for (DeploymentListener listener : m_listeners) {
-                listener.handleEvent(new DeploymentEvent(this, type));
-            }
         }
     }
 

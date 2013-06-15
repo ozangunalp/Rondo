@@ -1,6 +1,7 @@
 package fr.liglab.adele.rondo.infra.deployment;
 
 import fr.liglab.adele.rondo.infra.deployment.impl.DeploymentHandleImpl;
+import fr.liglab.adele.rondo.infra.deployment.impl.DeploymentResolverImpl;
 import fr.liglab.adele.rondo.infra.deployment.impl.InfrastructureDeployer;
 import fr.liglab.adele.rondo.infra.deployment.processor.ResourceProcessor;
 import fr.liglab.adele.rondo.infra.deployment.processor.impl.*;
@@ -35,13 +36,13 @@ public class TestDeploymentPlan {
                                 .version("3.2.6"))
 
 //                .resource(
-//                        file().name("file")
+//                        file().id("file")
 //                                .source("some other url")
 //                                .state("present")
 //                                .template("template url"))
 //
 //                .resource(
-//                        configuration().name("conf name"))
+//                        configuration().id("conf id"))
                 .resource(
                         bundle().name("everest-core")
                                 .source("file:/Volumes/Macintosh%20HD/Users/ozan/Downloads/felix-framework-4.2.1/bundle/everest-core-1.0-SNAPSHOT.jar")
@@ -60,9 +61,9 @@ public class TestDeploymentPlan {
 
 
 //        inf.resource(Bundle.class, "file install").dependsOn(Package.class, "package1")
-//                .resource(Configuration.class, "conf name").dependsOn(File.class, "file").dependsOn(Bundle.class, "log").dependsOn(Bundle.class, "file install")
-//                .resource(Configuration.class, "conf name").dependsOn(Bundle.class, "log");
-//        //      .resource(File.class,"file").dependsOn(Configuration.class,"conf name");
+//                .resource(Configuration.class, "conf id").dependsOn(File.class, "file").dependsOn(Bundle.class, "log").dependsOn(Bundle.class, "file install")
+//                .resource(Configuration.class, "conf id").dependsOn(Bundle.class, "log");
+//        //      .resource(File.class,"file").dependsOn(Configuration.class,"conf id");
 
         inf.resource(Bundle.class, "file install").dependsOn(Bundle.class, "everest-core");
 
@@ -91,7 +92,7 @@ public class TestDeploymentPlan {
 
         EverestService everestService = mock(EverestService.class, RETURNS_MOCKS);
 
-        BundleContext context = mock(BundleContext.class);
+        BundleContext context = mock(BundleContext.class,RETURNS_MOCKS);
         ServiceReference<Infrastructure> reference = mock(ServiceReference.class);
         when(context.getService(reference)).thenReturn(inf);
 
@@ -142,17 +143,16 @@ public class TestDeploymentPlan {
 
         DeploymentPlan dp = null;
         try {
-            deployer.bindInfrastructure(reference);
-            dp = deployer.calculateDeploymentPlan(inf);
+            dp = new DeploymentResolverImpl().resolve(inf,null);
+            //deployer.bindInfrastructure(reference);
         } catch (DependencyResolutionException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         for (ResourceReference res : dp) {
             System.out.println(res.toString());
         }
-        DeploymentHandle deploymentHandle = new DeploymentHandleImpl(dp, deployer);
-        deploymentHandle.apply();
-
+        DeploymentHandle deploymentHandle = new DeploymentHandleImpl(dp, deployer,null,0);
+        //deploymentHandle.apply();
 
     }
 }

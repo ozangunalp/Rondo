@@ -8,21 +8,51 @@ package fr.liglab.adele.rondo.infra.deployment;
  */
 public interface DeploymentHandle {
 
+    /**
+     *
+     */
     public enum DeploymentState {
         CREATED, DRYRUNNING, RUNNING, UNSUCCESSFUL, SUCCESSFUL
     }
 
+    /**
+     *
+     * @return
+     */
     public DeploymentState getState();
 
+    /**
+     *
+     * @return
+     */
     public DeploymentPlan getPlan();
 
+    /**
+     *
+     */
     public void apply();
 
+    /**
+     *
+     *
+     */
     public void dryRun();
 
+    /**
+     *
+     */
+    public void cancel();
+
+    /**
+     *
+     * @param listener
+     */
     public void registerListener(DeploymentListener listener);
 
+    /**
+     *
+     * @param listener
+     */
     public void unregisterListener(DeploymentListener listener);
-
 
 }
