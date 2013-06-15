@@ -2,6 +2,8 @@ package fr.liglab.adele.rondo.infra.impl;
 
 import fr.liglab.adele.rondo.infra.model.Instance;
 
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  * User: ozan
@@ -25,6 +27,14 @@ public class InstanceImpl extends AbstractResourceDeclaration<InstanceImpl> impl
     @Override
     protected InstanceImpl self() {
         return this;
+    }
+
+    @Override
+    public Map<String, Object> extraProperties() {
+        Map<String, Object> props = this.properties();
+        props.remove("factory.name");
+        props.remove("factory.version");
+        return props;
     }
 
     @Override

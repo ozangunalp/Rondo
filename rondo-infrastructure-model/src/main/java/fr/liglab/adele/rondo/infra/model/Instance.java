@@ -10,4 +10,6 @@ public interface Instance extends ResourceDeclaration {
 
     public String factory();
 
+    public String factoryVersion();
+
 }

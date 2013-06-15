@@ -4,6 +4,7 @@ import fr.liglab.adele.rondo.infra.model.Service;
 import org.osgi.framework.Constants;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,6 +35,15 @@ public class ServiceImpl extends AbstractResourceDeclaration<ServiceImpl> implem
     }
 
     @Override
+    public Map<String, Object> extraProperties() {
+        Map<String, Object> props = this.properties();
+        props.remove(Constants.OBJECTCLASS);
+        props.remove(Constants.SERVICE_PID);
+        props.remove("filter");
+        return props;
+    }
+
+    @Override
     public List<String> objectClass() {
         return (List<String>) this.properties().get(Constants.OBJECTCLASS);
     }
@@ -43,6 +53,11 @@ public class ServiceImpl extends AbstractResourceDeclaration<ServiceImpl> implem
         return (String) this.properties().get(Constants.SERVICE_PID);
     }
 
+    @Override
+    public String filter() {
+        return (String) this.properties().get("filter");
+    }
+
     public ServiceImpl objectClass(List<String> objectClass) {
         this.with(Constants.OBJECTCLASS).setto(objectClass);
         return this;
@@ -50,6 +65,11 @@ public class ServiceImpl extends AbstractResourceDeclaration<ServiceImpl> implem
 
     public ServiceImpl pid(String pid) {
         this.with(Constants.SERVICE_PID).setto(pid);
+        return this;
+    }
+
+    public ServiceImpl filter(String filter) {
+        this.with("filter").setto(filter);
         return this;
     }
 

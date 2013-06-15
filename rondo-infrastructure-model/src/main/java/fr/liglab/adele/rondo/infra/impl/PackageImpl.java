@@ -1,5 +1,7 @@
 package fr.liglab.adele.rondo.infra.impl;
 
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  * User: ozan
@@ -22,9 +24,16 @@ public class PackageImpl extends AbstractResourceDeclaration<PackageImpl> implem
         return new PackageImpl(name);
     }
 
-    public PackageImpl version(String version) {
-        this.with("version").setto(version);
+    @Override
+    protected PackageImpl self() {
         return this;
+    }
+
+    @Override
+    public Map<String, Object> extraProperties() {
+        Map<String, Object> props = this.properties();
+        props.remove("version");
+        return props;
     }
 
     @Override
@@ -32,8 +41,8 @@ public class PackageImpl extends AbstractResourceDeclaration<PackageImpl> implem
         return (String) this.properties().get("version");
     }
 
-    @Override
-    protected PackageImpl self() {
+    public PackageImpl version(String version) {
+        this.with("version").setto(version);
         return this;
     }
 

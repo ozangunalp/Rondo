@@ -12,6 +12,6 @@ public interface ResourceReference<T extends ResourceDeclaration> {
 
     public Class<T> type();
 
-    public String name();
+    public String id();
 
 }

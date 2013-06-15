@@ -12,9 +12,10 @@ import java.util.*;
  */
 public abstract class AbstractResourceDeclaration<T extends AbstractResourceDeclaration<T>> implements ResourceDeclaration {
 
-    private String name;
-    private String state;
-    private List<Property> properties;
+    protected String id;
+    protected String name;
+    protected String state;
+    protected List<Property> properties;
 
     protected abstract T self();
 
@@ -30,8 +31,13 @@ public abstract class AbstractResourceDeclaration<T extends AbstractResourceDecl
         return new Pair<K, V>(k, v);
     }
 
-    protected AbstractResourceDeclaration(String name) {
-        this.name = name;
+    protected AbstractResourceDeclaration(String id) {
+        this.id = id;
+        this.name = id;
+    }
+
+    public String id() {
+        return id;
     }
 
     public String name() {
@@ -51,6 +57,7 @@ public abstract class AbstractResourceDeclaration<T extends AbstractResourceDecl
         }
         return props;
     }
+
 
     public T name(String name) {
         this.name = name;
@@ -137,6 +144,10 @@ public abstract class AbstractResourceDeclaration<T extends AbstractResourceDecl
 
         public P get() {
             return value;
+        }
+
+        public boolean is(Object value){
+            return value.equals(value);
         }
 
         @Override

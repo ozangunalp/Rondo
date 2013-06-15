@@ -9,7 +9,7 @@
         <groupId>fr.liglab.adele.rondo</groupId>
         <artifactId>rondo-parent</artifactId>
         <relativePath>../rondo-parent</relativePath>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
 
@@ -23,20 +23,16 @@
 
     <!-- Dependencies -->
     <dependencies>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>4.3.1</version>
-        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
         </dependency>
     </dependencies>
 
@@ -51,7 +47,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>fr.liglab.adele.rondo.infra.*</Export-Package>
+                        <Export-Package>fr.liglab.adele.rondo.infra*</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

@@ -32,7 +32,7 @@ public class TestInfrastructureBuilders {
                         bundle().name("bundle1")
                                 .source("some url")
                                 .state("resolved")
-                                .with("symbolic-name").setto("org.core.osgi")
+                                .with("symbolic-id").setto("org.core.osgi")
                                 .with("version").setto("4.3.1"))
                 .resource(
                         file().name("file")
@@ -41,12 +41,12 @@ public class TestInfrastructureBuilders {
                                 .template("template url"))
 
                 .resource(
-                        configuration().name("conf name"))
+                        configuration().name("conf id"))
                 .resource(
                         bundle().name("bundle2")
                                 .source("some url2")
                                 .state("active")
-                                .with("symbolic-name").setto("asdgasdg")
+                                .with("symbolic-id").setto("asdgasdg")
                                 .with("version").setto("1.2.4"))
                 .resource(
                         aPackage("package1")
@@ -61,7 +61,7 @@ public class TestInfrastructureBuilders {
                 .resource(service().objectClass(list("asdgadsg", "asdgadsgsdg")));
 
         inf.resource(Bundle.class, "bundle1").dependsOn(Package.class, "package1")
-                .resource(Configuration.class, "conf name").dependsOn(File.class, "file").dependsOn(Bundle.class, "bundle2").dependsOn(Bundle.class, "bundle1");
+                .resource(Configuration.class, "conf id").dependsOn(File.class, "file").dependsOn(Bundle.class, "bundle2").dependsOn(Bundle.class, "bundle1");
 
         Map<String, Bundle> map = inf.getResources(Bundle.class);
         Bundle resource = inf.getResource(Bundle.class, "bundle1");

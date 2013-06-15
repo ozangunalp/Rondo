@@ -3,6 +3,8 @@ package fr.liglab.adele.rondo.infra.impl;
 import fr.liglab.adele.rondo.infra.model.Bundle;
 import org.osgi.framework.Constants;
 
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  * User: ozan
@@ -10,12 +12,6 @@ import org.osgi.framework.Constants;
  * Time: 10:44 AM
  */
 public class BundleImpl extends AbstractResourceDeclaration<BundleImpl> implements Bundle {
-
-    private String source;
-
-    private String symbolicName;
-
-    private String version;
 
     public static BundleImpl bundle() {
         return new BundleImpl(null);
@@ -29,16 +25,27 @@ public class BundleImpl extends AbstractResourceDeclaration<BundleImpl> implemen
         super(name);
     }
 
+    @Override
+    protected BundleImpl self() {
+        return this;
+    }
+
+    public Map<String, Object> extraProperties() {
+        Map<String, Object> props = this.properties();
+        props.remove("source");
+        props.remove(Constants.BUNDLE_SYMBOLICNAME);
+        props.remove(Constants.BUNDLE_VERSION);
+        return props;
+    }
+
     public String source() {
         return (String) this.properties().get("source");
     }
 
-    @Override
     public String symbolicName() {
         return (String) this.properties().get(Constants.BUNDLE_SYMBOLICNAME);
     }
 
-    @Override
     public String version() {
         return (String) this.properties().get(Constants.BUNDLE_VERSION);
     }
@@ -55,11 +62,6 @@ public class BundleImpl extends AbstractResourceDeclaration<BundleImpl> implemen
 
     public BundleImpl version(String version) {
         this.with(Constants.BUNDLE_VERSION).setto(version);
-        return this;
-    }
-
-    @Override
-    protected BundleImpl self() {
         return this;
     }
 

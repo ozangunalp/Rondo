@@ -8,4 +8,10 @@ package fr.liglab.adele.rondo.infra.model;
  */
 public interface Configuration extends ResourceDeclaration {
 
+    String pid();
+
+    String factoryPid();
+
+    String location();
+
 }

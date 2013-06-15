@@ -10,10 +10,14 @@ import java.util.Map;
  */
 public interface ResourceDeclaration {
 
+    public String id();
+
     public String name();
 
     public String state();
 
     public Map<String, Object> properties();
+
+    public Map<String, Object> extraProperties();
 
 }

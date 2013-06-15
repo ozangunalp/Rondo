@@ -15,14 +15,38 @@ import java.util.*;
  */
 public class InfrastructureImpl implements Infrastructure {
 
+    /**
+     *
+     */
+    private String name;
+
+    /**
+     *
+     */
     private Map<Class, LinkedHashMap<String, AbstractResourceDeclaration>> resources = new HashMap<Class, LinkedHashMap<String, AbstractResourceDeclaration>>();
+
+    /**
+     *
+     */
     private LinkedList<DependencyImpl> dependencies = new LinkedList<DependencyImpl>();
+
+    /**
+     *
+     */
     private List<ResourceReference> exports = new ArrayList<ResourceReference>();
 
     // Static
 
+    public static InfrastructureImpl infrastructure(String name) {
+        return new InfrastructureImpl(name);
+    }
+
     public static InfrastructureImpl infrastructure() {
-        return new InfrastructureImpl();
+        return new InfrastructureImpl(null);
+    }
+
+    public InfrastructureImpl(String name) {
+        this.name = name;
     }
 
     // Builder methods
@@ -32,10 +56,10 @@ public class InfrastructureImpl implements Infrastructure {
         return this;
     }
 
-    public InfrastructureImpl dependsOn(Class resourceType, String resourceName) {
+    public InfrastructureImpl dependsOn(Class resourceType, String resourceId) {
         DependencyImpl d = this.dependencies.getLast();
         ResourceReferenceImpl res = d.provider;
-        return res.dependsOn(resourceType, resourceName);
+        return res.dependsOn(resourceType, resourceId);
     }
 
     public InfrastructureImpl exports(ResourceReferenceImpl... resourceReferences) {
@@ -57,28 +81,38 @@ public class InfrastructureImpl implements Infrastructure {
             map = new LinkedHashMap<String, AbstractResourceDeclaration>();
             resources.put(interFace, map);
         }
-        String resourceName = resource.name();
-        if (map.containsKey(resourceName)) {
+        String resourceId = resource.id();
+        if (map.containsKey(resourceId)) {
             // TODO should throw some exception
         } else {
-            map.put(resource.name(), resource);
+            map.put(resource.id(), resource);
         }
         return this;
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends ResourceDeclaration> ResourceReferenceImpl<T> resource(Class<T> type, String name) {
-        return new ResourceReferenceImpl(type, name);
+    public <T extends ResourceDeclaration> ResourceReferenceImpl<T> resource(Class<T> type, String id) {
+        return new ResourceReferenceImpl(type, id);
+    }
+
+    public void nameIfUnnamed(String name){
+        if(this.name==null){
+            this.name = name;
+        }
     }
 
     // Getters
 
+    public String getName() {
+        return name;
+    }
+
     @SuppressWarnings("unchecked")
-    public <T extends ResourceDeclaration> T getResource(Class<T> resourceType, String resourceName) {
+    public <T extends ResourceDeclaration> T getResource(Class<T> resourceType, String resourceId) {
         T resource = null;
         LinkedHashMap<String, AbstractResourceDeclaration> res = this.resources.get(resourceType);
         if (res != null) {
-            ResourceDeclaration entity = res.get(resourceName);
+            ResourceDeclaration entity = res.get(resourceId);
             resource = (T) entity;
         }
         return resource;
@@ -118,7 +152,7 @@ public class InfrastructureImpl implements Infrastructure {
     }
 
     public <T extends ResourceDeclaration> T getResource(ResourceReference<T> reference) {
-        return this.getResource(reference.type(), reference.name());
+        return this.getResource(reference.type(), reference.id());
     }
 
     public List<Dependency> getDependencies() {
@@ -138,15 +172,14 @@ public class InfrastructureImpl implements Infrastructure {
     public class ResourceReferenceImpl<T extends ResourceDeclaration> implements ResourceReference {
 
         private final Class<T> resourceType;
-        private final String resourceName;
+        private final String resourceId;
 
 
-        public ResourceReferenceImpl(Class<T> resourceType, String resourceName) {
+        public ResourceReferenceImpl(Class<T> resourceType, String resourceId) {
             this.resourceType = resourceType;
-            this.resourceName = resourceName;
+            this.resourceId = resourceId;
         }
 
-        @Override
         public ResourceReference adapt(Class clazz) {
             System.out.println(resourceType.getName() + clazz.getName());
             if (clazz.equals(resourceType)) {
@@ -159,17 +192,17 @@ public class InfrastructureImpl implements Infrastructure {
             return this.resourceType;
         }
 
-        public String name() {
-            return this.resourceName;
+        public String id() {
+            return this.resourceId;
         }
 
-        public <Y extends ResourceDeclaration> InfrastructureImpl dependsOn(Class<Y> resourceType, String resourceName) {
-            return new DependencyImpl(this).dependsOn(new ResourceReferenceImpl<Y>(resourceType, resourceName));
+        public <Y extends ResourceDeclaration> InfrastructureImpl dependsOn(Class<Y> resourceType, String resourceId) {
+            return new DependencyImpl(this).dependsOn(new ResourceReferenceImpl<Y>(resourceType, resourceId));
         }
 
         @Override
         public String toString() {
-            return resourceType.getSimpleName() + ":" + resourceName;
+            return resourceType.getSimpleName() + ":" + resourceId;
         }
 
         @Override
@@ -178,7 +211,7 @@ public class InfrastructureImpl implements Infrastructure {
             if (o == this) return true;
             if (!(o instanceof ResourceReferenceImpl)) return false;
             ResourceReference oRef = (ResourceReference) o;
-            return (oRef.type().equals(this.type()) && oRef.name().equals(this.name()));
+            return (oRef.type().equals(this.type()) && oRef.id().equals(this.id()));
         }
 
         @Override

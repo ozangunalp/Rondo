@@ -14,4 +14,6 @@ public interface Service extends ResourceDeclaration {
 
     public String pid();
 
+    public String filter();
+
 }

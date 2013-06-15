@@ -12,4 +12,14 @@ public interface File extends ResourceDeclaration {
 
     public String template();
 
+    public String path();
+
+    public String owner();
+
+    public Boolean readable();
+
+    public Boolean writable();
+
+    public Boolean executable();
+
 }

@@ -2,6 +2,8 @@ package fr.liglab.adele.rondo.infra.impl;
 
 import fr.liglab.adele.rondo.infra.model.Configuration;
 
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  * User: ozan
@@ -27,4 +29,42 @@ public class ConfigurationImpl extends AbstractResourceDeclaration<Configuration
         return this;
     }
 
+    @Override
+    public Map<String, Object> extraProperties() {
+        Map<String, Object> props = this.properties();
+        props.remove("pid");
+        props.remove("factory.pid");
+        props.remove("location");
+        return props;
+    }
+
+    @Override
+    public String pid() {
+        return (String) this.properties().get("pid");
+    }
+
+    @Override
+    public String factoryPid() {
+        return (String) this.properties().get("factoryPid");
+    }
+
+    @Override
+    public String location() {
+        return (String) this.properties().get("location");
+    }
+
+    public ConfigurationImpl pid(String pid){
+        this.with("pid").setto(pid);
+        return this;
+    }
+
+    public ConfigurationImpl factoryPid(String factoryPid){
+        this.with("factoryPid").setto(factoryPid);
+        return this;
+    }
+
+    public ConfigurationImpl location(String location){
+        this.with("location").setto(location);
+        return this;
+    }
 }
