@@ -38,18 +38,15 @@ public class TestAnnotationDeployment extends RondoDeployerTest {
         assertThat(infrastructure).isNotNull();
         DeploymentHandle deploymentHandle = deployer.getDeploymentHandle();
         assertThat(deploymentHandle).isNotNull();
-
         try {
-            Thread.sleep(3000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
-            // interrupted
+            // thread interrupted
         }
-
+        assertThat(deploymentHandle.getState()).isEqualTo(DeploymentHandle.DeploymentState.SUCCESSFUL);
         System.out.println(deploymentHandle.getState());
 
-        for (Bundle bundle : osgiHelper.getContext().getBundles()) {
-            System.out.println(bundle.getSymbolicName());
-        }
+
 
     }
 
