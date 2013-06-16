@@ -1,14 +1,11 @@
 package fr.liglab.adele.rondo.deployer;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import fr.liglab.adele.rondo.infra.deployment.ManagedInfrastructure;
 import org.apache.felix.ipojo.everest.services.EverestService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.options.CompositeOption;
@@ -16,18 +13,11 @@ import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceReference;
 import org.ow2.chameleon.testing.helpers.BaseTest;
-import org.ow2.chameleon.testing.helpers.IPOJOHelper;
-import org.ow2.chameleon.testing.helpers.OSGiHelper;
-import org.slf4j.LoggerFactory;
+
 
 import javax.inject.Inject;
-import java.net.MalformedURLException;
 
-import static junit.framework.Assert.assertNotNull;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.*;
 
@@ -52,8 +42,9 @@ public class RondoDeployerTest extends BaseTest{
         return options(
                 systemProperty("ipojo.processing.synchronous").value("true"),
                 systemProperty("everest.processing.synchronous").value("true"),
+                eventAdmin(),
                 everestBundles(),
-                osgiBundles(),
+                //log(),
                 rondoBundles(),
                 festBundles()
         );
@@ -89,10 +80,15 @@ public class RondoDeployerTest extends BaseTest{
         );
     }
 
-    public CompositeOption osgiBundles() {
+    public CompositeOption log() {
         return new DefaultCompositeOption(
-                mavenBundle("org.apache.felix", "org.apache.felix.eventadmin").versionAsInProject(),
                 mavenBundle("org.apache.felix", "org.apache.felix.log").versionAsInProject()
+        );
+    }
+
+    public CompositeOption eventAdmin() {
+        return new DefaultCompositeOption(
+                mavenBundle("org.apache.felix", "org.apache.felix.eventadmin").versionAsInProject()
         );
     }
 

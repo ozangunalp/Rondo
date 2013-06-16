@@ -26,7 +26,7 @@ public class ExampleInfrastructure {
                         .with("checksum").setto("d632c7c4146d764954fdac7c41b597ffa78e3672"))   //d632c7c4146d764954fdac7c41b597ffa78e3672
                 .resource(bundle("file install")
                         .source("http://apache.opensourcemirror.com//felix/org.apache.felix.fileinstall-3.2.6.jar")
-                        .state("INSTALLED")
+                        .state("ACTIVE")
                         .symbolicName("org.apache.felix.fileinstall")
                         .version("3.2.6"))
                 .resource(bundle("log")
@@ -49,10 +49,10 @@ public class ExampleInfrastructure {
 
                 .resource(aPackage("org.apache.felix.ipojo"))
 
-                .resource(bundle("groovy")
-                        .source("file:///Volumes/Macintosh%20HD/Users/ozan/dev/rondo/rondo-groovy-script/target/rondo-groovy-script-0.0.1-SNAPSHOT.jar")
-                        .state("INSTALLED")
-                        .symbolicName("fr.liglab.adele.rondo.groovy-script"))
+//                .resource(bundle("groovy")
+//                        .source("file:///Volumes/Macintosh%20HD/Users/ozan/dev/rondo/rondo-groovy-script/target/rondo-groovy-script-0.0.1-SNAPSHOT.jar")
+//                        .state("INSTALLED")
+//                        .symbolicName("fr.liglab.adele.rondo.groovy-script"))
 
 //                .resource(instance("vadg")
 //                        .factory("tata")

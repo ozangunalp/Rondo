@@ -6,6 +6,7 @@ import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentParticipant;
 import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentTransaction;
 import fr.liglab.adele.rondo.infra.model.ResourceDeclaration;
 import fr.liglab.adele.rondo.infra.model.ResourceReference;
+import org.osgi.service.log.LogService;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class DeploymentHandleImpl implements DeploymentHandle {
     /**
      *
      */
-    private ManagedInfrastructure m_infrastructure;
+    private InfrastructureDeployer m_deployer;
 
     /**
      *
@@ -57,18 +58,21 @@ public class DeploymentHandleImpl implements DeploymentHandle {
     /**
      *
      * @param plan
-     * @param infra
+     * @param deployer
      * @param customizer
      * @param deploymentTimeout
      */
-    public DeploymentHandleImpl(DeploymentPlan plan, ManagedInfrastructure infra, DeploymentCustomizer customizer, int deploymentTimeout) {
+    public DeploymentHandleImpl(DeploymentPlan plan, InfrastructureDeployer deployer, DeploymentCustomizer customizer, int deploymentTimeout) {
         this.m_currentState = DeploymentState.CREATED;
         this.m_listeners = new ArrayList<DeploymentListener>();
         this.m_plan = plan;
-        this.m_infrastructure = infra;
+        this.m_deployer = deployer;
         this.m_customizer = customizer;
-        this.m_timeout = deploymentTimeout>0 ? deploymentTimeout : DEFAULT_DEPLOYMENT_TIMEOUT;
+        this.m_timeout = (deploymentTimeout > 0) ? deploymentTimeout : DEFAULT_DEPLOYMENT_TIMEOUT;
     }
+
+    // DeploymentHandle methods
+    // =================================================================================================================
 
     @Override
     public DeploymentState getState() {
@@ -82,36 +86,35 @@ public class DeploymentHandleImpl implements DeploymentHandle {
 
     @Override
     public void apply() {
+        m_deployer.log(LogService.LOG_INFO, "Starting to run with timeout: " + m_timeout);
         setState(DeploymentState.RUNNING);
-        DeploymentTransaction transaction = m_infrastructure.getCoordinator().create("infrastructure", m_timeout);
-
-        // set up a working directory for the deployment
-        File workingDir = new File("deployment", "cache");
-        workingDir.mkdirs();
-        transaction.store("working.dir", workingDir);
 
         // call customizer predeployment
         DeploymentPlan deploymentPlan = this.m_plan;
         if(m_customizer!=null){
+            m_deployer.log(LogService.LOG_DEBUG, "Calling customizer preDeployment");
             deploymentPlan = m_customizer.preDeployment(this);
         }
+
+        DeploymentTransaction transaction = m_deployer.getCoordinator().create("infrastructure", m_timeout);
+        // set up a working directory for the deployment
+        File workingDir = new File("deployment", "cache");
+        workingDir.mkdirs();
+        transaction.store("working.dir", workingDir);
+        m_deployer.log(LogService.LOG_DEBUG, "Setting up deployment directory: " + workingDir.getPath());
 
         // start transaction
         try {
             this.callProcessors(transaction, deploymentPlan);
         } catch (Throwable t) { // prepared processors are notified: they are supposed to clean up their mess...
             transaction.fail(t);
-            //TODO log preparing error
-            System.out.println("failed! cleaning up, reason: ");
-            System.out.println(transaction.getFailure().toString());
-            transaction.getFailure().printStackTrace();
+            m_deployer.log(LogService.LOG_WARNING,"Failed at prepare, reason:",transaction.getFailure());
         } finally {
             try { // if there is to catch errors on commit
+                m_deployer.log(LogService.LOG_INFO, "Prepared with success, proceeding with commit");
                 transaction.end();
             } catch (Throwable t) {
-                //TODO log commit error...
-                System.out.println("ended with ");
-                System.out.println(t.toString());
+                m_deployer.log(LogService.LOG_WARNING,"Failed at commit, reason:",t);
             } finally {
                 if(transaction.getFailure()==null){
                     setState(DeploymentState.SUCCESSFUL);
@@ -120,43 +123,50 @@ public class DeploymentHandleImpl implements DeploymentHandle {
                 }
                 // call customizer post deployment
                 if(m_customizer!=null){
+                    m_deployer.log(LogService.LOG_DEBUG, "Calling customizer postDeployment");
                     m_customizer.postDeployment(this);
                 }
             }
         }
+        m_deployer.log(LogService.LOG_INFO, "Finished with " + m_currentState);
     }
 
     @Override
     public void dryRun() {
+        m_deployer.log(LogService.LOG_INFO, "Starting to dry-run (prepare but, won't commit) with timeout: " + m_timeout);
         setState(DeploymentState.DRYRUNNING);
-        DeploymentTransaction transaction = m_infrastructure.getCoordinator().create("infrastructure", m_timeout);
         DeploymentPlan deploymentPlan = m_plan;
         if(m_customizer!=null){
+            m_deployer.log(LogService.LOG_DEBUG, "Calling customizer preDeployment");
             deploymentPlan = m_customizer.preDeployment(this);
         }
+        DeploymentTransaction transaction = m_deployer.getCoordinator().create("infrastructure", m_timeout);
         // start transaction
         try {
             this.callProcessors(transaction,deploymentPlan);
         } catch (Throwable t) {
             transaction.fail(t);
-            t.printStackTrace();
+            m_deployer.log(LogService.LOG_WARNING,"Failed at prepare, reason:",transaction.getFailure());
         } // don't do commit this is a dry run!!!
         transaction.fail(new DeploymentException("This is was a dry run! Cleaned up preparing mess.."));
         // call customizer post deployment
         if(m_customizer!=null){
+            m_deployer.log(LogService.LOG_DEBUG, "Calling customizer postDeployment");
             m_customizer.postDeployment(this);
         }
-        System.out.println(transaction.getFailure().toString());
+        m_deployer.log(LogService.LOG_INFO, "Dry-run finished", transaction.getFailure());
         setState(DeploymentState.CREATED);
     }
 
     @Override
     public void cancel() {
         if(m_currentState.equals(DeploymentState.RUNNING) || m_currentState.equals(DeploymentState.DRYRUNNING)){
-            // transaction.cancel;
-
+            //m_deployer.getCoordinator().getTransaction().cancel();
         }
     }
+
+    // Util methods
+    // =================================================================================================================
 
     /**
      *
@@ -179,10 +189,9 @@ public class DeploymentHandleImpl implements DeploymentHandle {
         // add participants to the transaction
         for (ResourceReference resourceReference : deploymentPlan) {
             Class type = resourceReference.type();
-            System.out.println(type.getName());
-            ResourceProcessor processor = m_infrastructure.getResourceProcessor(type.getName());
+            ResourceProcessor processor = m_deployer.getResourceProcessor(type.getName());
             if (processor != null) {
-                ResourceDeclaration resource = m_infrastructure.getInfrastructureModel().getResource(resourceReference);
+                ResourceDeclaration resource = m_deployer.getInfrastructureModel().getResource(resourceReference);
                 // create participant
                 DeploymentParticipant participant = processor.process(resource, transaction);
                 transaction.addParticipant(participant);
@@ -193,6 +202,9 @@ public class DeploymentHandleImpl implements DeploymentHandle {
         }
         transaction.prepare();
     }
+
+    // Listener methods
+    // =================================================================================================================
 
     @Override
     public void registerListener(DeploymentListener listener) {

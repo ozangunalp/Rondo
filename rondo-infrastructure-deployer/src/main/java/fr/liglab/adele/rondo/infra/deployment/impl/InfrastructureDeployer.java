@@ -4,13 +4,14 @@ import fr.liglab.adele.rondo.infra.deployment.*;
 import fr.liglab.adele.rondo.infra.deployment.processor.ResourceProcessor;
 import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentCoordinator;
 import fr.liglab.adele.rondo.infra.deployment.transaction.impl.DeploymentCoordinatorImpl;
+import fr.liglab.adele.rondo.infra.deployment.util.DefaultLogService;
 import fr.liglab.adele.rondo.infra.model.Infrastructure;
 import org.apache.felix.ipojo.annotations.*;
-import org.apache.felix.ipojo.util.Logger;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
 
@@ -30,11 +31,14 @@ import java.util.concurrent.Executors;
 @Provides(specifications = ManagedInfrastructure.class)
 public class InfrastructureDeployer implements ManagedInfrastructure {
 
+    public final static String LOG_PREFIX = "Rondo-Deployer";
+
     /**
      *
      */
     @ServiceProperty(name="deployment.timeout", mandatory = false)
     public int m_timeout = 1*10*1000;
+
     /**
      *
      */
@@ -50,7 +54,8 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
     /**
      *
      */
-    Logger m_logger;
+    @Requires(optional = true, defaultimplementation = DefaultLogService.class, proxy = false)
+    LogService m_logger;
 
     /**
      *
@@ -74,7 +79,7 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
     /**
      *
      */
-    private Map<String, ResourceProcessor> processors = new HashMap<String, ResourceProcessor>();
+    private Map<String, ResourceProcessor> m_processors = new HashMap<String, ResourceProcessor>();
 
     /**
      *
@@ -102,13 +107,16 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
      */
     public InfrastructureDeployer(BundleContext context) {
         this.m_context = context;
-        this.m_logger = new Logger(m_context,"Infrastructure-Deployer");
+
     }
+
+    // POJO Lifecycle methods
+    // =================================================================================================================
 
     @Validate
     public void start(){
         m_executorService = Executors.newSingleThreadExecutor();
-
+        this.log(LogService.LOG_INFO, "Starting");
         m_processor = new InfrastructureProcessor(m_context,m_logger);
         m_processor.start();
 
@@ -118,7 +126,6 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
                     // Not interested in our own bundle
                     return null;
                 }
-                System.out.println(bundle.getBundleId() + " " + bundle.getSymbolicName() + " " + bundle.getState());
                 m_processor.activate(bundle);
                 return bundle;
             }
@@ -144,18 +151,20 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
         boolean immediate = reference.getProperty("deployment.immediate")==null ? false : (Boolean) reference.getProperty("deployment.immediate");
         Infrastructure newInfrastructure = m_context.getService(reference);
         try {
+            this.log(LogService.LOG_INFO,"Resolving new infrastructure: "+newInfrastructure.getName());
             m_plan = m_resolver.resolve(newInfrastructure,m_currentInfrastructure);
             m_currentInfrastructure = newInfrastructure;
             if(m_handle!=null){
                 m_handle.cancel();
                 m_handle = null;
             }
+            this.log(LogService.LOG_INFO,"Handle created for "+m_currentInfrastructure.getName());
             if(immediate){
+                this.log(LogService.LOG_DEBUG,"Immediate deployment of "+m_currentInfrastructure.getName());
                 this.apply(this.getDeploymentHandle());
             }
         } catch (DependencyResolutionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            // TODO log
+            this.log(LogService.LOG_WARNING, "Dependencies can't be resolved: " + newInfrastructure.getName(), e);
         }
     }
 
@@ -163,19 +172,30 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
     public void bindResourceProcessor(ServiceReference<ResourceProcessor> reference) {
         ResourceProcessor processor = m_context.getService(reference);
         String resourceType = (String) reference.getProperty("resource.type");
-        processors.put(resourceType, processor);
+        m_processors.put(resourceType, processor);
     }
 
     @Unbind(id = "processors")
     public void unbindResourceProcessor(ServiceReference<ResourceProcessor> reference) {
         ResourceProcessor processor = m_context.getService(reference);
-        processors.remove(processor);
+        m_processors.remove(processor);
     }
 
+    // ManagedInfrastructure methods
+    // =================================================================================================================
+
+    /**
+     *
+     * @return
+     */
     public Infrastructure getInfrastructureModel() {
         return m_currentInfrastructure;
     }
 
+    /**
+     *
+     * @return
+     */
     public DeploymentHandle getDeploymentHandle() {
         if(m_handle!=null){
             return m_handle;
@@ -187,6 +207,11 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
         return null;
     }
 
+    /**
+     *
+     * @param handle
+     * @param listeners
+     */
     public void apply(DeploymentHandle handle, DeploymentListener... listeners){
         final DeploymentHandle deploymentHandle = handle;
         if(deploymentHandle!=null){
@@ -207,15 +232,46 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
         }
     }
 
+    /**
+     *
+     * @param type
+     * @return
+     */
     public ResourceProcessor getResourceProcessor(String type) {
-        return processors.get(type);
+        return m_processors.get(type);
     }
 
+    /**
+     *
+     * @return
+     */
     public DeploymentCoordinator getCoordinator() {
         if (m_coordinator == null) {
-            m_coordinator = new DeploymentCoordinatorImpl();
+            m_coordinator = new DeploymentCoordinatorImpl(m_logger);
         }
         return m_coordinator;
+    }
+
+    // Log helper methods
+    // =================================================================================================================
+
+    /**
+     *
+     * @param logLevel
+     * @param message
+     */
+    void log(int logLevel, String message){
+        m_logger.log(logLevel,LOG_PREFIX+" Deployment: "+message);
+    }
+
+    /**
+     *
+     * @param logLevel
+     * @param message
+     * @param exception
+     */
+    void log(int logLevel, String message, Throwable exception){
+        m_logger.log(logLevel,LOG_PREFIX+" Deployment: "+message, exception);
     }
 
 }

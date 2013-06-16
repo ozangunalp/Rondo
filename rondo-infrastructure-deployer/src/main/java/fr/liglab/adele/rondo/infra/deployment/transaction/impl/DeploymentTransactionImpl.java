@@ -3,6 +3,7 @@ package fr.liglab.adele.rondo.infra.deployment.transaction.impl;
 import fr.liglab.adele.rondo.infra.deployment.DeploymentException;
 import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentParticipant;
 import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentTransaction;
+import org.apache.felix.ipojo.util.Log;
 
 import java.util.*;
 
@@ -29,26 +30,73 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
      */
     private static final int TERMINATED = 3;
 
+    /**
+     *
+     */
     private static final DeploymentException TIMEOUT = new DeploymentException("Timeout !");
 
+    /**
+     *
+     */
     private final long m_id;
 
+    /**
+     *
+     */
     private final String m_name;
 
+    /**
+     *
+     */
     private final DeploymentCoordinatorImpl m_coordinator;
+
+    /**
+     *
+     */
     private final LinkedList<DeploymentParticipant> m_participants;
+
+    /**
+     *
+     */
     private final HashMap<String, Object> m_variables;
 
+    /**
+     *
+     */
     private final Thread m_initiatorThread;
 
+    /**
+     *
+     */
     private volatile int m_state;
 
+    /**
+     *
+     */
     private long m_deadline;
+
+    /**
+     *
+     */
     private TimerTask m_timeoutTask;
 
+    /**
+     *
+     */
     private int m_prepareIndex;
+
+    /**
+     *
+     */
     private Throwable m_failReason;
 
+    /**
+     *
+     * @param id
+     * @param deploymentCoordinator
+     * @param name
+     * @param timeout
+     */
     public DeploymentTransactionImpl(long id, DeploymentCoordinatorImpl deploymentCoordinator, String name, int timeout) {
         this.m_id = id;
         this.m_coordinator = deploymentCoordinator;
@@ -61,6 +109,9 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
         this.m_initiatorThread = Thread.currentThread();
         this.scheduleTimeout(m_deadline);
     }
+
+    // DeploymentTransaction Methods
+    // =================================================================================================================
 
     @Override
     public long getId() {
@@ -78,7 +129,9 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
         while (listIterator.hasNext()) {
             // store the index of to be prepared participant
             this.m_prepareIndex = listIterator.nextIndex();
-            listIterator.next().prepare();
+            DeploymentParticipant nextParticipant = listIterator.next();
+            m_coordinator.log(Log.DEBUG,"Preparing participant: "+nextParticipant.getParticipantId(),this);
+            nextParticipant.prepare();
         }
     }
 
@@ -87,10 +140,12 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
         if (startTermination()) {
             this.m_failReason = reason;
             // reverse iterate over participants and do a clean up
-            System.out.println("cleaning up from " + m_prepareIndex);
+            m_coordinator.log(Log.DEBUG, "Cleaning from " + m_prepareIndex, this);
             ListIterator<DeploymentParticipant> listIterator = this.m_participants.listIterator(m_prepareIndex);
             while (listIterator.hasPrevious()) {
-                listIterator.previous().cleanup();
+                DeploymentParticipant previousParticipant = listIterator.previous();
+                m_coordinator.log(Log.DEBUG, "Cleaning participant: " + previousParticipant.getParticipantId(), this);
+                previousParticipant.cleanup();
             }
             m_state = TERMINATED;
             synchronized (this) {
@@ -108,26 +163,27 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
             ListIterator<DeploymentParticipant> listIterator = this.m_participants.listIterator(0);
             while (listIterator.hasNext() && !commitFailure) {
                 try {
-                    listIterator.next().commit();
+                    DeploymentParticipant nextParticipant = listIterator.next();
+                    m_coordinator.log(Log.DEBUG, "Commiting participant: " + nextParticipant.getParticipantId(), this);
+                    nextParticipant.commit();
                 } catch (Throwable t) {
-                    t.printStackTrace();
                     this.m_failReason = t;
                     commitFailure = true;
                 }
             }
             if (commitFailure) {
-                //TODO log something here
-                System.out.println("Commit failed! Rolling back!");
+                m_coordinator.log(Log.DEBUG, "Commit failed, rolling back", this);
                 startTermination();
                 while (listIterator.hasPrevious()) {
-                    DeploymentParticipant previous = listIterator.previous();
+                    DeploymentParticipant previousParticipant = listIterator.previous();
+                    m_coordinator.log(Log.DEBUG, "Rolling back participant: " + previousParticipant.getParticipantId(), this);
                     try{
-                        previous.rollback();
+                        previousParticipant.rollback();
                     }catch (Throwable t){
-                        System.out.println("failed to rollback "+previous.getParticipantId());
+                        m_coordinator.log(Log.DEBUG, "Failed to roll back participant: " + previousParticipant.getParticipantId(), this);
                     }
                 }
-                // should decide where to clean up
+                // TODO should decide where to clean up
                 throw new DeploymentException("Transaction error on commit, rolled back to initial state");
             }
             this.m_state = TERMINATED;
@@ -187,6 +243,7 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
         synchronized (this) {
             if (isTerminated()) {
                 //TODO
+                m_coordinator.log(Log.WARNING, "Already terminated", this);
             }
 
             if (time > 0) {
@@ -196,6 +253,10 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
             return this.m_deadline;
         }
     }
+
+    // Util Methods
+    // =================================================================================================================
+
 
     void timeout() {
         // Fail the Coordination upon timeout

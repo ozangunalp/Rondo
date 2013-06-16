@@ -8,6 +8,7 @@ import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.Bundle;
+import org.ow2.chameleon.testing.helpers.TimeUtils;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
@@ -39,17 +40,12 @@ public class TestAnnotationDeployment extends RondoDeployerTest {
         DeploymentHandle deploymentHandle = deployer.getDeploymentHandle();
         assertThat(deploymentHandle).isNotNull();
 
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            // interrupted
-        }
+        TimeUtils.grace(2000);
 
+        assertThat(deploymentHandle.getState()).isEqualTo(DeploymentHandle.DeploymentState.SUCCESSFUL);
         System.out.println(deploymentHandle.getState());
 
-        for (Bundle bundle : osgiHelper.getContext().getBundles()) {
-            System.out.println(bundle.getSymbolicName());
-        }
+        System.out.flush();
 
     }
 

@@ -11,6 +11,8 @@ import java.util.Map;
  */
 public interface Infrastructure {
 
+    public String getName();
+
     public List<Dependency> getDependencies();
 
     public List<ResourceReference> getResourceReferences();

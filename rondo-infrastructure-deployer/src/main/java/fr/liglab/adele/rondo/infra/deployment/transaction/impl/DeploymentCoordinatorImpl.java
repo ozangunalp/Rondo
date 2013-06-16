@@ -2,6 +2,8 @@ package fr.liglab.adele.rondo.infra.deployment.transaction.impl;
 
 import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentCoordinator;
 import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentTransaction;
+import org.apache.felix.ipojo.util.Log;
+import org.osgi.service.log.LogService;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -14,16 +16,35 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class DeploymentCoordinatorImpl implements DeploymentCoordinator {
 
+    /**
+     *
+     */
     private final AtomicLong m_ctr;
 
-    private final HashMap<Long, DeploymentTransactionImpl> m_transactions;
+    /**
+     *
+     */
+    private final LinkedHashMap<Long, DeploymentTransactionImpl> m_transactions;
 
+    /**
+     *
+     */
     private final Timer m_coordinationTimer;
 
-    public DeploymentCoordinatorImpl() {
+    /**
+     *
+     */
+    private final LogService m_logger;
+
+    /**
+     *
+     * @param logger
+     */
+    public DeploymentCoordinatorImpl(LogService logger) {
         this.m_ctr = new AtomicLong();
-        this.m_transactions = new HashMap<Long, DeploymentTransactionImpl>();
+        this.m_transactions = new LinkedHashMap<Long, DeploymentTransactionImpl>();
         this.m_coordinationTimer = new Timer("Transaction Timer", true);
+        this.m_logger = logger;
     }
 
     @Override
@@ -36,7 +57,8 @@ public class DeploymentCoordinatorImpl implements DeploymentCoordinator {
 
     @Override
     public DeploymentTransaction getTransaction() { //TODO
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        //
+        return null;
     }
 
     @Override
@@ -51,13 +73,38 @@ public class DeploymentCoordinatorImpl implements DeploymentCoordinator {
         return this.m_transactions.get(id);
     }
 
-
+    /**
+     *
+     * @param timerTask
+     * @param deadline
+     */
     void schedule(final TimerTask timerTask, final long deadline) {
         if (deadline < 0) {
             timerTask.cancel();
         } else {
             m_coordinationTimer.schedule(timerTask, new Date(deadline));
         }
+    }
+
+    /**
+     *
+     * @param logLevel
+     * @param message
+     * @param transaction
+     */
+    void log(int logLevel, String message, DeploymentTransaction transaction){
+        this.m_logger.log(logLevel,"Transaction["+transaction.getId()+"-"+transaction.getName()+"] : "+message);
+    }
+
+    /**
+     *
+     * @param logLevel
+     * @param message
+     * @param exception
+     * @param transaction
+     */
+    void log(int logLevel, String message, Throwable exception, DeploymentTransaction transaction){
+        this.m_logger.log(logLevel,"Transaction["+transaction.getId()+"-"+transaction.getName()+"] : "+message, exception);
     }
 
 }
