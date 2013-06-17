@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 5/3/13
- * Time: 1:02 AM
+ * Default implementation of the resource processor
  */
 public abstract class DefaultResourceProcessor implements ResourceProcessor {
 
+    /**
+     * participants
+     */
     List<DeploymentParticipant> deploymentParticipants;
 
     public DefaultResourceProcessor() {

@@ -7,13 +7,18 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 5/8/13
- * Time: 3:11 PM
+ * Some Util methods
  */
 public class DeploymentUtils {
 
+    /**
+     * Find the checksum of the file according to the algorithm name
+     * @param file file
+     * @param algo algorithm name
+     * @return checksum
+     * @throws NoSuchAlgorithmException if cannot find the algorithm
+     * @throws IOException can occur while reading the given file
+     */
     public static String checksum(File file, String algo) throws NoSuchAlgorithmException, IOException {
         MessageDigest sha = MessageDigest.getInstance(algo);
         FileInputStream fis = new FileInputStream(file);

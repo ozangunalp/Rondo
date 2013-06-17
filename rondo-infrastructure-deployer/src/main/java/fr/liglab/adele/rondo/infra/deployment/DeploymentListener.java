@@ -1,13 +1,14 @@
 package fr.liglab.adele.rondo.infra.deployment;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 4/29/13
- * Time: 10:34 AM
+ * Interface for deployment listeners
  */
 public interface DeploymentListener {
 
+    /**
+     * Called when there is a new event (state change, etc.) for a deployment
+     * @param event deployment event containing event type and referencing deployment handle
+     */
     void handleEvent(DeploymentEvent event);
 
 }

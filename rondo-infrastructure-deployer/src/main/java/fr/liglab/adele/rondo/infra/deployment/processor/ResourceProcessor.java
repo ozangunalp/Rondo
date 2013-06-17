@@ -6,10 +6,7 @@ import fr.liglab.adele.rondo.infra.deployment.transaction.DeploymentTransaction;
 import fr.liglab.adele.rondo.infra.model.ResourceDeclaration;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 4/30/13
- * Time: 9:40 AM
+ *
  */
 public interface ResourceProcessor {
 

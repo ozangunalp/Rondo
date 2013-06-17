@@ -5,11 +5,9 @@ import fr.liglab.adele.rondo.infra.model.ResourceReference;
 import java.util.LinkedList;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 4/29/13
- * Time: 11:42 AM
+ * The Deployment Plan consists of a list of resource states that the deployment should pass in order to succeed.
+ * It describes the process of a deployment.
+ * This implementation simply extends a {@code LinkedList} of {@code ResourceReference}s.
  */
 public class DeploymentPlan extends LinkedList<ResourceReference> {
-
 }

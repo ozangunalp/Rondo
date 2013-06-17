@@ -13,10 +13,7 @@ import org.apache.felix.ipojo.annotations.Provides;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 6/11/13
- * Time: 9:12 AM
+ * Simple Resolver
  */
 @Component
 @Instantiate

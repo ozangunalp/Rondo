@@ -8,23 +8,32 @@ import fr.liglab.adele.rondo.infra.model.ResourceDeclaration;
 import java.io.File;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 5/3/13
- * Time: 12:50 AM
+ * A default implementation of the deployment participant
  */
 public abstract class DefaultDeploymentParticipant implements DeploymentParticipant {
 
+    /**
+     * resource declaration
+     */
     private final ResourceDeclaration m_resource;
+
+    /**
+     * deployment transaction
+     */
     private final DeploymentTransaction m_coordination;
 
+    /**
+     * Constructor
+     * @param resource resource declaration
+     * @param m_coordination deployment transaction
+     */
     public DefaultDeploymentParticipant(ResourceDeclaration resource, DeploymentTransaction m_coordination) {
         this.m_coordination = m_coordination;
         this.m_resource = resource;
     }
 
     public String getParticipantId() {
-        return m_coordination.getId()+" - "+m_resource.name();
+        return m_coordination.getId()+" - "+m_resource.id();
     }
 
     public void prepare() throws DeploymentException {/* default implementation does nothing*/}

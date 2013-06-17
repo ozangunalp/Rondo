@@ -13,50 +13,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 4/30/13
- * Time: 10:03 AM
+ * Deployment Handle implementation
  */
 public class DeploymentHandleImpl implements DeploymentHandle {
 
     /**
-     *
+     * Default deployment timeout is 0 (unlimited)
      */
     private static final int DEFAULT_DEPLOYMENT_TIMEOUT = 0; // zero means unlimited power
 
     /**
-     *
+     * Deployment Timeout
      */
     private final int m_timeout;
 
     /**
-     *
+     * Deployment Customizer
      */
     private final DeploymentCustomizer m_customizer;
 
     /**
-     *
+     * Deployer
      */
     private InfrastructureDeployer m_deployer;
 
     /**
-     *
+     * Deployment plan
      */
     private DeploymentPlan m_plan;
 
     /**
-     *
+     * Current state of the deployment
      */
     private DeploymentState m_currentState;
 
     /**
-     *
+     * Listeners
      */
     private final List<DeploymentListener> m_listeners;
 
     /**
-     *
+     * Constructor
      * @param plan
      * @param deployer
      * @param customizer
@@ -161,8 +158,17 @@ public class DeploymentHandleImpl implements DeploymentHandle {
     @Override
     public void cancel() {
         if(m_currentState.equals(DeploymentState.RUNNING) || m_currentState.equals(DeploymentState.DRYRUNNING)){
-            //m_deployer.getCoordinator().getTransaction().cancel();
+            DeploymentTransaction transaction = m_deployer.getCoordinator().getTransaction();
+            if(!transaction.isTerminated()){
+                transaction.fail(new DeploymentException("Deployment Canceled"));
+                try {
+                    transaction.end();
+                } catch (DeploymentException e) {
+                    // TODO
+                }
+            }
         }
+
     }
 
     // Util methods
@@ -174,14 +180,15 @@ public class DeploymentHandleImpl implements DeploymentHandle {
      */
     private void setState(DeploymentState newState) {
         this.m_currentState = newState;
-        DeploymentEvent.Type type = (newState == DeploymentState.RUNNING) ? DeploymentEvent.Type.INSTALLING : DeploymentEvent.Type.COMPLETED;
+        DeploymentEvent.Type type = (newState == DeploymentState.RUNNING) ? DeploymentEvent.Type.STARTING : DeploymentEvent.Type.COMPLETED;
         for (DeploymentListener listener : m_listeners) {
             listener.handleEvent(new DeploymentEvent(this, type));
         }
     }
 
     /**
-     *
+     * Find resource processors corresponding to the resource declaration.
+     * Ask processor to give a participant and add the participant to the transaction
      * @param transaction
      * @throws DeploymentException
      */

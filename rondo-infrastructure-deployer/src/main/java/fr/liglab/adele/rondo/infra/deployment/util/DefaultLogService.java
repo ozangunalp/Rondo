@@ -4,10 +4,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 6/16/13
- * Time: 10:56 PM
+ * A Default implementation for the OSGi Log service
  */
 public class DefaultLogService implements LogService {
 

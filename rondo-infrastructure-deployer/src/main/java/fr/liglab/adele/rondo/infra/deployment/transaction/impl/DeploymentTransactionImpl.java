@@ -8,94 +8,71 @@ import org.apache.felix.ipojo.util.Log;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 5/5/13
- * Time: 6:57 PM
+ * An implementation of the deployment transaction
  */
 public class DeploymentTransactionImpl implements DeploymentTransaction {
 
     /**
-     * Active
-     */
-    private static final int ACTIVE = 1;
-
-    /**
-     * Transaction termination started
-     */
-    private static final int TERMINATING = 2;
-
-    /**
-     * Transaction completed
-     */
-    private static final int TERMINATED = 3;
-
-    /**
-     *
-     */
-    private static final DeploymentException TIMEOUT = new DeploymentException("Timeout !");
-
-    /**
-     *
+     * Transaction id
      */
     private final long m_id;
 
     /**
-     *
+     * Transaction name
      */
     private final String m_name;
 
     /**
-     *
+     * Coordinator reference
      */
     private final DeploymentCoordinatorImpl m_coordinator;
 
     /**
-     *
+     * Participants list
      */
     private final LinkedList<DeploymentParticipant> m_participants;
 
     /**
-     *
+     * Properties of this transacation
      */
     private final HashMap<String, Object> m_variables;
 
     /**
-     *
+     * Initiator thread
      */
     private final Thread m_initiatorThread;
 
     /**
-     *
+     * Transaction state
      */
     private volatile int m_state;
 
     /**
-     *
+     * Deadline set by the timeout
      */
     private long m_deadline;
 
     /**
-     *
+     * Task to call when timeout deadline is up
      */
     private TimerTask m_timeoutTask;
 
     /**
-     *
+     * Prepare index
      */
     private int m_prepareIndex;
 
     /**
-     *
+     * Fail reason
      */
     private Throwable m_failReason;
 
     /**
-     *
-     * @param id
-     * @param deploymentCoordinator
-     * @param name
-     * @param timeout
+     * Constructor
+     * @param id id of the transaction
+     * @param deploymentCoordinator coordinator to which this transaction is bound to
+     * @param name name of the transaction
+     * @param timeout timeout
      */
     public DeploymentTransactionImpl(long id, DeploymentCoordinatorImpl deploymentCoordinator, String name, int timeout) {
         this.m_id = id;

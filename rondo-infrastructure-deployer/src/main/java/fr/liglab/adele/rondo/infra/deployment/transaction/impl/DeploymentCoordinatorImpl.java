@@ -9,36 +9,33 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 5/5/13
- * Time: 4:22 PM
+ * An implementation of the coordiator
  */
 public class DeploymentCoordinatorImpl implements DeploymentCoordinator {
 
     /**
-     *
+     * Transaction id dounter
      */
     private final AtomicLong m_ctr;
 
     /**
-     *
+     * Transaction by id
      */
     private final LinkedHashMap<Long, DeploymentTransactionImpl> m_transactions;
 
     /**
-     *
+     * Timer for scheduling transaction timeouts
      */
     private final Timer m_coordinationTimer;
 
     /**
-     *
+     * Logger
      */
     private final LogService m_logger;
 
     /**
-     *
-     * @param logger
+     * Constructor
+     * @param logger logger passed to transactions
      */
     public DeploymentCoordinatorImpl(LogService logger) {
         this.m_ctr = new AtomicLong();

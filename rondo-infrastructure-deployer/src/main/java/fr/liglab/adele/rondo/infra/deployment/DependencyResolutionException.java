@@ -1,10 +1,7 @@
 package fr.liglab.adele.rondo.infra.deployment;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 4/30/13
- * Time: 9:29 AM
+ * Dependency Resolution Exception
  */
 public class DependencyResolutionException extends Exception {
 

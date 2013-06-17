@@ -21,10 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 4/29/13
- * Time: 12:23 AM
+ *
  */
 @Component
 @Instantiate
@@ -34,75 +31,75 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
     public final static String LOG_PREFIX = "Rondo-Deployer";
 
     /**
-     *
+     * Timeout property on service
      */
     @ServiceProperty(name="deployment.timeout", mandatory = false)
     public int m_timeout = 1*10*1000;
 
     /**
-     *
+     * Customizer dependency
      */
     @Requires(id="deployment.customizer", optional = true, proxy = false, nullable = false)
     public DeploymentCustomizer m_customizer;
 
     /**
-     *
+     * Deployment resolver
      */
     @Requires(id="deployment.resolver", optional = false)
     public DeploymentResolver m_resolver;
 
     /**
-     *
+     *  Log service
      */
     @Requires(optional = true, defaultimplementation = DefaultLogService.class, proxy = false)
     LogService m_logger;
 
     /**
-     *
+     * Executor for async apply
      */
     private ExecutorService m_executorService;
 
     /**
-     *
+     * Bundle context
      */
     private BundleContext m_context;
 
     /**
-     *
+     * Bundle tracker
      */
     private BundleTracker m_tracker;
     /**
-     *
+     * Infrastructure Processor
      */
     private InfrastructureProcessor m_processor;
 
     /**
-     *
+     * Resource processors
      */
     private Map<String, ResourceProcessor> m_processors = new HashMap<String, ResourceProcessor>();
 
     /**
-     *
+     * Current infrastructure
      */
     private Infrastructure m_currentInfrastructure;
 
     /**
-     *
+     * Coordinator
      */
     private DeploymentCoordinatorImpl m_coordinator;
 
     /**
-     *
+     * Deployment Handle
      */
     private DeploymentHandleImpl m_handle;
 
     /**
-     *
+     *  Deployment Plan
      */
     private DeploymentPlan m_plan;
 
     /**
-     *
+     * Constructor
      * @param context
      */
     public InfrastructureDeployer(BundleContext context) {
@@ -161,7 +158,7 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
             this.log(LogService.LOG_INFO,"Handle created for "+m_currentInfrastructure.getName());
             if(immediate){
                 this.log(LogService.LOG_DEBUG,"Immediate deployment of "+m_currentInfrastructure.getName());
-                this.apply(this.getDeploymentHandle());
+                this.apply();
             }
         } catch (DependencyResolutionException e) {
             this.log(LogService.LOG_WARNING, "Dependencies can't be resolved: " + newInfrastructure.getName(), e);
@@ -184,18 +181,11 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
     // ManagedInfrastructure methods
     // =================================================================================================================
 
-    /**
-     *
-     * @return
-     */
+
     public Infrastructure getInfrastructureModel() {
         return m_currentInfrastructure;
     }
 
-    /**
-     *
-     * @return
-     */
     public DeploymentHandle getDeploymentHandle() {
         if(m_handle!=null){
             return m_handle;
@@ -207,13 +197,8 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
         return null;
     }
 
-    /**
-     *
-     * @param handle
-     * @param listeners
-     */
-    public void apply(DeploymentHandle handle, DeploymentListener... listeners){
-        final DeploymentHandle deploymentHandle = handle;
+    public void apply(DeploymentListener... listeners){
+        final DeploymentHandle deploymentHandle = this.getDeploymentHandle();
         if(deploymentHandle!=null){
             for (DeploymentListener listener : listeners) {
                 deploymentHandle.registerListener(listener);
@@ -232,19 +217,10 @@ public class InfrastructureDeployer implements ManagedInfrastructure {
         }
     }
 
-    /**
-     *
-     * @param type
-     * @return
-     */
     public ResourceProcessor getResourceProcessor(String type) {
         return m_processors.get(type);
     }
 
-    /**
-     *
-     * @return
-     */
     public DeploymentCoordinator getCoordinator() {
         if (m_coordinator == null) {
             m_coordinator = new DeploymentCoordinatorImpl(m_logger);

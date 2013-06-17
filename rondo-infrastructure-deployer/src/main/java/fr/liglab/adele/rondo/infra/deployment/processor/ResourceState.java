@@ -7,10 +7,7 @@ import org.apache.felix.ipojo.everest.services.*;
 import java.io.File;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 6/7/13
- * Time: 4:57 PM
+ *
  */
 public class ResourceState {
 

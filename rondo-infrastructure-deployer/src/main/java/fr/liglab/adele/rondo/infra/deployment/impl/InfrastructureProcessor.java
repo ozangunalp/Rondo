@@ -18,37 +18,34 @@ import java.util.*;
 import static org.apache.felix.ipojo.util.Reflection.fields;
 
 /**
- * Created with IntelliJ IDEA.
- * User: ozan
- * Date: 6/14/13
- * Time: 11:27 AM
+ * Bundle Processor for finding annotated infrastructures
  */
 public class InfrastructureProcessor {
 
     /**
-     *
+     * Context of the deployer
      */
     private final BundleContext m_context;
 
     /**
-     *
+     * Logger
      */
     private LogService m_logger;
 
     /**
-     *
+     * registered infrastructures
      */
     Map<Bundle,ServiceRegistration> registeredInfrastructures = new HashMap<Bundle,ServiceRegistration>();
 
     /**
-     *
+     * Bundle capability that imports infrastructure definitions
      */
     private BundleCapability packageCapability;
 
     /**
-     *
-     * @param context
-     * @param logger
+     * Constructor
+     * @param context deployer context
+     * @param logger loger
      */
     public InfrastructureProcessor(BundleContext context, LogService logger) {
         this.m_context = context;
@@ -56,7 +53,7 @@ public class InfrastructureProcessor {
     }
 
     /**
-     *
+     * A new bundle is active
      * @param bundle
      */
     public void activate(Bundle bundle) {
@@ -98,10 +95,48 @@ public class InfrastructureProcessor {
     }
 
     /**
-     *
+     * A Bundle is no more active
      * @param bundle
-     * @param resources
-     * @param classLoader
+     */
+    public void deactivate(Bundle bundle) {
+        if(registeredInfrastructures.containsKey(bundle)) {
+            ServiceRegistration serviceRegistration = registeredInfrastructures.get(bundle);
+            if(serviceRegistration!=null){
+                serviceRegistration.unregister();
+            }
+        }
+    }
+
+    /**
+     * Deployer bundle started
+     */
+    public void start() {
+        // get myCapability
+        BundleWiring myWiring = m_context.getBundle().adapt(BundleWiring.class);
+        List<BundleWire> requiredWires = myWiring.getRequiredWires("osgi.wiring.package");
+        for (BundleWire requiredWire : requiredWires) {
+            if("fr.liglab.adele.rondo.infra.impl".equals(requiredWire.getCapability().getAttributes().get("osgi.wiring.package"))){
+                packageCapability = requiredWire.getCapability();
+            }
+        }
+    }
+
+    /**
+     * Deployer bundle stopping
+     */
+    public void stop() {
+        for (ServiceRegistration registeredInfrastructure : registeredInfrastructures.values()) {
+            if(registeredInfrastructure!=null){
+                registeredInfrastructure.unregister();
+            }
+        }
+    }
+
+    /**
+     * Handle resources found in the bundle
+     * @param bundle bundle
+     * @param resources resources
+     * @param classLoader classloader of the bundle
      */
     private void handleResources(Bundle bundle, Collection<String> resources, ClassLoader classLoader) {
         // for now take the first resource with infrastructure annotation
@@ -116,10 +151,10 @@ public class InfrastructureProcessor {
     }
 
     /**
-     *
-     * @param bundle
-     * @param resource
-     * @param classLoader
+     * Handle resource
+     * @param bundle bundle
+     * @param resource resource
+     * @param classLoader classloader the bundle
      * @return
      */
     private ServiceRegistration handleResource(Bundle bundle, String resource, ClassLoader classLoader) {
@@ -178,7 +213,7 @@ public class InfrastructureProcessor {
     }
 
     /**
-     *
+     * This mwthod tries to consolidate multiple infrastructures
      * @param infrastructures
      * @param clazz
      * @return
@@ -207,44 +242,6 @@ public class InfrastructureProcessor {
         }
         res = res.substring(0, res.length() - ".class".length()); // Remove the .class
         return res.replace("/", ".");
-    }
-
-    /**
-     *
-     * @param bundle
-     */
-    public void deactivate(Bundle bundle) {
-        if(registeredInfrastructures.containsKey(bundle)) {
-            ServiceRegistration serviceRegistration = registeredInfrastructures.get(bundle);
-            if(serviceRegistration!=null){
-                serviceRegistration.unregister();
-            }
-        }
-    }
-
-    /**
-     *
-     */
-    public void start() {
-        // get myCapability
-        BundleWiring myWiring = m_context.getBundle().adapt(BundleWiring.class);
-        List<BundleWire> requiredWires = myWiring.getRequiredWires("osgi.wiring.package");
-        for (BundleWire requiredWire : requiredWires) {
-            if("fr.liglab.adele.rondo.infra.impl".equals(requiredWire.getCapability().getAttributes().get("osgi.wiring.package"))){
-                packageCapability = requiredWire.getCapability();
-            }
-        }
-    }
-
-    /**
-     *
-     */
-    public void stop() {
-        for (ServiceRegistration registeredInfrastructure : registeredInfrastructures.values()) {
-            if(registeredInfrastructure!=null){
-                registeredInfrastructure.unregister();
-            }
-        }
     }
 
 }
