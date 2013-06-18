@@ -8,7 +8,7 @@
     <parent>
         <groupId>fr.liglab.adele.rondo</groupId>
         <artifactId>rondo-parent</artifactId>
-        <relativePath>../rondo-parent</relativePath>
+        <relativePath>../../rondo-parent</relativePath>
         <version>0.1-SNAPSHOT</version>
     </parent>
 

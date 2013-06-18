@@ -15,12 +15,9 @@
     <!-- List of sub-projects. -->
     <modules>
         <module>rondo-parent</module>
-        <!--<module>rondo-groovy-script</module>-->
         <module>rondo-infrastructure-model</module>
         <module>rondo-infrastructure-deployer</module>
-        <module>rondo-infrastructure-example</module>
         <module>rondo-infrastructure-gogo-command</module>
-        <module>rondo-system-extension</module>
         <module>rondo-it</module>
     </modules>
 
