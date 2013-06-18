@@ -10,16 +10,40 @@
     <packaging>pom</packaging>
 
     <!-- Description -->
-    <name>Rondo - Reactor Project</name>
+    <name>Rondo Reactor</name>
 
-    <!-- List of sub-projects. -->
-    <modules>
-        <module>parent</module>
-        <module>core</module>
-        <module>deployer</module>
-        <module>gogo-command</module>
-        <module>tests</module>
-    </modules>
+    <profiles>
+        <profile>
+            <id>core</id>
+            <modules>
+                <module>core</module>
+                <module>deployer</module>
+                <module>gogo-command</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>tests</id>
+            <modules>
+                <module>tests</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>examples</id>
+            <modules>
+                <module>example/infrastructure-example</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>extensions</id>
+            <modules>
+                <module>extensions/system-extension</module>
+            </modules>
+        </profile>
+
+    </profiles>
 
     <!-- Avoid reactor deployment -->
     <build>

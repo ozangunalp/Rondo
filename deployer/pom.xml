@@ -8,18 +8,17 @@
     <parent>
         <groupId>fr.liglab.adele.rondo</groupId>
         <artifactId>rondo-parent</artifactId>
-        <relativePath>../rondo-parent</relativePath>
+        <relativePath>../parent/pom.xml</relativePath>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
+    <!-- Description -->
+    <name>Rondo Deployer</name>
+
     <!-- Coordinates -->
-    <artifactId>rondo-infrastructure-deployer</artifactId>
+    <artifactId>rondo-deployer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
-
-
-    <!-- Description -->
-    <name>Rondo Infrastructure Deployer</name>
 
     <!-- Dependencies -->
     <dependencies>
@@ -28,13 +27,20 @@
             <artifactId>org.apache.felix.ipojo</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.felix.ipojo</groupId>
+            <artifactId>everest-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.liglab.adele.rondo</groupId>
+            <artifactId>rondo-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -49,15 +55,6 @@
             <groupId>org.easytesting</groupId>
             <artifactId>fest-assert</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix.ipojo</groupId>
-            <artifactId>everest-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>fr.liglab.adele.rondo</groupId>
-            <artifactId>rondo-infrastructure-model</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

@@ -52,12 +52,6 @@ public class TestBundleDeploy extends RondoDeployerTest {
                         .symbolicName("org.apache.felix.eventadmin")
                         .version("1.3.2"))
 
-                .resource(bundle("groovy")
-                        .source("file:///Volumes/Macintosh%20HD/Users/ozan/dev/rondo/rondo-groovy-script/target/rondo-groovy-script-0.0.1-SNAPSHOT.jar")
-                        .state("INSTALLED")
-                        .symbolicName("fr.liglab.adele.rondo.groovy-script"))
-
-                .resource(Bundle.class, "groovy").dependsOn(Bundle.class, "event admin")
                 .resource(Bundle.class, "config admin").dependsOn(Bundle.class, "file install")
                 .resource(Bundle.class, "event admin").dependsOn(Bundle.class, "config admin")
                 ;
@@ -72,17 +66,10 @@ public class TestBundleDeploy extends RondoDeployerTest {
         System.out.println("DEPLOYMENT STATE: " + deploymentHandle.getState().toString());
 
         org.osgi.framework.Bundle fileInstall = osgiHelper.getBundle("org.apache.felix.fileinstall");
-        org.osgi.framework.Bundle groovy = osgiHelper.getBundle("fr.liglab.adele.rondo.groovy-script");
 
         assertThat(fileInstall).isNotNull();
         assertThat(fileInstall.getState()).isEqualTo(org.osgi.framework.Bundle.ACTIVE);
         assertThat(fileInstall.getLocation()).isEqualTo("http://apache.opensourcemirror.com//felix/org.apache.felix.fileinstall-3.2.6.jar");
-
-        assertThat(groovy).isNotNull();
-        assertThat(groovy.getState()).isEqualTo(org.osgi.framework.Bundle.INSTALLED);
-        assertThat(groovy.getLocation()).isEqualTo("file:///Volumes/Macintosh%20HD/Users/ozan/dev/rondo/rondo-groovy-script/target/rondo-groovy-script-0.0.1-SNAPSHOT.jar");
-
-
 
         assertThat(deploymentHandle.getState()).isEqualTo(DeploymentHandle.DeploymentState.SUCCESSFUL);
         System.out.flush();
@@ -111,12 +98,6 @@ public class TestBundleDeploy extends RondoDeployerTest {
                         .symbolicName("org.apache.felix.eventadmin")
                         .version("1.3.2"))
 
-                .resource(bundle("groovy")
-                        .source("file:///Volumes/Macintosh%20HD/Users/ozan/dev/rondo/rondo-groovy-script/target/rondo-groovy-script-0.0.1-SNAPSHOT.jar")
-                        .state("INSTALLED")
-                        .symbolicName("fr.liglab.adele.rondo.groovy-script"))
-
-                .resource(Bundle.class, "groovy").dependsOn(Bundle.class, "event admin")
                 .resource(Bundle.class, "config admin").dependsOn(Bundle.class,"file install")
                 .resource(Bundle.class,"event admin").dependsOn(Bundle.class,"config admin")
                 ;
@@ -131,16 +112,10 @@ public class TestBundleDeploy extends RondoDeployerTest {
         System.out.println("DEPLOYMENT STATE: " + deploymentHandle.getState().toString());
 
         org.osgi.framework.Bundle fileInstall = osgiHelper.getBundle("org.apache.felix.fileinstall");
-        org.osgi.framework.Bundle groovy = osgiHelper.getBundle("fr.liglab.adele.rondo.groovy-script");
 
         assertThat(fileInstall).isNotNull();
         assertThat(fileInstall.getState()).isEqualTo(org.osgi.framework.Bundle.ACTIVE);
         assertThat(fileInstall.getLocation()).isEqualTo("mvn:org.apache.felix/org.apache.felix.fileinstall/LATEST");
-
-        assertThat(groovy).isNotNull();
-        assertThat(groovy.getState()).isEqualTo(org.osgi.framework.Bundle.INSTALLED);
-        assertThat(groovy.getLocation()).isEqualTo("file:///Volumes/Macintosh%20HD/Users/ozan/dev/rondo/rondo-groovy-script/target/rondo-groovy-script-0.0.1-SNAPSHOT.jar");
-
 
         assertThat(deploymentHandle.getState()).isEqualTo(DeploymentHandle.DeploymentState.SUCCESSFUL);
         System.out.flush();
@@ -168,11 +143,6 @@ public class TestBundleDeploy extends RondoDeployerTest {
                         .state("ACTIVE")
                         .symbolicName("org.apache.felix.eventadmin")
                         .version("1.3.2"))
-
-                .resource(bundle("groovy")
-                        .source("file:///Volumes/Macintosh%20HD/Users/ozan/dev/rondo/rondo-groovy-script/target/rondo-groovy-script-0.0.1-SNAPSHOT.jar")
-                        .state("INSTALLED")
-                        .symbolicName("fr.liglab.adele.rondo.groovy-script"))
 
                 .resource(Bundle.class, "groovy").dependsOn(Bundle.class, "event admin")
                 .resource(Bundle.class, "config admin").dependsOn(Bundle.class,"file install")
@@ -215,17 +185,24 @@ public class TestBundleDeploy extends RondoDeployerTest {
                         .symbolicName("org.apache.felix.eventadmin")
                         .version("1.3.2"))
 
-                .resource(bundle("groovy")
-                        .source("file:///Volumes/Macintosh%20HD/Users/ozan/dev/rondo/rondo-groovy-script/target/rondo-groovy-script-0.0.1-SNAPSHOT.jar")
+                .resource(bundle("web console")
+                        .source("http://apache.mirrors.lucidnetworks.net//felix/org.apache.felix.http.whiteboard-2.2.0.jar")
+                      //  .symbolicName("org.apache.felix.http.whiteboard")
+                      //  .version("2.2.0")
                         .state("RESOLVED")
-                        .symbolicName("fr.liglab.adele.rondo.groovy-script"))
+                )
 
-                .resource(Bundle.class, "groovy").dependsOn(Bundle.class, "event admin")
-                .resource(Bundle.class, "config admin").dependsOn(Bundle.class,"file install")
-                .resource(Bundle.class,"event admin").dependsOn(Bundle.class,"config admin")
+                .resource(Bundle.class, "config admin").dependsOn(Bundle.class, "file install")
+                .resource(Bundle.class, "event admin").dependsOn(Bundle.class, "config admin")
+                .resource(Bundle.class, "web console").dependsOn(Bundle.class, "config admin")
                 ;
 
         ServiceRegistration<Infrastructure> registration = osgiHelper.getContext().registerService(Infrastructure.class, inf, null);
+
+        for (org.osgi.framework.Bundle bundle : osgiHelper.getContext().getBundles()) {
+            System.out.println(bundle.getSymbolicName());
+        }
+
 
         DeploymentHandle deploymentHandle = deployer.getDeploymentHandle();
         assertThat(deploymentHandle).isNotNull();
@@ -234,7 +211,7 @@ public class TestBundleDeploy extends RondoDeployerTest {
         deploymentHandle.apply();
         System.out.println("DEPLOYMENT STATE: " + deploymentHandle.getState().toString());
         assertThat(deploymentHandle.getState()).isEqualTo((DeploymentHandle.DeploymentState.UNSUCCESSFUL));
-
+        System.out.println(deploymentHandle);
         System.out.flush();
     }
 
@@ -262,12 +239,6 @@ public class TestBundleDeploy extends RondoDeployerTest {
                         .symbolicName("org.apache.felix.eventadmin")
                         .version("1.3.2"))
 
-                .resource(bundle("groovy")
-                        .source("file:///Volumes/Macintosh%20HD/Users/ozan/dev/rondo/rondo-groovy-script/target/rondo-groovy-script-0.0.1-SNAPSHOT.jar")
-                        .state("RESOLVED")
-                        .symbolicName("fr.liglab.adele.rondo.groovy-script"))
-
-                .resource(Bundle.class, "groovy").dependsOn(Bundle.class, "event admin")
                 .resource(Bundle.class, "config admin").dependsOn(Bundle.class,"file install")
                 .resource(Bundle.class,"event admin").dependsOn(Bundle.class,"config admin")
                 ;
@@ -297,7 +268,7 @@ public class TestBundleDeploy extends RondoDeployerTest {
                         .with("checksum").setto("d632c7c4146d764954fdac7c41b597ffa78e3672"))   //d632c7c4146d764954fdac7c41b597ffa78e3672
 
                 .resource(bundle("file install")
-                        .source("http://apache.opensourcemirror.com//felix/org.apache.felix.fileinstall-3.2.6.jar")
+                        .source("httt://apache.opensourcemirror.com//felix/org.apache.felix.fileinstall-3.2.6.jar")
                         .state("ACTIVE")
                         .symbolicName("org.apache.felix.fileinstall")
                         .version("3.2.6"))
@@ -308,12 +279,6 @@ public class TestBundleDeploy extends RondoDeployerTest {
                         .symbolicName("org.apache.felix.eventadmin")
                         .version("1.3.2"))
 
-                .resource(bundle("groovy")
-                        .source("filt:///Volumes/Macintosh%20HD/Users/ozan/dev/rondo/rondo-groovy-script/target/rondo-groovy-script-0.0.1-SNAPSHOT.jar")
-                        .state("RESOLVED")
-                        .symbolicName("fr.liglab.adele.rondo.groovy-script"))
-
-                .resource(Bundle.class, "groovy").dependsOn(Bundle.class, "event admin")
                 .resource(Bundle.class, "config admin").dependsOn(Bundle.class, "file install")
                 .resource(Bundle.class, "event admin").dependsOn(Bundle.class, "config admin")
                 ;

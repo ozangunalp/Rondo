@@ -8,29 +8,32 @@
     <parent>
         <groupId>fr.liglab.adele.rondo</groupId>
         <artifactId>rondo-parent</artifactId>
-        <relativePath>../../rondo-parent</relativePath>
+        <relativePath>../../parent/pom.xml</relativePath>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
+    <!-- Description -->
+    <name>Rondo System Extension</name>
 
     <!-- Coordinates -->
     <artifactId>rondo-system-extension</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
-    <!-- Description -->
-    <name>Rondo System Extension</name>
-
     <!-- Dependencies -->
     <dependencies>
         <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo</artifactId>
+        </dependency>
+        <dependency>
             <groupId>fr.liglab.adele.rondo</groupId>
-            <artifactId>rondo-infrastructure-model</artifactId>
+            <artifactId>rondo-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.rondo</groupId>
-            <artifactId>rondo-infrastructure-deployer</artifactId>
+            <artifactId>rondo-deployer</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

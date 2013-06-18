@@ -8,20 +8,23 @@
         <artifactId>rondo-parent</artifactId>
         <groupId>fr.liglab.adele.rondo</groupId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../../rondo-parent/pom.xml</relativePath>
+        <relativePath>../../parent/pom.xml</relativePath>
     </parent>
+
+    <!-- Description -->
+    <name>Rondo Test Distribution</name>
 
     <!-- Project coordinates -->
     <artifactId>rondo-test-distribution</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>osgi-distribution</packaging>
-    <name>Rondo Test Distribution</name>
 
 
     <properties>
         <felix.version>4.2.1</felix.version>
         <ipojo.version>1.10.1</ipojo.version>
     </properties>
+
     <!-- Project dependencies -->
 
     <!-- core osgi bundles -->
@@ -125,6 +128,7 @@
         </dependency>
 
     </dependencies>
+
     <build>
         <plugins>
             <plugin>

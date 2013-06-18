@@ -8,22 +8,20 @@
     <parent>
         <groupId>fr.liglab.adele.rondo</groupId>
         <artifactId>rondo-parent</artifactId>
-        <relativePath>../rondo-parent</relativePath>
+        <relativePath>../parent/pom.xml</relativePath>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
+    <!-- Description -->
+    <name>Rondo Core</name>
 
     <!-- Coordinates -->
-    <artifactId>rondo-infrastructure-model</artifactId>
+    <artifactId>rondo-core</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
-    <!-- Description -->
-    <name>Rondo Infrastructure Model</name>
-
     <!-- Dependencies -->
     <dependencies>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

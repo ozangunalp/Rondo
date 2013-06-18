@@ -9,8 +9,11 @@
         <artifactId>rondo-parent</artifactId>
         <groupId>fr.liglab.adele.rondo</groupId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../../rondo-parent/pom.xml</relativePath>
+        <relativePath>../../parent/pom.xml</relativePath>
     </parent>
+
+    <!-- Description -->
+    <name>Rondo Test Distribution</name>
 
     <!-- Coordinates -->
     <artifactId>test-distribution</artifactId>

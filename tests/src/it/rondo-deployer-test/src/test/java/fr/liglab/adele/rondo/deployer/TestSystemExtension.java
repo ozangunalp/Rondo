@@ -28,8 +28,8 @@ public class TestSystemExtension extends RondoDeployerTest {
     public CompositeOption rondoBundles() {
         return new DefaultCompositeOption(
                 mavenBundle("commons-io","commons-io").versionAsInProject(),
-                mavenBundle("fr.liglab.adele.rondo", "rondo-infrastructure-model").versionAsInProject(),
-                mavenBundle("fr.liglab.adele.rondo", "rondo-infrastructure-deployer").versionAsInProject(),
+                mavenBundle("fr.liglab.adele.rondo", "rondo-core").versionAsInProject(),
+                mavenBundle("fr.liglab.adele.rondo", "rondo-deployer").versionAsInProject(),
                 mavenBundle("fr.liglab.adele.rondo", "rondo-system-extension").versionAsInProject()
         );
     }

@@ -49,10 +49,6 @@ public class TestServicesDeploy extends RondoDeployerTest {
 //                        .symbolicName("org.apache.felix.eventadmin")
 //                        .version("1.3.2"))
 //
-//                .resource(bundle("groovy")
-//                        .source("file:///Volumes/Macintosh%20HD/Users/ozan/dev/rondo/rondo-groovy-script/target/rondo-groovy-script-0.0.1-SNAPSHOT.jar")
-//                        .state("INSTALLED")
-//                        .symbolicName("fr.liglab.adele.rondo.groovy-script"))
 
                 .resource(service("config admin")
                         .objectClass(list(ConfigurationAdmin.class.getName()))
@@ -66,7 +62,6 @@ public class TestServicesDeploy extends RondoDeployerTest {
 //                        .executable(true)
 //                        .writable(true))
 
-//                .resource(Bundle.class, "groovy").dependsOn(Bundle.class, "event admin")
 //                .resource(Bundle.class,"event admin").dependsOn(Bundle.class,"config admin")
 //                .resource(File.class,"a file").dependsOn(Bundle.class,"config admin")
                 .resource(Service.class,"config admin").dependsOn(Bundle.class,"config admin");

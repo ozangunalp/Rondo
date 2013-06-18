@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Description -->
+    <name>Rondo Parent</name>
+
     <!-- Coordinates -->
     <groupId>fr.liglab.adele.rondo</groupId>
     <artifactId>rondo-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-
-    <!-- Description -->
-    <name>Rondo Parent</name>
 
     <!-- Properties -->
     <properties>

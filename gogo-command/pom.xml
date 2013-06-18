@@ -8,42 +8,38 @@
     <parent>
         <groupId>fr.liglab.adele.rondo</groupId>
         <artifactId>rondo-parent</artifactId>
-        <relativePath>../rondo-parent</relativePath>
-        <version>0.1-SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
 
+    <!-- Description -->
+    <name>Rondo Gogo Command</name>
+
     <!-- Coordinates -->
-    <artifactId>rondo-infrastructure-gogo-command</artifactId>
+    <artifactId>rondo-gogo-command</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>bundle</packaging>
-
-    <!-- Description -->
-    <name>Rondo Infrastructure Gogo Command</name>
 
     <!-- Dependencies -->
     <dependencies>
         <dependency>
             <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <version>4.3.1</version>
+            <artifactId>org.apache.felix.ipojo</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.gogo.runtime</artifactId>
             <version>0.10.0</version>
         </dependency>
+
         <dependency>
             <groupId>fr.liglab.adele.rondo</groupId>
-            <artifactId>rondo-infrastructure-model</artifactId>
+            <artifactId>rondo-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.rondo</groupId>
-            <artifactId>rondo-infrastructure-deployer</artifactId>
+            <artifactId>rondo-deployer</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
