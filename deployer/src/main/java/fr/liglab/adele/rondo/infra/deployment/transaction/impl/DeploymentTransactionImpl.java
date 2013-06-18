@@ -161,7 +161,7 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
                     }
                 }
                 // TODO should decide where to clean up
-                throw new DeploymentException("Transaction error on commit, rolled back to initial state");
+                throw new DeploymentException("Transaction error on commit, rolled back to initial state: "+m_failReason.getMessage());
             }
             this.m_state = TERMINATED;
         } else {
