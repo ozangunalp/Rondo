@@ -19,6 +19,7 @@
                 <module>core</module>
                 <module>deployer</module>
                 <module>gogo-command</module>
+                <module>cloner</module>
             </modules>
         </profile>
 
