@@ -11,9 +11,10 @@ public interface DeploymentCoordinator {
      * Create a new transaction
      * @param name transaction name
      * @param timeout time out of the new transaction
-     * @return
+     * @param threaded if transaction will be parallel
+     * @return deployment transaction
      */
-    DeploymentTransaction create(String name, int timeout);
+    DeploymentTransaction create(String name, int timeout, boolean threaded);
 
     /**
      * @return current transaction

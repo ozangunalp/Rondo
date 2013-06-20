@@ -15,57 +15,57 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
     /**
      * Transaction id
      */
-    private final long m_id;
+    final long m_id;
 
     /**
      * Transaction name
      */
-    private final String m_name;
+    final String m_name;
 
     /**
      * Coordinator reference
      */
-    private final DeploymentCoordinatorImpl m_coordinator;
+    final DeploymentCoordinatorImpl m_coordinator;
 
     /**
      * Participants list
      */
-    private final LinkedList<DeploymentParticipant> m_participants;
+    final LinkedList<DeploymentParticipant> m_participants;
 
     /**
      * Properties of this transacation
      */
-    private final HashMap<String, Object> m_variables;
+    final HashMap<String, Object> m_variables;
 
     /**
      * Initiator thread
      */
-    private final Thread m_initiatorThread;
+    final Thread m_initiatorThread;
 
     /**
      * Transaction state
      */
-    private volatile int m_state;
+    volatile int m_state;
 
     /**
      * Deadline set by the timeout
      */
-    private long m_deadline;
+    long m_deadline;
 
     /**
      * Task to call when timeout deadline is up
      */
-    private TimerTask m_timeoutTask;
+    TimerTask m_timeoutTask;
 
     /**
      * Prepare index
      */
-    private int m_prepareIndex;
+    int m_prepareIndex;
 
     /**
      * Fail reason
      */
-    private Throwable m_failReason;
+    Throwable m_failReason;
 
     /**
      * Constructor
@@ -240,7 +240,7 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
         fail(TIMEOUT);
     }
 
-    private boolean startTermination() {
+    boolean startTermination() {
         if (this.m_state == ACTIVE) {
             this.m_state = TERMINATING;
             this.scheduleTimeout(-1);

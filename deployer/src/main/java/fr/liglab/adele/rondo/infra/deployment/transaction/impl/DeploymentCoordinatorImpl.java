@@ -45,9 +45,14 @@ public class DeploymentCoordinatorImpl implements DeploymentCoordinator {
     }
 
     @Override
-    public DeploymentTransaction create(String name, int timeout) {
+    public DeploymentTransaction create(String name, int timeout,boolean threaded) {
         long id = m_ctr.incrementAndGet();
-        DeploymentTransactionImpl newTransaction = new DeploymentTransactionImpl(id, this, name, timeout);
+        DeploymentTransactionImpl newTransaction;
+        if(threaded){
+            newTransaction = new ThreadedDeploymentTransactionImpl(id,this,name,timeout);
+        } else{
+            newTransaction = new DeploymentTransactionImpl(id, this, name, timeout);
+        }
         m_transactions.put(id, newTransaction);
         return newTransaction;
     }

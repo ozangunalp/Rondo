@@ -93,7 +93,7 @@ public class DeploymentHandleImpl implements DeploymentHandle {
             deploymentPlan = m_customizer.preDeployment(this);
         }
 
-        DeploymentTransaction transaction = m_deployer.getCoordinator().create("infrastructure", m_timeout);
+        DeploymentTransaction transaction = m_deployer.getCoordinator().create("infrastructure", m_timeout,false);
         // set up a working directory for the deployment
         File workingDir = new File("deployment", "cache");
         workingDir.mkdirs();
@@ -132,12 +132,14 @@ public class DeploymentHandleImpl implements DeploymentHandle {
     public void dryRun() {
         m_deployer.log(LogService.LOG_INFO, "Starting to dry-run (prepare but, won't commit) with timeout: " + m_timeout);
         setState(DeploymentState.DRYRUNNING);
+
         DeploymentPlan deploymentPlan = m_plan;
         if(m_customizer!=null){
             m_deployer.log(LogService.LOG_DEBUG, "Calling customizer preDeployment");
             deploymentPlan = m_customizer.preDeployment(this);
         }
-        DeploymentTransaction transaction = m_deployer.getCoordinator().create("infrastructure", m_timeout);
+        long l = System.currentTimeMillis();
+        DeploymentTransaction transaction = m_deployer.getCoordinator().create("infrastructure", m_timeout,false);
         // start transaction
         try {
             this.callProcessors(transaction,deploymentPlan);
@@ -145,13 +147,14 @@ public class DeploymentHandleImpl implements DeploymentHandle {
             transaction.fail(t);
             m_deployer.log(LogService.LOG_WARNING,"Failed at prepare, reason:",transaction.getFailure());
         } // don't do commit this is a dry run!!!
-        transaction.fail(new DeploymentException("This is was a dry run! Cleaned up preparing mess.."));
+        //transaction.fail(new DeploymentException("This is was a dry run! Cleaned up preparing mess.."));
         // call customizer post deployment
         if(m_customizer!=null){
             m_deployer.log(LogService.LOG_DEBUG, "Calling customizer postDeployment");
             m_customizer.postDeployment(this);
         }
-        m_deployer.log(LogService.LOG_INFO, "Dry-run finished", transaction.getFailure());
+        long time = System.currentTimeMillis() - l;
+        m_deployer.log(LogService.LOG_INFO, "Dry-run finished in: "+time);
         setState(DeploymentState.CREATED);
     }
 
