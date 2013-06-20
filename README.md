@@ -10,10 +10,12 @@ Rondo subprojects are organized as follows:
 - *example*: This project contains an platform example ready for deployment.
 - *tests*: This directory contains the integration tests.
  
-## Infrastructure Model
+## Platform Model
+
+Rondo tools are based on typed 
 
 ## Deployment
 
-## Infrastructure Language Extensions
+## Platform Language Extensions
 
 ## Deployment Hooks with customizers
