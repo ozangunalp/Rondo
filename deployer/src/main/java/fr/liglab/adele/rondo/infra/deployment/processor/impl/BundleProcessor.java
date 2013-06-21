@@ -77,6 +77,7 @@ public class BundleProcessor extends DefaultResourceProcessor {
             super(resource,transaction);
             if (resource instanceof Bundle) {
                 m_bundleDef = (Bundle) resource;
+                transaction.extendTimeout(3000);
             } else {
                 throw new DeploymentException("Received resource " + resource.id() + " is not of type: " + m_resourceType);
             }
@@ -114,7 +115,8 @@ public class BundleProcessor extends DefaultResourceProcessor {
         public void commit() throws DeploymentException {
             try {
                 if(initialBundleState!=null){
-                    bundle = initialBundleState.getResourceUsing(m_everest);
+                    bundle = m_everest.process(new DefaultRequest(Action.READ, initialBundleState.getPath(), null));
+                    //bundle = initialBundleState.getResourceUsing(m_everest);
                 }
                 if(bundle==null){
                     if (this.cachedBundle == null || !this.cachedBundle.exists()) {
