@@ -55,12 +55,15 @@
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.gogo.command</artifactId>
             <version>0.12.0</version>
-
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.ipojo</artifactId>
             <version>${ipojo.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo.arch.gogo</artifactId>
         </dependency>
         
         <!-- pax url handler mvn -->
@@ -121,12 +124,12 @@
 
         <dependency>
             <groupId>fr.liglab.adele.rondo</groupId>
-            <artifactId>rondo-infrastructure-model</artifactId>
+            <artifactId>rondo-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.rondo</groupId>
-            <artifactId>rondo-infrastructure-deployer</artifactId>
+            <artifactId>rondo-deployer</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
