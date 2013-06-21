@@ -33,8 +33,8 @@ public class BundleImpl extends AbstractResourceDeclaration<BundleImpl> implemen
     public Map<String, Object> extraProperties() {
         Map<String, Object> props = this.properties();
         props.remove("source");
-        props.remove(Constants.BUNDLE_SYMBOLICNAME);
-        props.remove(Constants.BUNDLE_VERSION);
+        props.remove(Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE);
+        props.remove(Constants.BUNDLE_VERSION_ATTRIBUTE);
         return props;
     }
 
@@ -43,11 +43,11 @@ public class BundleImpl extends AbstractResourceDeclaration<BundleImpl> implemen
     }
 
     public String symbolicName() {
-        return (String) this.properties().get(Constants.BUNDLE_SYMBOLICNAME);
+        return (String) this.properties().get(Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE);
     }
 
     public String version() {
-        return (String) this.properties().get(Constants.BUNDLE_VERSION);
+        return (String) this.properties().get(Constants.BUNDLE_VERSION_ATTRIBUTE);
     }
 
     public BundleImpl source(String source) {
@@ -56,12 +56,12 @@ public class BundleImpl extends AbstractResourceDeclaration<BundleImpl> implemen
     }
 
     public BundleImpl symbolicName(String symbolicName) {
-        this.with(Constants.BUNDLE_SYMBOLICNAME).setto(symbolicName);
+        this.with(Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE).setto(symbolicName);
         return this;
     }
 
     public BundleImpl version(String version) {
-        this.with(Constants.BUNDLE_VERSION).setto(version);
+        this.with(Constants.BUNDLE_VERSION_ATTRIBUTE).setto(version);
         return this;
     }
 
