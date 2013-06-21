@@ -103,7 +103,7 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
     @Override
     public void prepare() throws DeploymentException {
         ListIterator<DeploymentParticipant> listIterator = this.m_participants.listIterator();
-        while (listIterator.hasNext()) {
+        while (listIterator.hasNext() && !isTerminated()) {
             // store the index of to be prepared participant
             this.m_prepareIndex = listIterator.nextIndex();
             DeploymentParticipant nextParticipant = listIterator.next();
