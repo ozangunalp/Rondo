@@ -1,6 +1,5 @@
 package fr.liglab.adele.rondo.infra.example;
 
-import fr.liglab.adele.rondo.infra.annotations.Infrastructure;
 import fr.liglab.adele.rondo.infra.impl.InfrastructureImpl;
 import fr.liglab.adele.rondo.infra.model.Bundle;
 
@@ -15,7 +14,7 @@ import static fr.liglab.adele.rondo.infra.impl.PackageImpl.aPackage;
  * Time: 2:15 PM
  */
 
-@Infrastructure(immediate = true)
+//@Infrastructure(immediate = true)
 public class IcasaPlatform {
 
     InfrastructureImpl inf ;

@@ -17,7 +17,7 @@ import static fr.liglab.adele.rondo.infra.impl.PackageImpl.aPackage;
 @Infrastructure(immediate = true)
 public class ExampleInfrastructure {
 
-        InfrastructureImpl inf = infrastructure()
+    InfrastructureImpl inf = infrastructure()
                 .resource(bundle("config admin")
                         .source("http://apache.opensourcemirror.com//felix/org.apache.felix.configadmin-1.6.0.jar")
                         .state("ACTIVE")
