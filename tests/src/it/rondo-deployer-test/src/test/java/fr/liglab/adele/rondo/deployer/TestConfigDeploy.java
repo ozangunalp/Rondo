@@ -7,6 +7,7 @@ import fr.liglab.adele.rondo.infra.model.Infrastructure;
 import org.junit.Test;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -115,8 +116,39 @@ public class TestConfigDeploy extends RondoDeployerTest {
     }
 
     @Test
-    public void testFactroyConfigCreation(){
+    public void testFactroyConfigCreation() throws IOException, InvalidSyntaxException {
 
+        Infrastructure inf = infrastructure()
+
+                .resource(bundle("file install")
+                        //.source("mvn:org.apache.felix/org.apache.felix.fileinstall/3.2.6")
+                        .source("http://apache.opensourcemirror.com//felix/org.apache.felix.fileinstall-3.2.6.jar")
+                        .state("ACTIVE")
+                        .symbolicName("org.apache.felix.fileinstall")
+                        .version("3.2.6"))
+
+                .resource(configuration("a config")
+                        .factoryPid("factory")
+                        .location("http://apache.opensourcemirror.com//felix/org.apache.felix.fileinstall-3.2.6.jar")
+                        .with("prop").setto("value"))
+
+                .resource(Configuration.class, "a config").dependsOn(Bundle.class, "file install")
+                ;
+
+        ServiceRegistration<Infrastructure> registration = osgiHelper.getContext().registerService(Infrastructure.class, inf, null);
+        DeploymentHandle deploymentHandle = deployer.getDeploymentHandle();
+        assertThat(deploymentHandle).isNotNull();
+        System.out.println("DEPLOYMENT STATE: " + deploymentHandle.getState().toString());
+        System.out.println("DEPLOYMENT PLAN: " + deploymentHandle.getPlan().toString());
+        deploymentHandle.apply();
+        System.out.println("DEPLOYMENT STATE: " + deploymentHandle.getState().toString());
+
+
+        ConfigurationAdmin configurationAdmin = osgiHelper.getServiceObject(ConfigurationAdmin.class);
+        org.osgi.service.cm.Configuration[] configurations = configurationAdmin.listConfigurations(null);
+        for (org.osgi.service.cm.Configuration configuration : configurations) {
+            System.out.println(configuration.getPid()+" - "+configuration.getFactoryPid());
+        }
     }
 
 }

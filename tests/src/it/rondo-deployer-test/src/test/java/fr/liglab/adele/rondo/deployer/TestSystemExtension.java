@@ -2,7 +2,6 @@ package fr.liglab.adele.rondo.deployer;
 
 import fr.liglab.adele.rondo.infra.deployment.DeploymentHandle;
 import fr.liglab.adele.rondo.infra.model.Infrastructure;
-import org.apache.felix.ipojo.architecture.Architecture;
 import org.junit.Test;
 import org.ops4j.pax.exam.options.CompositeOption;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;

@@ -2,14 +2,11 @@ package fr.liglab.adele.rondo.deployer;
 
 import fr.liglab.adele.rondo.infra.deployment.DeploymentHandle;
 import fr.liglab.adele.rondo.infra.model.Bundle;
-import fr.liglab.adele.rondo.infra.model.Configuration;
 import fr.liglab.adele.rondo.infra.model.Infrastructure;
-import org.apache.felix.ipojo.everest.osgi.OsgiResourceUtils;
 import org.junit.Test;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.cm.ConfigurationAdmin;
 
 import static fr.liglab.adele.rondo.infra.impl.BundleImpl.bundle;
 import static fr.liglab.adele.rondo.infra.impl.InfrastructureImpl.infrastructure;
@@ -144,7 +141,7 @@ public class TestBundleDeploy extends RondoDeployerTest {
                         .symbolicName("org.apache.felix.eventadmin")
                         .version("1.3.2"))
 
-                .resource(Bundle.class, "groovy").dependsOn(Bundle.class, "event admin")
+                //.resource(Bundle.class, "groovy").dependsOn(Bundle.class, "event admin")
                 .resource(Bundle.class, "config admin").dependsOn(Bundle.class,"file install")
                 .resource(Bundle.class,"event admin").dependsOn(Bundle.class,"config admin")
                 ;

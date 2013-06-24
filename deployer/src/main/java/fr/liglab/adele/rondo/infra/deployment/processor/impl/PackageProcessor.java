@@ -12,6 +12,8 @@ import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.everest.impl.DefaultRequest;
 import org.apache.felix.ipojo.everest.services.*;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 import org.osgi.framework.wiring.BundleCapability;
 
@@ -63,7 +65,7 @@ public class PackageProcessor extends DefaultResourceProcessor {
 
         @Override
         public void commit() throws DeploymentException {
-            PackageResourceFilter packageResourceFilter = new PackageResourceFilter(packageDef);
+            PackageResourceFilter packageResourceFilter = new PackageResourceFilter(m_context,packageDef);
             Resource packages = null;
             try {
                 packages = m_everest.process(new DefaultRequest(Action.READ, Path.from("/osgi/packages"), null));
@@ -88,9 +90,17 @@ public class PackageProcessor extends DefaultResourceProcessor {
     public class PackageResourceFilter implements ResourceFilter{
 
         Package pkg;
+        Filter filter;
 
-        public PackageResourceFilter(Package pkg) {
+        public PackageResourceFilter(BundleContext bundleContext,Package pkg) throws DeploymentException {
             this.pkg = pkg;
+            if(pkg.filter()!=null){
+                try {
+                    filter = bundleContext.createFilter(pkg.filter());
+                } catch (InvalidSyntaxException e) {
+                    throw new DeploymentException(e.getMessage());
+                }
+            }
         }
 
         @Override
@@ -98,13 +108,18 @@ public class PackageProcessor extends DefaultResourceProcessor {
             if(resource.adaptTo(BundleCapability.class)==null){
                 return false;
             }
-            String packageName = (String) resource.getMetadata().get("osgi.wiring.package");
+            ResourceMetadata attributes = resource.getMetadata().get("attributes", ResourceMetadata.class);
+            String packageName = attributes.get("osgi.wiring.package",String.class);
             boolean versionCheck = true;
-            Version version = (Version) resource.getMetadata().get("version");
+            Version version = attributes.get("version",Version.class);
             if(pkg.version()!=null){
                 versionCheck = version.equals(new Version(pkg.version()));
             }
-            return packageName.equals(pkg.name()) && versionCheck;
+            boolean filterCheck = true;
+            if(filter!=null){
+                filterCheck = filter.matches(attributes);
+            }
+            return packageName.equals(pkg.name()) && versionCheck && filterCheck;
         }
     }
 

@@ -5,12 +5,9 @@ import fr.liglab.adele.rondo.infra.model.Bundle;
 import fr.liglab.adele.rondo.infra.model.Package;
 import fr.liglab.adele.rondo.infra.model.Configuration;
 import fr.liglab.adele.rondo.infra.model.Infrastructure;
-import org.apache.felix.ipojo.everest.osgi.OsgiResourceUtils;
 import org.junit.Test;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ConfigurationAdmin;
 

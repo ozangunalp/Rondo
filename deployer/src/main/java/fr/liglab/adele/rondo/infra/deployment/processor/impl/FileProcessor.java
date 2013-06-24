@@ -81,21 +81,7 @@ public class FileProcessor extends DefaultResourceProcessor {
             if(m_fileDef.path()==null){ // fail fast
                 throw new DeploymentException("A target path is mandatory");
             }
-
-            try {
-                String path = m_fileDef.path();
-                URL pathUrl = new URL(m_fileDef.path());
-                if(!"file".equals(pathUrl.getProtocol())){
-                    throw new DeploymentException("Error handling url : "+m_fileDef.path()+" is not a file url.");
-                }
-                try {
-                    pathFile = new java.io.File(pathUrl.toURI());
-                } catch(URISyntaxException e) {
-                    pathFile = new java.io.File(pathUrl.getPath());
-                }
-            } catch (MalformedURLException e) {
-                throw new DeploymentException("Error handling url : "+m_fileDef.path()+" : "+e.getMessage());
-            }
+            pathFile = new java.io.File(m_fileDef.path());
             if(m_fileDef.source()!=null){
                 try {
                     sourceUrl = new URL(m_fileDef.source());

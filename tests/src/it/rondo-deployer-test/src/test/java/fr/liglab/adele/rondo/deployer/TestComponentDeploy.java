@@ -3,13 +3,11 @@ package fr.liglab.adele.rondo.deployer;
 import fr.liglab.adele.rondo.infra.deployment.DeploymentHandle;
 import fr.liglab.adele.rondo.infra.model.Bundle;
 import fr.liglab.adele.rondo.infra.model.Component;
-import fr.liglab.adele.rondo.infra.model.Configuration;
 import fr.liglab.adele.rondo.infra.model.Infrastructure;
 import org.junit.Test;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.io.IOException;
 

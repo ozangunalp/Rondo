@@ -89,7 +89,6 @@ public class InstanceProcessor extends DefaultResourceProcessor {
                         if(m_instanceDef.name()!=null){
                             params.put("instance.name",m_instanceDef.name());
                         }
-                        System.out.println(factory.getPath()+" : "+params);
                         instance = m_everest.process(new DefaultRequest(Action.CREATE,factory.getPath(),params));
                     } catch (IllegalActionOnResourceException e) {
                         // can happen
@@ -104,22 +103,14 @@ public class InstanceProcessor extends DefaultResourceProcessor {
                 }
 
             } else { // there was an instance with given name, we reconfigure it
-                System.out.println("reconfiguring with "+m_instanceDef.extraProperties());
                 try {
                     Map<String, Object> params = new HashMap<String, Object>();
-                    params.putAll(m_instanceDef.extraProperties());
-                    params.put("__action","reconfigure");
+                    params.put("configuration",m_instanceDef.extraProperties());
                     instance = m_everest.process(new DefaultRequest(Action.UPDATE,m_initialInstance.getPath(),params));
                 } catch (IllegalActionOnResourceException e) {
                     // this can happen
-                    System.out.println("illegal action");
-                    e.printStackTrace();
-
                 } catch (ResourceNotFoundException e) {
                     // if this happens, we could not find the instance
-                    System.out.println("resource not found");
-                    e.printStackTrace();
-
                 }
             }
 
@@ -129,24 +120,15 @@ public class InstanceProcessor extends DefaultResourceProcessor {
                 if(m_instanceDef.state()!=null){
                     try {
                         Map<String, Object> params = new HashMap<String, Object>();
-                        if("valid".equalsIgnoreCase(m_instanceDef.state())){
-                            params.put("__action","start");
-                        }
-                        if("stopped".equalsIgnoreCase(m_instanceDef.state())){
-                            params.put("__action","stop");
-                        }
+                        params.put("state",m_instanceDef.state());
                         //ignore other states
                         instance = m_everest.process(new DefaultRequest(Action.UPDATE,instance.getPath(),params));
                     } catch (IllegalActionOnResourceException e) {
                         // hope this does not happen
-                        System.out.println("illegal action");
                         e.printStackTrace();
-
                     } catch (ResourceNotFoundException e) {
                         // well this neither..
-                        System.out.println("resource not found");
                         e.printStackTrace();
-
                     }
                 }
                 m_instance = instance;
@@ -179,19 +161,7 @@ public class InstanceProcessor extends DefaultResourceProcessor {
                     // TODO reconfigure and state rollback
                     Map<String, Object> updateParams = new HashMap<String, Object>();
                     ResourceMetadata resourceState = m_initialInstance.getResourceState();
-                    ResourceMetadata configuration = resourceState.get("configuration", ResourceMetadata.class);
-                    for (String key : configuration.keySet()) {
-                        updateParams.put(key,configuration.get(key));
-                    }
-                    m_everest.process(new DefaultRequest(Action.UPDATE, m_initialInstance.getPath(), updateParams));
-                    updateParams = new HashMap<String, Object>();
-                    String state = resourceState.get("state", String.class);
-                    if("valid".equalsIgnoreCase(state)){
-                        updateParams.put("__action","start");
-                    }
-                    if("stopped".equalsIgnoreCase(state)){
-                        updateParams.put("__action","stop");
-                    }
+                    updateParams.putAll(resourceState);
                     m_everest.process(new DefaultRequest(Action.UPDATE, m_initialInstance.getPath(), updateParams));
 
                 } catch (IllegalActionOnResourceException e) {
@@ -274,16 +244,16 @@ public class InstanceProcessor extends DefaultResourceProcessor {
                     }
                 }
                 if(factory==null){
-                    System.out.println("factory null");
+                    //System.out.println("factory null");
                     return false;
                 }
                 if(!factory.getMetadata().get("name",String.class).equals(instanceDef.factory())){
-                    System.out.println("cant verify factory name");
+                    //System.out.println("cant verify factory name");
                     return false;
                 }
                 if(instanceDef.factoryVersion()!=null){
                     if(!factory.getMetadata().get("version",String.class).equals(instanceDef.factoryVersion())){
-                        System.out.println("cant verify factory version");
+                        //System.out.println("cant verify factory version");
                         return false;
                     }
                 }
@@ -292,17 +262,17 @@ public class InstanceProcessor extends DefaultResourceProcessor {
                     // look if instance properties match given properties
                     Iterator<String> iterator = instanceDef.extraProperties().keySet().iterator();
                     ResourceMetadata configuration = instance.getMetadata().get("configuration", ResourceMetadata.class);
-                    System.out.println(configuration);
+                    //System.out.println(configuration);
                     while (propertyCheck && iterator.hasNext()) {
                         String key = iterator.next();
                         Object o = instanceDef.properties().get(key);
                         if (!o.equals(configuration.get(key))) {
-                            System.out.println("Found "+configuration.get(key)+" expected "+o);
+                            //System.out.println("Found "+configuration.get(key)+" expected "+o);
                             propertyCheck = false;
                         }
                     }
                 }
-                System.out.println("propertyCheck"+propertyCheck);
+                //System.out.println("propertyCheck"+propertyCheck);
                 return propertyCheck;
             }
             return false;

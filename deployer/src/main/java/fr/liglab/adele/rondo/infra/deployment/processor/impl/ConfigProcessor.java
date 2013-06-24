@@ -63,15 +63,17 @@ public class ConfigProcessor extends DefaultResourceProcessor {
         @Override
         public void prepare() throws DeploymentException {
             String pid = m_configDef.pid();
-            try {
-                Resource configResource = m_everest.process(new DefaultRequest(Action.READ, Path.from("/osgi/configurations").addElements(pid), null));
-                if(configResource!=null){
-                    m_initialConfig = new ResourceState(null,configResource);
+            if(pid!=null){
+                try {
+                    Resource configResource = m_everest.process(new DefaultRequest(Action.READ, Path.from("/osgi/configurations").addElements(pid), null));
+                    if(configResource!=null){
+                        m_initialConfig = new ResourceState(null,configResource);
+                    }
+                } catch (IllegalActionOnResourceException e) {
+                    // should never happen
+                } catch (ResourceNotFoundException e) {
+                    // this can happen, then there is no initial state to save
                 }
-            } catch (IllegalActionOnResourceException e) {
-                // should never happen
-            } catch (ResourceNotFoundException e) {
-                // this can happen, then there is no initial state to save
             }
         }
 
