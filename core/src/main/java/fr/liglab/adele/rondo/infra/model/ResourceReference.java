@@ -1,5 +1,7 @@
 package fr.liglab.adele.rondo.infra.model;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: ozan
@@ -13,5 +15,9 @@ public interface ResourceReference<T extends ResourceDeclaration> {
     public Class<T> type();
 
     public String id();
+
+    public List<Dependency> dependencies();
+
+    public List<Dependency> providings();
 
 }

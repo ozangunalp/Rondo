@@ -60,6 +60,9 @@ public abstract class AbstractResourceDeclaration<T extends AbstractResourceDecl
 
 
     public T name(String name) {
+        if(id()==null){
+            this.id = name;
+        }
         this.name = name;
         return self();
     }

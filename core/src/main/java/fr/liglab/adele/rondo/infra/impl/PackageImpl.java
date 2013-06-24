@@ -10,8 +10,6 @@ import java.util.Map;
  */
 public class PackageImpl extends AbstractResourceDeclaration<PackageImpl> implements fr.liglab.adele.rondo.infra.model.Package {
 
-    private String version;
-
     public PackageImpl(String name) {
         super(name);
     }
@@ -43,6 +41,16 @@ public class PackageImpl extends AbstractResourceDeclaration<PackageImpl> implem
 
     public PackageImpl version(String version) {
         this.with("version").setto(version);
+        return this;
+    }
+
+    @Override
+    public String filter() {
+        return (String) this.properties().get("filter");
+    }
+
+    public PackageImpl filter(String filter) {
+        this.with("filter").setto(filter);
         return this;
     }
 

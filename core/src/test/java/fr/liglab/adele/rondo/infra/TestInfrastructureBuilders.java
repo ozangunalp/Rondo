@@ -58,20 +58,25 @@ public class TestInfrastructureBuilders {
                                                 pair("osman", "value"),
                                                 pair("adsgsadg", 3)
                                         )))
-                .resource(service().objectClass(list("asdgadsg", "asdgadsgsdg")));
+                .resource(service("service").objectClass(list("asdgadsg", "asdgadsgsdg")));
+
+        System.out.println(inf.getResourceReferences());
+        System.out.println(inf.getResources());
 
         inf.resource(Bundle.class, "bundle1").dependsOn(Package.class, "package1")
-                .resource(Configuration.class, "conf id").dependsOn(File.class, "file").dependsOn(Bundle.class, "bundle2").dependsOn(Bundle.class, "bundle1");
+                .resource(Configuration.class, "conf id").dependsOn(File.class, "file")
+                .resource(File.class, "file").dependsOn(Bundle.class, "bundle2")
+                .resource(Bundle.class, "bundle2").dependsOn(Bundle.class, "bundle1");
 
-        Map<String, Bundle> map = inf.getResources(Bundle.class);
-        Bundle resource = inf.getResource(Bundle.class, "bundle1");
+        Map<String, ResourceReference<Bundle>> map = inf.getResourceReferences(Bundle.class);
+        ResourceReference<Bundle> resource = inf.getResourceReference(Bundle.class, "bundle1");
         System.out.println(map);
         System.out.println(resource);
-        System.out.println(inf.getResource(File.class, "file"));
+        ResourceReference<File> fileReference = inf.getResourceReference(File.class, "file");
+        System.out.println(inf.getResource(fileReference));
         for (Dependency dependency : inf.getDependencies()) {
             System.out.println(dependency);
         }
-
     }
 
 }

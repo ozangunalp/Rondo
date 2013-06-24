@@ -17,11 +17,11 @@ public interface Infrastructure {
 
     public List<ResourceReference> getResourceReferences();
 
-    public <T extends ResourceDeclaration> Map<String, T> getResources(Class<T> resourceType);
+    public <T extends ResourceDeclaration> Map<String, ResourceReference<T>> getResourceReferences(Class<T> resourceType);
+
+    <T extends ResourceDeclaration> ResourceReference<T> getResourceReference(Class<T> resourceType, String resourceId);
 
     public List<ResourceDeclaration> getResources();
-
-    public <T extends ResourceDeclaration> T getResource(Class<T> resourceType, String resourceName);
 
     public <T extends ResourceDeclaration> T getResource(ResourceReference<T> reference);
 

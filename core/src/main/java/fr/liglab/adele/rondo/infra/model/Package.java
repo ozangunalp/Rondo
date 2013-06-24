@@ -10,4 +10,6 @@ public interface Package extends ResourceDeclaration {
 
     public String version();
 
+    public String filter();
+
 }
