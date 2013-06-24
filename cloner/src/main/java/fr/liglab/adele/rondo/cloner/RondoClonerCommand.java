@@ -2,11 +2,11 @@ package fr.liglab.adele.rondo.cloner;
 
 import fr.liglab.adele.rondo.infra.impl.*;
 import fr.liglab.adele.rondo.infra.impl.InfrastructureImpl.ResourceReferenceImpl;
-import fr.liglab.adele.rondo.infra.model.Dependency;
-import fr.liglab.adele.rondo.infra.model.Instance;
-import fr.liglab.adele.rondo.infra.model.ResourceDeclaration;
-import fr.liglab.adele.rondo.infra.model.Service;
+import fr.liglab.adele.rondo.infra.model.*;
+import fr.liglab.adele.rondo.infra.model.Package;
+import org.apache.commons.io.FileUtils;
 import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.everest.impl.DefaultRequest;
 import org.apache.felix.ipojo.everest.services.*;
 import org.apache.felix.service.command.Descriptor;
@@ -16,6 +16,8 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 import org.osgi.framework.wiring.FrameworkWiring;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,7 +44,7 @@ public class RondoClonerCommand {
     public static final String RANGE_SPLITTER = "\\.\\.";
 
     /**
-     * Defines the command scope (ipojo).
+     * Defines the command scope (rondo).
      */
     @ServiceProperty(name = "osgi.command.scope", value = "rondo")
     String m_scope;
@@ -133,9 +135,10 @@ public class RondoClonerCommand {
 //            System.out.println(resourceDeclaration);
 //        }
 
-        for (Dependency dependency : infrastructure.getDependencies()) {
-            System.out.println(dependency.toString());
-        }
+        String dump = "/Users/ozan/dumped.txt" ;
+
+        File file = printInfra(infrastructure, dump);
+        System.out.println(file.getPath());
 
     }
 
@@ -144,8 +147,6 @@ public class RondoClonerCommand {
         Set<Long> nextBundleIds = new HashSet<Long>();
 
         //Resource packages = this.get("/osgi/packages");
-
-        Resource factories = this.get("/ipojo/factory");
 
         for (Long bundleId : bundleIds) {
 
@@ -186,27 +187,29 @@ public class RondoClonerCommand {
                             if(relation.getName().startsWith("wire")){
                                 Resource wire = this.get(relation.getHref().toString());
                                 Relation wireRel = getRelation(wire, "capability");
-                                Resource capability = this.get(wireRel.getHref().toString());
-                                Relation pkgRel = getRelation(capability, "package");
-                                if(pkgRel!=null){
-                                    Resource pkg = this.get(pkgRel.getHref().toString());
-                                    PackageImpl aPackage = packageResource(pkg);
-                                    //System.out.println("Package: "+aPackage.toString());
-                                    // add package
-                                    infrastructure.resource(aPackage);
-                                    // add dependency to the bundle
-                                    //System.out.println("Adding: "+bundle.id()+" requires: "+aPackage.id());
-                                    infrastructure.resource(fr.liglab.adele.rondo.infra.model.Bundle.class, bundle.id())
-                                            .dependsOn(fr.liglab.adele.rondo.infra.model.Package.class, aPackage.id());
+                                if(wireRel!=null){
+                                    Resource capability = this.get(wireRel.getHref().toString());
+                                    Relation pkgRel = getRelation(capability, "package");
+                                    if(pkgRel!=null){
+                                        Resource pkg = this.get(pkgRel.getHref().toString());
+                                        PackageImpl aPackage = packageResource(pkg);
+                                        //System.out.println("Package: "+aPackage.toString());
+                                        // add package
+                                        infrastructure.resource(aPackage);
+                                        // add dependency to the bundle
+                                        //System.out.println("Adding: "+bundle.id()+" requires: "+aPackage.id());
+                                        infrastructure.resource(fr.liglab.adele.rondo.infra.model.Bundle.class, bundle.id())
+                                                .dependsOn(fr.liglab.adele.rondo.infra.model.Package.class, aPackage.id());
 
-                                    Relation providerBundleRelation = getRelation(pkg, "provider-bundle");
-                                    if(providerBundleRelation!=null){
-                                        Resource providerBundle = this.get(providerBundleRelation.getHref().toString());
-                                        //BundleImpl providerBundleDeclaration = bundleResource(providerBundle);
-                                        Long nextBundleId = providerBundle.getMetadata().get("bundle-id", Long.class);
-                                        //System.out.println("PACKAGE PROVIDER: "+nextBundleId);
-                                        if(!bundleIds.contains(nextBundleId)){
-                                            nextBundleIds.add(nextBundleId);
+                                        Relation providerBundleRelation = getRelation(pkg, "provider-bundle");
+                                        if(providerBundleRelation!=null){
+                                            Resource providerBundle = this.get(providerBundleRelation.getHref().toString());
+                                            //BundleImpl providerBundleDeclaration = bundleResource(providerBundle);
+                                            Long nextBundleId = providerBundle.getMetadata().get("bundle-id", Long.class);
+                                            //System.out.println("PACKAGE PROVIDER: "+nextBundleId);
+                                            if(!bundleIds.contains(nextBundleId)){
+                                                nextBundleIds.add(nextBundleId);
+                                            }
                                         }
                                     }
                                 }
@@ -216,129 +219,133 @@ public class RondoClonerCommand {
                 }
 
                 // look at its services
-                //Resource services = bundleResource.getResource(bundleResource.getPath() + "/services");
-                Resource services = getChild(bundleResource, "services");
-                Resource registeredServices = getChild(services, "registered");
-//                System.out.println("REGISTERED");
-                if(registeredServices!=null){
-                    for (Relation regService : registeredServices.getRelations()) {
-                        Resource serviceResource = this.get(regService.getHref().toString());
-                        ServiceImpl service = serviceResource(serviceResource);
-                        //System.out.println("Service: "+service.id());
-                        // add service
-                        infrastructure.resource(service);
-                        // add dependency to the bundle
-                        //System.out.println("\t Adding: "+service.id()+ " requires: "+bundle.id());
-                        infrastructure.resource(Service.class, service.id()).
-                                dependsOn(fr.liglab.adele.rondo.infra.model.Bundle.class, bundle.id());
-                    }
-
-                }
-                Resource usedServices = getChild(services, "uses");
-//                System.out.println("USES");
-                if(usedServices!=null){
-                    for (Relation usedService : usedServices.getRelations()) {
-                        Resource serviceResource = this.get(usedService.getHref().toString());
-                        ServiceImpl service = serviceResource(serviceResource);
-                        //System.out.println("Service: "+service.id());
-                        // add service
-                        infrastructure.resource(service);
-                        // add dependency to the bundle
-                        //System.out.println("\t Adding: "+bundle.id()+ " requires: "+service.id());
-                        infrastructure.resource(fr.liglab.adele.rondo.infra.model.Bundle.class, bundle.id()).
-                                dependsOn(Service.class, service.id());
-
-//                      //don't follow services
-//                        Relation fromBundleRelation = this.getRelation(serviceResource, "from-bundle");
-//                        if(fromBundleRelation!=null){
-//                            Resource fromBundle = this.get(fromBundleRelation.getHref().toString());
-//                            Long nextBundleId = fromBundle.getMetadata().get("bundle-id", Long.class);
-//                            System.out.println("SERVICE PROVIDER: "+nextBundleId);
-//                            if(!bundleIds.contains(nextBundleId)){
-//                                nextBundleIds.add(nextBundleId);
-//                            }
-//                        }
-
-                    }
-                }
+//                //Resource services = bundleResource.getResource(bundleResource.getPath() + "/services");
+//                Resource services = getChild(bundleResource, "services");
+//                Resource registeredServices = getChild(services, "registered");
+////                System.out.println("REGISTERED");
+//                if(registeredServices!=null){
+//                    for (Relation regService : registeredServices.getRelations()) {
+//                        Resource serviceResource = this.get(regService.getHref().toString());
+//                        ServiceImpl service = serviceResource(serviceResource);
+//                        //System.out.println("Service: "+service.id());
+//                        // add service
+//                        infrastructure.resource(service);
+//                        // add dependency to the bundle
+//                        //System.out.println("\t Adding: "+service.id()+ " requires: "+bundle.id());
+//                        infrastructure.resource(Service.class, service.id()).
+//                                dependsOn(fr.liglab.adele.rondo.infra.model.Bundle.class, bundle.id());
+//                    }
+//
+//                }
+//                Resource usedServices = getChild(services, "uses");
+////                System.out.println("USES");
+//                if(usedServices!=null){
+//                    for (Relation usedService : usedServices.getRelations()) {
+//                        Resource serviceResource = this.get(usedService.getHref().toString());
+//                        ServiceImpl service = serviceResource(serviceResource);
+//                        //System.out.println("Service: "+service.id());
+//                        // add service
+//                        infrastructure.resource(service);
+//                        // add dependency to the bundle
+//                        //System.out.println("\t Adding: "+bundle.id()+ " requires: "+service.id());
+//                        infrastructure.resource(fr.liglab.adele.rondo.infra.model.Bundle.class, bundle.id()).
+//                                dependsOn(Service.class, service.id());
+//
+////                      //don't follow services
+////                        Relation fromBundleRelation = this.getRelation(serviceResource, "from-bundle");
+////                        if(fromBundleRelation!=null){
+////                            Resource fromBundle = this.get(fromBundleRelation.getHref().toString());
+////                            Long nextBundleId = fromBundle.getMetadata().get("bundle-id", Long.class);
+////                            System.out.println("SERVICE PROVIDER: "+nextBundleId);
+////                            if(!bundleIds.contains(nextBundleId)){
+////                                nextBundleIds.add(nextBundleId);
+////                            }
+////                        }
+//
+//                    }
+//                }
 
                 //look at the components
-                for (Resource factoryByVersion : factories.getResources()) {
-                    for (Resource factory : factoryByVersion.getResources()) {
-                        Relation declaringBundleRel = getRelation(factory, "bundle");
-                        if(declaringBundleRel!=null){
-                            Resource declaringBundle = this.get(declaringBundleRel.getHref().toString());
-                            if(bundleResource.equals(declaringBundle)){
-                                ComponentImpl component = componentResource(factory);
-                                // add component
-                                //System.out.println("COMPONENT "+component);
-                                infrastructure.resource(component);
-                                // add dependency to bundle
-                                infrastructure.resource(fr.liglab.adele.rondo.infra.model.Component.class, component.id())
-                                        .dependsOn(fr.liglab.adele.rondo.infra.model.Bundle.class, bundle.id());
+//                for (Resource factoryByVersion : factories.getResources()) {
+//                    for (Resource factory : factoryByVersion.getResources()) {
+//                        Relation declaringBundleRel = getRelation(factory, "bundle");
+//                        if(declaringBundleRel!=null){
+//                            Resource declaringBundle = this.get(declaringBundleRel.getHref().toString());
+//                            if(bundleResource.equals(declaringBundle)){
+//                                ComponentImpl component = componentResource(factory);
+//                                // add component
+//                                //System.out.println("COMPONENT "+component);
+//                                infrastructure.resource(component);
+//                                // add dependency to bundle
+//                                infrastructure.resource(fr.liglab.adele.rondo.infra.model.Component.class, component.id())
+//                                        .dependsOn(fr.liglab.adele.rondo.infra.model.Bundle.class, bundle.id());
+//
+//                                // add instances
+//                                for (Relation relation : factory.getRelations()) {
+//                                    if(relation.getName().startsWith("instance")){
+//                                        Resource instanceResource = this.get(relation.getHref().toString());
+//                                        InstanceImpl instance = instanceResource(instanceResource);
+//
+//                                        //System.out.println("INSTANCE "+instance);
+//                                        // add instance
+//                                        infrastructure.resource(instance);
+//                                        // add dependency to component
+//                                        infrastructure.resource(Instance.class,instance.id())
+//                                                .dependsOn(fr.liglab.adele.rondo.infra.model.Component.class,component.id());
+//
+//                                        // find provided services
+//                                        Relation providings = getRelation(instanceResource, "providings");
+//                                        if(providings!=null){
+//                                            Resource providing = this.get(providings.getHref().toString());
+//                                            for (Relation providingRel : providing.getRelations()) {
+//                                                Resource providingResource = this.get(providingRel.getHref().toString());
+//                                                Relation service = getRelation(providingResource, "service");
+//                                                if(service!=null){
+//                                                    Resource serviceResource = this.get(service.getHref().toString());
+//                                                    ServiceImpl providedService = serviceResource(serviceResource);
+//                                                    //System.out.println("\tPROVIDED SERVICE "+providedService);
+//                                                    // add dependency to instance
+//                                                    infrastructure.resource(Service.class,providedService.id())
+//                                                            .dependsOn(Instance.class,instance.id());
+//                                                }
+//                                            }
+//                                        }
+//
+//                                        // find depending services
+//                                        Relation dependencies = getRelation(instanceResource, "dependencies");
+//                                        if(dependencies!=null){
+//                                            Resource dependency = this.get(dependencies.getHref().toString());
+//                                            for (Relation dependencyRel : dependency.getRelations()) {
+//                                                Resource dependencyResource = this.get(dependencyRel.getHref().toString());
+//                                                for (Relation dependencyRelation : dependencyResource.getRelations()) {
+//                                                    if(dependencyRelation.getName().startsWith("usedService")){
+//                                                        Resource serviceResource = this.get(dependencyRelation.getHref().toString());
+//                                                        if(serviceResource!=null){
+//                                                            ServiceImpl requiredService = serviceResource(serviceResource);
+//                                                            //System.out.println("\tREQUIRED SERVICE "+requiredService);
+//                                                            // add to infrastructure
+//                                                            infrastructure.resource(requiredService);
+//                                                            // add dependency to service
+//                                                            infrastructure
+//                                                                    .resource(Instance.class,instance.id())
+//                                                                    .dependsOn(Service.class,requiredService.id());
+//                                                        }
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//
+//                    }
+//
+//                }
 
-                                // add instances
-                                for (Relation relation : factory.getRelations()) {
-                                    if(relation.getName().startsWith("instance")){
-                                        Resource instanceResource = this.get(relation.getHref().toString());
-                                        InstanceImpl instance = instanceResource(instanceResource);
 
-                                        //System.out.println("INSTANCE "+instance);
-                                        // add instance
-                                        infrastructure.resource(instance);
-                                        // add dependency to component
-                                        infrastructure.resource(Instance.class,instance.id())
-                                                .dependsOn(fr.liglab.adele.rondo.infra.model.Component.class,component.id());
 
-                                        // find provided services
-                                        Relation providings = getRelation(instanceResource, "providings");
-                                        if(providings!=null){
-                                            Resource providing = this.get(providings.getHref().toString());
-                                            for (Relation providingRel : providing.getRelations()) {
-                                                Resource providingResource = this.get(providingRel.getHref().toString());
-                                                Relation service = getRelation(providingResource, "service");
-                                                if(service!=null){
-                                                    Resource serviceResource = this.get(service.getHref().toString());
-                                                    ServiceImpl providedService = serviceResource(serviceResource);
-                                                    //System.out.println("\tPROVIDED SERVICE "+providedService);
-                                                    // add dependency to instance
-                                                    infrastructure.resource(Service.class,providedService.id())
-                                                            .dependsOn(Instance.class,instance.id());
-                                                }
-                                            }
-                                        }
 
-                                        // find depending services
-                                        Relation dependencies = getRelation(instanceResource, "dependencies");
-                                        if(dependencies!=null){
-                                            Resource dependency = this.get(dependencies.getHref().toString());
-                                            for (Relation dependencyRel : dependency.getRelations()) {
-                                                Resource dependencyResource = this.get(dependencyRel.getHref().toString());
-                                                for (Relation dependencyRelation : dependencyResource.getRelations()) {
-                                                    if(dependencyRelation.getName().startsWith("usedService")){
-                                                        Resource serviceResource = this.get(dependencyRelation.getHref().toString());
-                                                        if(serviceResource!=null){
-                                                            ServiceImpl requiredService = serviceResource(serviceResource);
-                                                            //System.out.println("\tREQUIRED SERVICE "+requiredService);
-                                                            // add to infrastructure
-                                                            infrastructure.resource(requiredService);
-                                                            // add dependency to service
-                                                            infrastructure
-                                                                    .resource(Instance.class,instance.id())
-                                                                    .dependsOn(Service.class,requiredService.id());
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-
-                }
 
 
             }
@@ -401,7 +408,7 @@ public class RondoClonerCommand {
     }
 
     public static PackageImpl packageResource(Resource packageResource){
-        ResourceMetadata metadata = packageResource.getMetadata();
+        ResourceMetadata metadata = packageResource.getMetadata().get("attributes",ResourceMetadata.class);
         String id = packageResource.getPath().getLast();
         PackageImpl pkg = new PackageImpl(id);
         pkg.name(metadata.get("osgi.wiring.package",String.class));
@@ -455,6 +462,84 @@ public class RondoClonerCommand {
 
     public static Resource getChild(Resource resource, String childName){
         return resource.getResource(resource.getPath().addElements(childName).toString());
+    }
+
+    public static File printInfra(InfrastructureImpl infrastructure, String path) {
+
+        File dump = new File(path);
+
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("public class Infra"+infrastructure.getName()+" {");
+        sb.append("InfrastructureImpl "+infrastructure.getName()+";");
+        sb.append("\n");
+        sb.append("public Infra"+infrastructure.getName()+"() {");
+        sb.append("\n");
+        sb.append(infrastructure.getName()+" = infrastructure()");
+        sb.append("\n");
+        Map<String, ResourceReference<fr.liglab.adele.rondo.infra.model.Bundle>> bundleMap = infrastructure.getResourceReferences(fr.liglab.adele.rondo.infra.model.Bundle.class);
+
+        for (String bundleId : bundleMap.keySet()) {
+            ResourceReference<fr.liglab.adele.rondo.infra.model.Bundle> bundleReference = bundleMap.get(bundleId);
+            fr.liglab.adele.rondo.infra.model.Bundle bundle = infrastructure.getResource(bundleReference);
+            sb.append("\n");
+            sb.append(infrastructure.getName()+".resource(");
+            sb.append("bundle(\""+bundleId+"\")");
+            sb.append("\n");
+            sb.append("\t");
+            sb.append(".source(\""+bundle.source()+"\")");
+            sb.append("\n");
+            sb.append("\t");
+            sb.append(".symbolicName(\""+bundle.symbolicName()+"\")");
+            sb.append("\n");
+            sb.append("\t");
+            sb.append(".version(\""+bundle.version()+"\")");
+            sb.append("\n");
+            sb.append("\t");
+            sb.append(".state(\""+bundle.state()+"\")");
+            sb.append(");");
+            sb.append("\n\n");
+        }
+
+        sb.append("\n\n");
+
+        Map<String, ResourceReference<Package>> packageMap = infrastructure.getResourceReferences(Package.class);
+
+        for (String pkgId : packageMap.keySet()) {
+            ResourceReference<Package> packageReference = packageMap.get(pkgId);
+            Package pkg = infrastructure.getResource(packageReference);
+            sb.append("\n");
+            sb.append(infrastructure.getName()+".resource(");
+            sb.append("aPackage(\""+pkgId+"\")");
+            sb.append("\n");
+            sb.append("\t");
+            sb.append(".name(\""+pkg.name()+"\")");
+            sb.append("\n");
+            sb.append("\t");
+            sb.append(".version(\""+pkg.version()+"\")");
+            sb.append(");");
+            sb.append("\n\n");
+        }
+        sb.append("\n\n");
+
+        for (Dependency dependency : infrastructure.getDependencies()) {
+
+            sb.append(infrastructure.getName()+".resource("+dependency.requirer().type().getSimpleName()+".class,\""+dependency.requirer().id()+"\")");
+            sb.append("\n\t");
+            sb.append(".dependsOn("+dependency.provider().type().getSimpleName()+".class,\""+dependency.provider().id()+"\");");
+            sb.append("\n\n");
+        }
+        sb.append("}\n");
+        sb.append("}\n");
+        sb.append(";");
+
+
+        try {
+            FileUtils.writeStringToFile(dump, sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return dump;
     }
 
 
