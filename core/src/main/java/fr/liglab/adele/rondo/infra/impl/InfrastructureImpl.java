@@ -1,9 +1,6 @@
 package fr.liglab.adele.rondo.infra.impl;
 
-import fr.liglab.adele.rondo.infra.model.Dependency;
-import fr.liglab.adele.rondo.infra.model.Infrastructure;
-import fr.liglab.adele.rondo.infra.model.ResourceDeclaration;
-import fr.liglab.adele.rondo.infra.model.ResourceReference;
+import fr.liglab.adele.rondo.infra.model.*;
 
 import java.util.*;
 
@@ -23,7 +20,12 @@ public class InfrastructureImpl implements Infrastructure {
     /**
      *
      */
-    //private Map<Class, LinkedHashMap<String, AbstractResourceDeclaration>> resources = new HashMap<Class, LinkedHashMap<String, AbstractResourceDeclaration>>();
+    private List<Condition> m_preConditions = new ArrayList<Condition>();
+
+    /**
+     *
+     */
+    private LinkedHashMap<String, ContainedInfrastructureImpl> m_containedInfrastructures = new LinkedHashMap<String, ContainedInfrastructureImpl>();
 
     /**
      *
@@ -35,20 +37,57 @@ public class InfrastructureImpl implements Infrastructure {
      */
     private Map<ResourceReference, AbstractResourceDeclaration> resourceDeclarationMap = new HashMap<ResourceReference, AbstractResourceDeclaration>();
 
-    // Static
+    // Static Builder Methods
+    /////////////////////////////////////////////////////////////////////////////
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public static InfrastructureImpl infrastructure(String name) {
         return new InfrastructureImpl(name);
     }
 
+    /**
+     *
+     * @return
+     */
     public static InfrastructureImpl infrastructure() {
         return new InfrastructureImpl(null);
     }
 
+    /**
+     *
+     * @param declaration
+     * @return
+     */
+    public static ConditionImpl condition(ResourceDeclaration declaration){
+        return new ConditionImpl(declaration);
+    }
+
+    /**
+     *
+     * @param name
+     */
     public InfrastructureImpl(String name) {
         this.name = name;
     }
 
+
+    public InfrastructureImpl validWhen(Condition... conditions) {
+        if(conditions!=null){
+            Collections.addAll(m_preConditions, conditions);
+        }
+        return this;
+    }
+
+    /**
+     *
+     * @param resource
+     * @param <T>
+     * @return
+     */
     public <T extends AbstractResourceDeclaration<T>> InfrastructureImpl resource(T resource) {
         // Get the first interface of the resource, it must be the type
         Class interFace = null;
@@ -79,6 +118,13 @@ public class InfrastructureImpl implements Infrastructure {
         return this;
     }
 
+    /**
+     *
+     * @param resourceType
+     * @param resourceId
+     * @param <T>
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public <T extends ResourceDeclaration> ResourceReferenceImpl<T> resource(Class<T> resourceType, String resourceId) {
         ResourceReferenceImpl<T> resourceReference = null;
@@ -91,20 +137,53 @@ public class InfrastructureImpl implements Infrastructure {
         }
         if(resourceReference==null){
             ResourceReferenceImpl<T> newResourceRef = new ResourceReferenceImpl<T>(resourceType, resourceId);
-            resourceReferences.get(resourceType).put(resourceId,newResourceRef);
+            resourceReferences.get(resourceType).put(resourceId, newResourceRef);
         }
         return resourceReference;
     }
 
+    /**
+     *
+     * @param subInfrastructureName
+     * @param subInfrastructure
+     * @return
+     */
+    public InfrastructureImpl with(String subInfrastructureName, Infrastructure subInfrastructure) {
+        return new ContainedInfrastructureImpl().then(subInfrastructureName,subInfrastructure);
+    }
+
+    /**
+     *
+     * @param condition
+     * @return
+     */
+    public ContainedInfrastructureImpl when(Condition... condition){
+        return new ContainedInfrastructureImpl(condition);
+    }
+
+    /**
+     *
+     * @param name
+     */
     public void nameIfUnnamed(String name){
         if(this.name==null){
             this.name = name;
         }
     }
 
+    // Infrastructure Interface Methods
+    /////////////////////////////////////////////////////////////////////////////
+
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public List<Condition> getPreConditions() {
+        ArrayList<Condition> preConditions = new ArrayList<Condition>();
+        preConditions.addAll(m_preConditions);
+        return preConditions;
     }
 
     @Override
@@ -175,8 +254,58 @@ public class InfrastructureImpl implements Infrastructure {
         return null;
     }
 
+    @Override
+    public List<ContainedInfrastructure> getContainedInfrastructures() {
+        ArrayList<ContainedInfrastructure> infrastructures = new ArrayList<ContainedInfrastructure>();
+        infrastructures.addAll(m_containedInfrastructures.values());
+        return infrastructures;
+    }
+
     // Inner Classes ResourceReference and Dependency
     /////////////////////////////////////////////////////////////////////////////
+
+    public static class ConditionImpl implements Condition {
+
+        ResourceDeclaration m_declaration;
+
+        boolean m_value;
+
+        public ConditionImpl(ResourceDeclaration declaration, boolean conditionValue) {
+            this.m_declaration = declaration;
+            this.m_value = conditionValue;
+        }
+
+        public ConditionImpl(ResourceDeclaration declaration){
+            this.m_declaration = declaration;
+            this.m_value = true;
+        }
+
+        @Override
+        public ResourceDeclaration declaration() {
+            return m_declaration;
+        }
+
+        @Override
+        public boolean value() {
+            return m_value;
+        }
+
+        public ConditionImpl isTrue(){
+            this.m_value = true;
+            return this;
+        }
+
+        public ConditionImpl isFalse(){
+            this.m_value = false;
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return declaration().toString() + ":" + value();
+        }
+    }
+
 
     public class ResourceReferenceImpl<T extends ResourceDeclaration> implements ResourceReference {
 
@@ -269,6 +398,7 @@ public class InfrastructureImpl implements Infrastructure {
     public class DependencyImpl implements Dependency {
 
         private final ResourceReference requirer;
+
         private ResourceReference provider;
 
         DependencyImpl(ResourceReferenceImpl from) {
@@ -281,10 +411,12 @@ public class InfrastructureImpl implements Infrastructure {
             return InfrastructureImpl.this;
         }
 
+        @Override
         public ResourceReference requirer() {
             return this.requirer;
         }
 
+        @Override
         public ResourceReference provider() {
             return this.provider;
         }
@@ -295,4 +427,46 @@ public class InfrastructureImpl implements Infrastructure {
         }
     }
 
+    public class ContainedInfrastructureImpl implements ContainedInfrastructure {
+
+        String m_name;
+
+        Infrastructure m_containedInfrastructure;
+
+        Set<Condition> m_conditions;
+
+        public ContainedInfrastructureImpl(Condition... conditions) {
+            this.m_conditions = new LinkedHashSet<Condition>();
+            if(conditions!=null){
+                Collections.addAll(m_conditions, conditions);
+            }
+        }
+
+        @Override
+        public String getName(){
+            return m_name;
+        }
+
+        @Override
+        public Infrastructure getInfrastructure() {
+            return m_containedInfrastructure;
+        }
+
+        @Override
+        public Set<Condition> getConditions() {
+            return m_conditions;
+        }
+
+        public InfrastructureImpl then(String name, Infrastructure containedInfrastructure){
+            m_containedInfrastructure = containedInfrastructure;
+            this.m_name = name;
+            InfrastructureImpl.this.m_containedInfrastructures.put(name, this);
+            return InfrastructureImpl.this;
+        }
+
+        @Override
+        public String toString() {
+            return this.m_name + " : " + this.m_conditions + " - " + this.m_containedInfrastructure.getResourceReferences();
+        }
+    }
 }

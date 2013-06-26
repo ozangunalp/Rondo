@@ -13,6 +13,8 @@ public interface Infrastructure {
 
     public String getName();
 
+    public List<Condition> getPreConditions();
+
     public List<Dependency> getDependencies();
 
     public List<ResourceReference> getResourceReferences();
@@ -25,5 +27,6 @@ public interface Infrastructure {
 
     public <T extends ResourceDeclaration> T getResource(ResourceReference<T> reference);
 
+    public List<ContainedInfrastructure> getContainedInfrastructures();
 
 }
