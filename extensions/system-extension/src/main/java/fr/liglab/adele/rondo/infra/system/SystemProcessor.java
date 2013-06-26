@@ -47,6 +47,11 @@ public class SystemProcessor extends DefaultResourceProcessor {
         return new SystemDeploymentParticipant(resource,transaction);
     }
 
+    @Override
+    public boolean check(ResourceDeclaration resource) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public class SystemDeploymentParticipant extends DefaultDeploymentParticipant {
 
         System m_systemDef;
