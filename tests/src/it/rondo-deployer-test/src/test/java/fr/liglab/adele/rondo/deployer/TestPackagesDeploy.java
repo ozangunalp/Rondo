@@ -62,7 +62,7 @@ public class TestPackagesDeploy extends RondoDeployerTest{
 //
                 .resource(aPackage("cm")
                         .name("org.osgi.service.cm")
-                        .filter("(tatat=toto)")
+                        .filter("(&(version>=1.5.0)(version<=2.0.0))")
                 )
                 ;
 
@@ -72,7 +72,7 @@ public class TestPackagesDeploy extends RondoDeployerTest{
         assertThat(deploymentHandle).isNotNull();
         deploymentHandle.apply();
 
-        assertThat(deploymentHandle.getState()).isEqualTo(DeploymentHandle.DeploymentState.UNSUCCESSFUL);
+        assertThat(deploymentHandle.getState()).isEqualTo(DeploymentHandle.DeploymentState.SUCCESSFUL);
 
         System.out.flush();
     }
