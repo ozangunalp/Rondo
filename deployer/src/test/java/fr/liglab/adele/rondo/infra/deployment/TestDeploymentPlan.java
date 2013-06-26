@@ -1,7 +1,6 @@
 package fr.liglab.adele.rondo.infra.deployment;
 
 import fr.liglab.adele.rondo.infra.deployment.impl.DeploymentHandleImpl;
-import fr.liglab.adele.rondo.infra.deployment.impl.DeploymentResolverImpl;
 import fr.liglab.adele.rondo.infra.deployment.impl.InfrastructureDeployer;
 import fr.liglab.adele.rondo.infra.deployment.processor.ResourceProcessor;
 import fr.liglab.adele.rondo.infra.deployment.processor.impl.*;
@@ -141,18 +140,18 @@ public class TestDeploymentPlan {
         deployer.bindResourceProcessor(fileProcessor);
         deployer.bindResourceProcessor(confProcessor);
 
-        DeploymentPlan dp = null;
-        try {
-            dp = new DeploymentResolverImpl().resolve(inf,null);
-            //deployer.bindInfrastructure(reference);
-        } catch (DependencyResolutionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        for (ResourceReference res : dp) {
-            System.out.println(res.toString());
-        }
-        DeploymentHandle deploymentHandle = new DeploymentHandleImpl(dp, deployer,null,0);
-        //deploymentHandle.apply();
+//        DeploymentPlan dp = null;
+//        try {
+//            dp = new DeploymentResolverImpl().resolve(inf,null);
+//            //deployer.bindInfrastructure(reference);
+//        } catch (DependencyResolutionException e) {
+//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//        }
+//        for (ResourceReference res : dp) {
+//            System.out.println(res.toString());
+//        }
+//        DeploymentHandle deploymentHandle = new DeploymentHandleImpl(dp, deployer,null,0);
+//        //deploymentHandle.apply();
 
     }
 }

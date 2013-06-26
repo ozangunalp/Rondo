@@ -134,6 +134,11 @@
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.rondo</groupId>
+            <artifactId>recursive-resolver</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.rondo</groupId>
             <artifactId>rondo-system-extension</artifactId>
             <version>${project.version}</version>
         </dependency>

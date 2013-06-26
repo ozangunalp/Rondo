@@ -15,11 +15,15 @@
     <profiles>
         <profile>
             <id>core</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>core</module>
                 <module>deployer</module>
                 <module>gogo-command</module>
                 <module>cloner</module>
+                <module>resolver/recursive-resolver</module>
             </modules>
         </profile>
 
@@ -41,6 +45,14 @@
             <id>extensions</id>
             <modules>
                 <module>extensions/system-extension</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>resolvers</id>
+            <modules>
+                <module>resolver/simple-resolver</module>
+                <module>resolver/recursive-resolver</module>
             </modules>
         </profile>
 

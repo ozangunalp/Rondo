@@ -1,4 +1,4 @@
-package fr.liglab.adele.rondo.infra.deployment.impl;
+package fr.liglab.adele.rondo.resolver;
 
 import fr.liglab.adele.rondo.infra.deployment.DependencyResolutionException;
 import fr.liglab.adele.rondo.infra.deployment.DeploymentPlan;
@@ -18,7 +18,7 @@ import java.util.*;
 @Component
 @Instantiate
 @Provides( specifications = DeploymentResolver.class )
-public class DeploymentResolverImpl implements DeploymentResolver {
+public class SimpleResolver implements DeploymentResolver {
 
     @Override
     public DeploymentPlan resolve(Infrastructure newInfrastructure, Infrastructure oldInfrastructure) throws DependencyResolutionException {
