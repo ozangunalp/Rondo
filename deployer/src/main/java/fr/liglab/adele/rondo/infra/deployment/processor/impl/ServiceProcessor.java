@@ -46,6 +46,11 @@ public class ServiceProcessor extends DefaultResourceProcessor {
         return participant;
     }
 
+    @Override
+    public boolean check(ResourceDeclaration resource) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private class ServiceDeploymentParticipant extends DefaultDeploymentParticipant {
 
         Service m_serviceDef;
@@ -61,10 +66,10 @@ public class ServiceProcessor extends DefaultResourceProcessor {
 
         @Override
         public void commit() throws DeploymentException {
-            ServiceResourceFilter serviceResourceFilter = new ServiceResourceFilter(m_context, m_serviceDef);
             Resource services = null;
             try {
                 services = m_everest.process(new DefaultRequest(Action.READ, Path.from("/osgi/services"), null));
+                ServiceResourceFilter serviceResourceFilter = new ServiceResourceFilter(services.getCanonicalPath(),m_context, m_serviceDef);
                 List<Resource> resources = services.getResources(serviceResourceFilter);
                 if (resources.isEmpty()) {
                     throw new DeploymentException("Service resource not found " + m_serviceDef.id());
@@ -83,11 +88,13 @@ public class ServiceProcessor extends DefaultResourceProcessor {
 
     public class ServiceResourceFilter implements ResourceFilter{
 
+        private final Path parentPath;
         BundleContext bundleContext;
         Service serviceDeclaration;
         Filter filter = null;
 
-        public ServiceResourceFilter(BundleContext context,Service serviceDeclaration) throws DeploymentException {
+        public ServiceResourceFilter(Path parentPath,BundleContext context,Service serviceDeclaration) throws DeploymentException {
+            this.parentPath = parentPath;
             this.bundleContext = context;
             this.serviceDeclaration = serviceDeclaration;
             if(serviceDeclaration.filter()!=null){
@@ -101,8 +108,7 @@ public class ServiceProcessor extends DefaultResourceProcessor {
 
         @Override
         public boolean accept(Resource resource) {
-            ServiceReference serviceReference = resource.adaptTo(ServiceReference.class);
-            if(serviceReference==null){
+            if(!parentPath.equals(resource.getCanonicalPath().getParent())){
                 return false;
             }
             String[] objectClass = (String[]) resource.getMetadata().get(Constants.OBJECTCLASS,Object.class);

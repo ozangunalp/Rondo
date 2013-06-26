@@ -45,6 +45,11 @@ public class InstanceProcessor extends DefaultResourceProcessor {
         return new InstanceParticipant(resource, transaction);
     }
 
+    @Override
+    public boolean check(ResourceDeclaration resource) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private class InstanceParticipant extends DefaultDeploymentParticipant {
 
         Instance m_instanceDef;

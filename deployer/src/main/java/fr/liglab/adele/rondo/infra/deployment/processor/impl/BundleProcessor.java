@@ -24,6 +24,7 @@ import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -59,6 +60,11 @@ public class BundleProcessor extends DefaultResourceProcessor {
         BundleDeploymentParticipant participant = new BundleDeploymentParticipant(resource, transaction);
         this.addParticipant(participant);
         return participant;
+    }
+
+    @Override
+    public boolean check(ResourceDeclaration resource) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public class BundleDeploymentParticipant extends DefaultDeploymentParticipant {
@@ -114,9 +120,15 @@ public class BundleProcessor extends DefaultResourceProcessor {
         @Override
         public void commit() throws DeploymentException {
             try {
+                Map<String, Object> updateParams = new HashMap<String, Object>();
                 if(initialBundleState!=null){
                     bundle = m_everest.process(new DefaultRequest(Action.READ, initialBundleState.getPath(), null));
                     //bundle = initialBundleState.getResourceUsing(m_everest);
+                    Version version = bundle.getMetadata().get(Constants.BUNDLE_VERSION_ATTRIBUTE, Version.class);
+                    if(m_bundleDef.version()!=null && !version.equals(Version.parseVersion(m_bundleDef.version()))){
+                        updateParams.put("update",true);
+                        updateParams.put("input",new ByteArrayInputStream(FileUtils.readFileToByteArray(this.cachedBundle)));
+                    }
                 }
                 if(bundle==null){
                     if (this.cachedBundle == null || !this.cachedBundle.exists()) {
@@ -131,7 +143,6 @@ public class BundleProcessor extends DefaultResourceProcessor {
                     }
                 }
                 // Bundle was already installed or just installed, try to update to given state
-                Map<String, Object> updateParams = new HashMap<String, Object>();
                 updateParams.put("newState", m_bundleDef.state());
                 Path canonicalPath = bundle.getCanonicalPath();
                 bundle = m_everest.process(new DefaultRequest(Action.UPDATE, canonicalPath, updateParams));
@@ -230,31 +241,16 @@ public class BundleProcessor extends DefaultResourceProcessor {
         }
 
         private Resource findBundle(Bundle bundleDef) {
-            final Bundle bundleDescription = bundleDef;
+            Resource bundle = null;
             // return fast
-            if(bundleDescription.symbolicName()==null){
+            if(bundleDef.symbolicName()==null){
                 return null;
             }
-            Resource bundle = null;
             try{
                 Resource bundles = m_everest.process(new DefaultRequest(Action.READ, Path.from("/osgi/bundles"), null));
-                Iterator<Resource> iterator = bundles.getResources().iterator();
-                while (iterator.hasNext() && bundle == null) {
-                    Resource next = iterator.next();
-                    if (new ResourceFilter() {
-
-                        public boolean accept(Resource resource) {
-                            String symbolicName = resource.getMetadata().get(Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE, String.class);
-                            Version version = resource.getMetadata().get(Constants.BUNDLE_VERSION_ATTRIBUTE, Version.class);
-                            //String bundleLocation = resource.getMetadata().get("bundle-location", String.class);
-                            //String state = resource.getMetadata().get("bundle-state", String.class);
-                            return ((bundleDescription.symbolicName() == null || symbolicName.equals(bundleDescription.symbolicName())) &&
-                                    (bundleDescription.version() == null || version.equals(new Version(bundleDescription.version()))))
-                                    ;
-                        }
-                    }.accept(next)) {
-                        bundle = next;
-                    }
+                List<Resource> matchingBundles = bundles.getResources(new BundleResourceFilter(bundles.getCanonicalPath(),bundleDef));
+                if(!matchingBundles.isEmpty()){
+                    bundle = matchingBundles.get(0);
                 }
             } catch (ResourceNotFoundException e) {
                 // Well this should not have happened..
@@ -275,6 +271,26 @@ public class BundleProcessor extends DefaultResourceProcessor {
             return fileName;
         }
 
+    }
+
+    private class BundleResourceFilter implements ResourceFilter {
+
+        final Bundle bundleDeclaration;
+        private final Path parentPath;
+
+        private BundleResourceFilter(Path parentPath, Bundle bundleDeclaration) {
+            this.parentPath = parentPath;
+            this.bundleDeclaration = bundleDeclaration;
+        }
+
+        @Override
+        public boolean accept(Resource resource) {
+            if(!parentPath.equals(resource.getCanonicalPath().getParent())){
+                return false;
+            }
+            String symbolicName = resource.getMetadata().get(Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE, String.class);
+            return symbolicName.equals(bundleDeclaration.symbolicName());
+        }
     }
 
 }

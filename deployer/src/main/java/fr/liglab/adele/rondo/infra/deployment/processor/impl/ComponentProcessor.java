@@ -45,6 +45,11 @@ public class ComponentProcessor extends DefaultResourceProcessor {
         return new ComponentParticipant(resource, transaction);
     }
 
+    @Override
+    public boolean check(ResourceDeclaration resource) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private class ComponentParticipant extends DefaultDeploymentParticipant {
 
         fr.liglab.adele.rondo.infra.model.Component m_componentDef;

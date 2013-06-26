@@ -25,6 +25,9 @@ public abstract class DefaultResourceProcessor implements ResourceProcessor {
     @Override
     public abstract DeploymentParticipant process(ResourceDeclaration resource, DeploymentTransaction transaction) throws DeploymentException;
 
+    @Override
+    public abstract boolean check(ResourceDeclaration resource);
+
     protected void addParticipant(DeploymentParticipant participant) {
         this.deploymentParticipants.add(participant);
     }

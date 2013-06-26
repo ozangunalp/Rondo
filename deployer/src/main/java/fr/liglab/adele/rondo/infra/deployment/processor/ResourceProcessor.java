@@ -19,4 +19,11 @@ public interface ResourceProcessor {
      */
     public DeploymentParticipant process(ResourceDeclaration resource, DeploymentTransaction transaction) throws DeploymentException;
 
+    /**
+     *
+     * @param resource
+     * @return
+     */
+    public boolean check(ResourceDeclaration resource);
+
 }

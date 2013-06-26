@@ -50,6 +50,11 @@ public class PackageProcessor extends DefaultResourceProcessor {
         return participant;
     }
 
+    @Override
+    public boolean check(ResourceDeclaration resource) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private class PackageDeploymentParticipant extends DefaultDeploymentParticipant {
 
         Package packageDef;
@@ -65,10 +70,10 @@ public class PackageProcessor extends DefaultResourceProcessor {
 
         @Override
         public void commit() throws DeploymentException {
-            PackageResourceFilter packageResourceFilter = new PackageResourceFilter(m_context,packageDef);
             Resource packages = null;
             try {
                 packages = m_everest.process(new DefaultRequest(Action.READ, Path.from("/osgi/packages"), null));
+                PackageResourceFilter packageResourceFilter = new PackageResourceFilter(packages.getCanonicalPath(),m_context,packageDef);
                 List<Resource> resources = packages.getResources(packageResourceFilter);
                 if (resources.isEmpty()) {
                     throw new DeploymentException("Package resource not found " + packageDef.name());
@@ -89,10 +94,12 @@ public class PackageProcessor extends DefaultResourceProcessor {
 
     public class PackageResourceFilter implements ResourceFilter{
 
+        private final Path parentPath;
         Package pkg;
         Filter filter;
 
-        public PackageResourceFilter(BundleContext bundleContext,Package pkg) throws DeploymentException {
+        public PackageResourceFilter(Path parentPath,BundleContext bundleContext,Package pkg) throws DeploymentException {
+            this.parentPath = parentPath;
             this.pkg = pkg;
             if(pkg.filter()!=null){
                 try {
@@ -105,7 +112,7 @@ public class PackageProcessor extends DefaultResourceProcessor {
 
         @Override
         public boolean accept(Resource resource) {
-            if(resource.adaptTo(BundleCapability.class)==null){
+            if(!parentPath.equals(resource.getCanonicalPath().getParent())){
                 return false;
             }
             ResourceMetadata attributes = resource.getMetadata().get("attributes", ResourceMetadata.class);

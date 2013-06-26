@@ -45,6 +45,11 @@ public class ConfigProcessor extends DefaultResourceProcessor {
         return new ConfigurationParticipant(resource, transaction);
     }
 
+    @Override
+    public boolean check(ResourceDeclaration resource) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private class ConfigurationParticipant extends DefaultDeploymentParticipant {
 
         Configuration m_configDef;

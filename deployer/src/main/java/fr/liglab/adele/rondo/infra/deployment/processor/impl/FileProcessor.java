@@ -53,6 +53,11 @@ public class FileProcessor extends DefaultResourceProcessor {
         return new FileParticipant(resource, transaction);
     }
 
+    @Override
+    public boolean check(ResourceDeclaration resource) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private class FileParticipant extends DefaultDeploymentParticipant {
 
         File m_fileDef;
