@@ -437,11 +437,18 @@ public class IcasaClonedPlatform {
                 .state("ACTIVE"));
 
 
-        infra.resource(bundle("27-slf4j.api")
+        infra.resource(bundle("27-slf4j.api-active")
                 .source("file:/Volumes/Macintosh%20HD/Users/ozan/dev/iCasa-Platform/distribution/icasa-platform-distribution/target/icasa.platform.distribution/bundle/slf4j-api-1.6.4.jar")
                 .symbolicName("slf4j.api")
                 .version("1.6.4")
                 .state("ACTIVE"));
+
+
+        infra.resource(bundle("27-slf4j.api-installed")
+                .source("file:/Volumes/Macintosh%20HD/Users/ozan/dev/iCasa-Platform/distribution/icasa-platform-distribution/target/icasa.platform.distribution/bundle/slf4j-api-1.6.4.jar")
+                .symbolicName("slf4j.api")
+                .version("1.6.4")
+                .state("INSTALLED"));
 
 
         infra.resource(bundle("12-org.apache.felix.gogo.runtime")
@@ -660,9 +667,9 @@ public class IcasaClonedPlatform {
                 .version("1.0.1.SNAPSHOT"));
 
 
-        infra.resource(aPackage("0-osgi.wiring.package-org.osgi.framework.launch-1.0.0")
+        infra.resource(aPackage("0-osgi.wiring.package-org.osgi.framework.launch>1.0.0")
                 .name("org.osgi.framework.launch")
-                .version("1.0.0"));
+                .filter("(version>=1.0.0)"));
 
 
         infra.resource(aPackage("0-osgi.wiring.package-javax.xml.ws.soap-0.0.0.1_007_JavaSE")
@@ -1665,9 +1672,9 @@ public class IcasaClonedPlatform {
                 .version("1.4.3"));
 
 
-        infra.resource(aPackage("0-osgi.wiring.package-org.osgi.framework.hooks.bundle-1.0.0")
+        infra.resource(aPackage("0-osgi.wiring.package-org.osgi.framework.hooks.bundle>1.0.0")
                 .name("org.osgi.framework.hooks.bundle")
-                .version("1.0.0"));
+                .filter("(version>=1.0.0)"));
 
 
         infra.resource(aPackage("33-osgi.wiring.package-org.apache.felix.ipojo.everest.ipojo-1.0.0.SNAPSHOT")
@@ -2320,9 +2327,9 @@ public class IcasaClonedPlatform {
                 .version("2.2.0"));
 
 
-        infra.resource(aPackage("0-osgi.wiring.package-org.osgi.framework-1.6.0")
+        infra.resource(aPackage("0-osgi.wiring.package-org.osgi.framework>1.6.0")
                 .name("org.osgi.framework")
-                .version("1.6.0"));
+                .filter("(version>=1.6.0)"));
 
 
         infra.resource(aPackage("48-osgi.wiring.package-com.sun.jersey.server.wadl.generators.resourcedoc.xhtml-0.0.0")
@@ -3007,7 +3014,7 @@ public class IcasaClonedPlatform {
 
         infra.resource(aPackage("0-osgi.wiring.package-org.osgi.framework.wiring-1.0.0")
                 .name("org.osgi.framework.wiring")
-                .version("1.0.0"));
+                .filter("(version>=1.0.0)"));
 
 
         infra.resource(aPackage("25-osgi.wiring.package-org.osgi.service.dmt-2.0.1")
@@ -3046,7 +3053,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"16-osgi.wiring.package-org.apache.felix.ipojo.architecture-1.10.0");
 
         infra.resource(Bundle.class,"1-de.akquinet.gomobile.deployment.rp.autoconf")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Package.class,"2-osgi.wiring.package-fr.liglab.adele.common.dp.autoload.res.proc-1.0.5.SNAPSHOT")
                 .dependsOn(Bundle.class,"2-autoload.res.processor");
@@ -3055,7 +3062,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"4-osgi.wiring.package-org.osgi.service.deploymentadmin.spi-1.1.0");
 
         infra.resource(Bundle.class,"2-autoload.res.processor")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"2-autoload.res.processor")
                 .dependsOn(Package.class,"16-osgi.wiring.package-org.apache.felix.ipojo.architecture-1.10.0");
@@ -3187,7 +3194,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"25-osgi.wiring.package-org.osgi.service.cm-1.4.0");
 
         infra.resource(Bundle.class,"4-de.akquinet.gomobile.deploymentadmin")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"4-de.akquinet.gomobile.deploymentadmin")
                 .dependsOn(Package.class,"9-osgi.wiring.package-org.osgi.service.event-1.3.0");
@@ -3217,7 +3224,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"25-osgi.wiring.package-org.osgi.service.cm-1.4.0");
 
         infra.resource(Bundle.class,"5-deployment.package.file.install")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"5-deployment.package.file.install")
                 .dependsOn(Package.class,"4-osgi.wiring.package-org.osgi.service.deploymentadmin-1.1.0");
@@ -3292,7 +3299,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Bundle.class,"8-org.apache.felix.configadmin");
 
         infra.resource(Bundle.class,"8-org.apache.felix.configadmin")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"8-org.apache.felix.configadmin")
                 .dependsOn(Package.class,"11-osgi.wiring.package-org.osgi.service.log-1.3.0");
@@ -3301,16 +3308,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Bundle.class,"9-org.apache.felix.eventadmin");
 
         infra.resource(Bundle.class,"9-org.apache.felix.eventadmin")
-                .dependsOn(Package.class,"25-osgi.wiring.package-org.osgi.service.cm-1.4.0");
-
-        infra.resource(Bundle.class,"9-org.apache.felix.eventadmin")
-                .dependsOn(Package.class,"11-osgi.wiring.package-org.osgi.service.log-1.3.0");
-
-        infra.resource(Bundle.class,"9-org.apache.felix.eventadmin")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
-
-        infra.resource(Bundle.class,"9-org.apache.felix.eventadmin")
-                .dependsOn(Package.class,"25-osgi.wiring.package-org.osgi.service.metatype-1.2.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"9-org.apache.felix.eventadmin")
                 .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.util.tracker-1.5.0");
@@ -3325,7 +3323,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"11-osgi.wiring.package-org.osgi.service.log-1.3.0");
 
         infra.resource(Bundle.class,"10-org.apache.felix.fileinstall")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"10-org.apache.felix.fileinstall")
                 .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.util.tracker-1.5.0");
@@ -3355,7 +3353,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.service.startlevel-1.1.0");
 
         infra.resource(Bundle.class,"11-org.apache.felix.gogo.command")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"11-org.apache.felix.gogo.command")
                 .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework.wiring-1.0.0");
@@ -3376,10 +3374,10 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.util.tracker-1.5.0");
 
         infra.resource(Bundle.class,"12-org.apache.felix.gogo.runtime")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"13-org.apache.felix.gogo.shell")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"13-org.apache.felix.gogo.shell")
                 .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.service.startlevel-1.1.0");
@@ -3433,7 +3431,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"0-osgi.wiring.package-org.xml.sax-0.0.0.1_007_JavaSE");
 
         infra.resource(Bundle.class,"14-org.apache.felix.http.jetty")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"14-org.apache.felix.http.jetty")
                 .dependsOn(Package.class,"0-osgi.wiring.package-javax.security.cert-0.0.0.1_007_JavaSE");
@@ -3448,7 +3446,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.util.tracker-1.5.0");
 
         infra.resource(Bundle.class,"15-org.apache.felix.http.whiteboard")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"15-org.apache.felix.http.whiteboard")
                 .dependsOn(Package.class,"11-osgi.wiring.package-org.osgi.service.log-1.3.0");
@@ -3484,7 +3482,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"16-osgi.wiring.package-org.apache.felix.ipojo.parser-1.10.0");
 
         infra.resource(Bundle.class,"17-org.apache.felix.ipojo.composite")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"17-org.apache.felix.ipojo.composite")
                 .dependsOn(Package.class,"0-osgi.wiring.package-org.w3c.dom-0.0.0.1_007_JavaSE");
@@ -3556,7 +3554,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.util.tracker-1.5.0");
 
         infra.resource(Bundle.class,"16-org.apache.felix.ipojo")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"16-org.apache.felix.ipojo")
                 .dependsOn(Package.class,"25-osgi.wiring.package-org.osgi.service.cm-1.4.0");
@@ -3571,7 +3569,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"16-osgi.wiring.package-org.apache.felix.ipojo.metadata-1.10.0");
 
         infra.resource(Bundle.class,"19-org.apache.felix.ipojo.handler.extender")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"19-org.apache.felix.ipojo.handler.extender")
                 .dependsOn(Package.class,"16-osgi.wiring.package-org.apache.felix.ipojo.architecture-1.10.0");
@@ -3613,7 +3611,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"16-osgi.wiring.package-org.apache.felix.ipojo.metadata-1.10.0");
 
         infra.resource(Bundle.class,"21-org.apache.felix.log")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"21-org.apache.felix.log")
                 .dependsOn(Package.class,"11-osgi.wiring.package-org.osgi.service.log-1.3.0");
@@ -3640,7 +3638,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"16-osgi.wiring.package-org.apache.felix.ipojo.handlers.dependency-1.10.0");
 
         infra.resource(Bundle.class,"20-org.apache.felix.ipojo.webconsole")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"20-org.apache.felix.ipojo.webconsole")
                 .dependsOn(Package.class,"16-osgi.wiring.package-org.apache.felix.ipojo.architecture-1.10.0");
@@ -3664,7 +3662,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"25-osgi.wiring.package-org.osgi.service.wireadmin-1.0.1");
 
         infra.resource(Bundle.class,"23-org.apache.felix.webconsole")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"23-org.apache.felix.webconsole")
                 .dependsOn(Package.class,"14-osgi.wiring.package-javax.servlet-2.5.0");
@@ -3709,7 +3707,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"25-osgi.wiring.package-org.osgi.service.prefs-1.1.1");
 
         infra.resource(Bundle.class,"22-org.apache.felix.prefs")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Package.class,"25-osgi.wiring.package-org.osgi.service.device-1.1.0")
                 .dependsOn(Bundle.class,"25-osgi.cmpn");
@@ -3820,10 +3818,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"0-osgi.wiring.package-javax.xml.parsers-0.0.0.1_007_JavaSE");
 
         infra.resource(Bundle.class,"25-osgi.cmpn")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
-
-        infra.resource(Bundle.class,"25-osgi.cmpn")
-                .dependsOn(Package.class,"14-osgi.wiring.package-javax.servlet-2.5.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"25-osgi.cmpn")
                 .dependsOn(Package.class,"0-osgi.wiring.package-javax.naming-0.0.0.1_007_JavaSE");
@@ -3832,13 +3827,10 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"0-osgi.wiring.package-javax.sql-0.0.0.1_007_JavaSE");
 
         infra.resource(Bundle.class,"25-osgi.cmpn")
-                .dependsOn(Package.class,"14-osgi.wiring.package-javax.servlet.http-2.5.0");
-
-        infra.resource(Bundle.class,"25-osgi.cmpn")
                 .dependsOn(Package.class,"0-osgi.wiring.package-javax.naming.directory-0.0.0.1_007_JavaSE");
 
         infra.resource(Bundle.class,"24-org.apache.felix.webconsole.plugins.event")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"24-org.apache.felix.webconsole.plugins.event")
                 .dependsOn(Package.class,"14-osgi.wiring.package-javax.servlet.http-2.5.0");
@@ -3853,16 +3845,16 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"14-osgi.wiring.package-javax.servlet-2.5.0");
 
         infra.resource(Package.class,"27-osgi.wiring.package-org.slf4j-1.6.4")
-                .dependsOn(Bundle.class,"27-slf4j.api");
+                .dependsOn(Bundle.class,"27-slf4j.api-active");
 
         infra.resource(Package.class,"27-osgi.wiring.package-org.slf4j.spi-1.6.4")
-                .dependsOn(Bundle.class,"27-slf4j.api");
+                .dependsOn(Bundle.class,"27-slf4j.api-active");
 
         infra.resource(Package.class,"28-osgi.wiring.package-org.slf4j.impl-1.6.4")
-                .dependsOn(Bundle.class,"27-slf4j.api");
+                .dependsOn(Bundle.class,"28-slf4j.log4j12");
 
         infra.resource(Package.class,"27-osgi.wiring.package-org.slf4j.helpers-1.6.4")
-                .dependsOn(Bundle.class,"27-slf4j.api");
+                .dependsOn(Bundle.class,"27-slf4j.api-active");
 
         infra.resource(Package.class,"26-osgi.wiring.package-org.ow2.chameleon.sharedprefs-1.0.0")
                 .dependsOn(Bundle.class,"26-org.ow2.chameleon.shared.preferences");
@@ -3907,7 +3899,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"39-osgi.wiring.package-fr.liglab.adele.icasa.common-1.0.1.SNAPSHOT");
 
         infra.resource(Bundle.class,"31-application.impl")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"31-application.impl")
                 .dependsOn(Package.class,"39-osgi.wiring.package-fr.liglab.adele.icasa.common.impl-1.0.1.SNAPSHOT");
@@ -3970,7 +3962,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"4-osgi.wiring.package-org.osgi.service.deploymentadmin-1.1.0");
 
         infra.resource(Bundle.class,"34-org.apache.felix.ipojo.everest-osgi")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"34-org.apache.felix.ipojo.everest-osgi")
                 .dependsOn(Package.class,"16-osgi.wiring.package-org.apache.felix.ipojo-1.10.0");
@@ -3997,7 +3989,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"58-osgi.wiring.package-fr.liglab.adele.icasa.clock.util-1.0.1.SNAPSHOT");
 
         infra.resource(Bundle.class,"35-context.remote")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"35-context.remote")
                 .dependsOn(Package.class,"58-osgi.wiring.package-fr.liglab.adele.icasa.location-1.0.1.SNAPSHOT");
@@ -4077,9 +4069,6 @@ public class IcasaClonedPlatform {
         infra.resource(Bundle.class,"32-org.apache.felix.ipojo.everest-core")
                 .dependsOn(Package.class,"25-osgi.wiring.package-org.osgi.service.cm-1.4.0");
 
-        infra.resource(Bundle.class,"32-org.apache.felix.ipojo.everest-core")
-                .dependsOn(Package.class,"36-osgi.wiring.package-com.fasterxml.jackson.databind-2.2.0");
-
         infra.resource(Package.class,"33-osgi.wiring.package-org.apache.felix.ipojo.everest.ipojo-1.0.0.SNAPSHOT")
                 .dependsOn(Bundle.class,"33-org.apache.felix.ipojo.everest-ipojo");
 
@@ -4117,7 +4106,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"16-osgi.wiring.package-org.apache.felix.ipojo.handlers.dependency-1.10.0");
 
         infra.resource(Bundle.class,"33-org.apache.felix.ipojo.everest-ipojo")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"33-org.apache.felix.ipojo.everest-ipojo")
                 .dependsOn(Package.class,"16-osgi.wiring.package-org.apache.felix.ipojo.metadata-1.10.0");
@@ -4342,7 +4331,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"7-osgi.wiring.package-org.json-0.0.0");
 
         infra.resource(Bundle.class,"37-gogo.adapter")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"37-gogo.adapter")
                 .dependsOn(Package.class,"12-osgi.wiring.package-org.apache.felix.service.command-0.10.0");
@@ -4375,7 +4364,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"48-osgi.wiring.package-com.sun.jersey.api.core-0.0.0");
 
         infra.resource(Bundle.class,"42-jersey-exporter")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"42-jersey-exporter")
                 .dependsOn(Package.class,"60-osgi.wiring.package-org.ow2.chameleon.rose.registry-1.2.2.SNAPSHOT");
@@ -4621,7 +4610,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"38-osgi.wiring.package-javax.mail.util-1.4.0");
 
         infra.resource(Bundle.class,"46-com.sun.jersey.jersey-core")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"46-com.sun.jersey.jersey-core")
                 .dependsOn(Package.class,"0-osgi.wiring.package-javax.xml.transform.stream-0.0.0.1_007_JavaSE");
@@ -4720,10 +4709,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"16-osgi.wiring.package-org.apache.felix.ipojo-1.10.0");
 
         infra.resource(Bundle.class,"47-atmosgi-component")
-                .dependsOn(Package.class,"40-osgi.wiring.package-org.barjo.atmosgi-0.0.0");
-
-        infra.resource(Bundle.class,"47-atmosgi-component")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"47-atmosgi-component")
                 .dependsOn(Package.class,"25-osgi.wiring.package-org.osgi.service.cm-1.4.0");
@@ -4831,7 +4817,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"60-osgi.wiring.package-org.ow2.chameleon.rose.introspect-1.2.2.SNAPSHOT");
 
         infra.resource(Bundle.class,"51-json-configurator")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"51-json-configurator")
                 .dependsOn(Package.class,"25-osgi.wiring.package-org.osgi.service.cm-1.4.0");
@@ -4930,7 +4916,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"46-osgi.wiring.package-com.sun.jersey.core.header-0.0.0");
 
         infra.resource(Bundle.class,"49-dp-rest-installer")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"49-dp-rest-installer")
                 .dependsOn(Package.class,"4-osgi.wiring.package-org.osgi.service.deploymentadmin-1.1.0");
@@ -5143,7 +5129,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"46-osgi.wiring.package-javax.ws.rs.ext-0.0.0");
 
         infra.resource(Bundle.class,"48-com.sun.jersey.jersey-server")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"48-com.sun.jersey.jersey-server")
                 .dependsOn(Package.class,"46-osgi.wiring.package-com.sun.jersey.core.reflection-0.0.0");
@@ -5218,7 +5204,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Bundle.class,"55-application.api");
 
         infra.resource(Bundle.class,"55-application.api")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"55-application.api")
                 .dependsOn(Package.class,"39-osgi.wiring.package-fr.liglab.adele.icasa.common-1.0.1.SNAPSHOT");
@@ -5254,7 +5240,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"25-osgi.wiring.package-org.osgi.service.cm-1.4.0");
 
         infra.resource(Bundle.class,"53-fr.liglab.adele.rondo.cloner")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"53-fr.liglab.adele.rondo.cloner")
                 .dependsOn(Package.class,"11-osgi.wiring.package-org.osgi.service.log-1.3.0");
@@ -5296,7 +5282,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"32-osgi.wiring.package-org.apache.felix.ipojo.everest.impl-1.0.0.SNAPSHOT");
 
         infra.resource(Bundle.class,"52-fr.liglab.adele.rondo.deployer")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"52-fr.liglab.adele.rondo.deployer")
                 .dependsOn(Package.class,"57-osgi.wiring.package-fr.liglab.adele.rondo.infra.impl-0.0.0");
@@ -5491,7 +5477,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"46-osgi.wiring.package-com.sun.jersey.core.spi.component.ioc-0.0.0");
 
         infra.resource(Bundle.class,"56-com.sun.jersey.jersey-client")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Package.class,"63-osgi.wiring.package-org.apache.felix.ipojo.everest.system.mx-1.0.0.SNAPSHOT")
                 .dependsOn(Bundle.class,"63-org.apache.felix.ipojo.everest-system");
@@ -5548,7 +5534,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Package.class,"52-osgi.wiring.package-fr.liglab.adele.rondo.infra.deployment-0.0.1.SNAPSHOT");
 
         infra.resource(Bundle.class,"61-fr.liglab.adele.rondo.system-extension")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"61-fr.liglab.adele.rondo.system-extension")
                 .dependsOn(Package.class,"57-osgi.wiring.package-fr.liglab.adele.rondo.infra.impl-0.0.0");
@@ -5575,7 +5561,7 @@ public class IcasaClonedPlatform {
                 .dependsOn(Bundle.class,"60-rose-core");
 
         infra.resource(Bundle.class,"60-rose-core")
-                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework-1.6.0");
+                .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.framework>1.6.0");
 
         infra.resource(Bundle.class,"60-rose-core")
                 .dependsOn(Package.class,"16-osgi.wiring.package-org.apache.felix.ipojo-1.10.0");
@@ -5597,6 +5583,84 @@ public class IcasaClonedPlatform {
 
         infra.resource(Bundle.class,"60-rose-core")
                 .dependsOn(Package.class,"0-osgi.wiring.package-org.osgi.util.tracker-1.5.0");
+
+        infra.resource(Bundle.class,"28-slf4j.log4j12")
+                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j-1.2.16");
+
+        infra.resource(Bundle.class,"27-slf4j.api-active")
+                .dependsOn(Bundle.class,"27-slf4j.api-installed");
+
+        infra.resource(Bundle.class,"28-slf4j.log4j12")
+                .dependsOn(Bundle.class,"27-slf4j.api-installed");
+
+        infra.resource(Bundle.class,"27-slf4j.api-active")
+                .dependsOn(Package.class,"28-osgi.wiring.package-org.slf4j.impl-1.6.4");
+
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"27-osgi.wiring.package-org.slf4j.helpers-1.6.4");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"27-osgi.wiring.package-org.slf4j.spi-1.6.4");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"27-osgi.wiring.package-org.slf4j-1.6.4");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.nt-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.jmx-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.varia-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.or.jms-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.net-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.jdbc-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.spi-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.or.sax-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.config-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.lf5.config-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.lf5.util-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.lf5-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.pattern-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.helpers-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.lf5.viewer.categoryexplorer-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.nt-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.lf5.viewer.images-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.xml-1.2.16");
+//
+//        infra.resource(Bundle.class,"28-slf4j.log4j12")
+//                .dependsOn(Package.class,"3-osgi.wiring.package-org.apache.log4j.or-1.2.16");
 
     }
 }
