@@ -28,13 +28,14 @@ public class TestSystemExtension extends RondoDeployerTest {
         return new DefaultCompositeOption(
                 mavenBundle("commons-io","commons-io").versionAsInProject(),
                 mavenBundle("fr.liglab.adele.rondo", "rondo-core").versionAsInProject(),
+                mavenBundle("fr.liglab.adele.rondo", "recursive-resolver").versionAsInProject(),
                 mavenBundle("fr.liglab.adele.rondo", "rondo-deployer").versionAsInProject(),
                 mavenBundle("fr.liglab.adele.rondo", "rondo-system-extension").versionAsInProject()
         );
     }
 
     @Test
-    public void testSystemExtension(){
+    public void testSystemExtension() {
 
         Infrastructure inf = infrastructure()
                 .resource(system()

@@ -132,9 +132,8 @@ public class TestInfrastructureBuilders {
 
     public void resolve(ResourceReference resourceReference, Set<ResourceReference> resolved, List<ResourceReference> unresolved) throws Exception {
         System.out.println("\t"+resourceReference);
-        List<Dependency> dependencies = resourceReference.dependencies();
         unresolved.add(resourceReference);
-        for (Dependency dependency : dependencies) {
+        for (Dependency dependency : resourceReference.dependencies()) {
             ResourceReference provider = dependency.provider();
             if(!resolved.contains(provider)){
                 if(unresolved.contains(provider)){

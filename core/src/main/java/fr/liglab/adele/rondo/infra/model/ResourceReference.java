@@ -1,7 +1,5 @@
 package fr.liglab.adele.rondo.infra.model;
 
-import java.util.List;
-
 /**
  * Created with IntelliJ IDEA.
  * User: ozan
@@ -10,14 +8,14 @@ import java.util.List;
  */
 public interface ResourceReference<T extends ResourceDeclaration> {
 
-    public ResourceReference<T> adapt(Class<T> clazz);
+    public <A extends ResourceDeclaration> ResourceReference<A> adapt(Class<A> clazz);
 
     public Class<T> type();
 
     public String id();
 
-    public List<Dependency> dependencies();
+    public Dependency[] dependencies();
 
-    public List<Dependency> providings();
+    public Dependency[] providings();
 
 }

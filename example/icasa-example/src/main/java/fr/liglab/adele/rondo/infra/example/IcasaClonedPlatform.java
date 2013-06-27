@@ -1324,7 +1324,7 @@ public class IcasaClonedPlatform {
 
         infra.resource(aPackage("57-osgi.wiring.package-fr.liglab.adele.rondo.infra.annotations-0.0.0")
                 .name("fr.liglab.adele.rondo.infra.annotations")
-                .version("0.0.0"));
+                .version("0.0.1.SNAPSHOT"));
 
 
         infra.resource(aPackage("0-osgi.wiring.package-org.xml.sax.helpers-0.0.0.1_007_JavaSE")
@@ -1349,7 +1349,7 @@ public class IcasaClonedPlatform {
 
         infra.resource(aPackage("57-osgi.wiring.package-fr.liglab.adele.rondo.infra.impl-0.0.0")
                 .name("fr.liglab.adele.rondo.infra.impl")
-                .version("0.0.0"));
+                .version("0.0.1.SNAPSHOT"));
 
 
         infra.resource(aPackage("0-osgi.wiring.package-javax.management.remote.rmi-0.0.0.1_007_JavaSE")
@@ -1884,7 +1884,7 @@ public class IcasaClonedPlatform {
 
         infra.resource(aPackage("57-osgi.wiring.package-fr.liglab.adele.rondo.infra.model-0.0.0")
                 .name("fr.liglab.adele.rondo.infra.model")
-                .version("0.0.0"));
+                .version("0.0.1.SNAPSHOT"));
 
 
         infra.resource(aPackage("48-osgi.wiring.package-com.sun.jersey.server.impl.component-0.0.0")

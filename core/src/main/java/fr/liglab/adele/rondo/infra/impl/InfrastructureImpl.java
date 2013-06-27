@@ -35,7 +35,7 @@ public class InfrastructureImpl implements Infrastructure {
     /**
      *
      */
-    private Map<ResourceReference, AbstractResourceDeclaration> resourceDeclarationMap = new HashMap<ResourceReference, AbstractResourceDeclaration>();
+    private Map<ResourceReference, ResourceDeclaration> resourceDeclarationMap = new HashMap<ResourceReference, ResourceDeclaration>();
 
     // Static Builder Methods
     /////////////////////////////////////////////////////////////////////////////
@@ -90,28 +90,28 @@ public class InfrastructureImpl implements Infrastructure {
      */
     public <T extends AbstractResourceDeclaration<T>> InfrastructureImpl resource(T resource) {
         // Get the first interface of the resource, it must be the type
-        Class interFace = null;
+        Class interfaze = null;
         Class<?>[] interfaces = resource.getClass().getInterfaces();
         for (Class<?> anInterface : interfaces) {
             if(ResourceDeclaration.class.isAssignableFrom(anInterface)){
-                interFace = anInterface;
+                interfaze = anInterface;
             }
         }
-        if(interFace==null) {
+        if(interfaze==null) {
             //TODO throw some exception
             return this;
         }
-        LinkedHashMap<String, ResourceReferenceImpl> map = resourceReferences.get(interFace);
+        LinkedHashMap<String, ResourceReferenceImpl> map = resourceReferences.get(interfaze);
         if (map == null) {
             map = new LinkedHashMap<String, ResourceReferenceImpl>();
-            resourceReferences.put(interFace, map);
+            resourceReferences.put(interfaze, map);
         }
         String resourceId = resource.id();
         if (map.containsKey(resourceId)) {
             // TODO should throw some exception
             return this;
         } else {
-            ResourceReferenceImpl<T> reference = new ResourceReferenceImpl<T>(interFace, resource.id());
+            ResourceReferenceImpl<T> reference = new ResourceReferenceImpl<T>(interfaze, resource.id());
             map.put(resource.id(), reference);
             resourceDeclarationMap.put(reference,resource);
         }
@@ -191,7 +191,7 @@ public class InfrastructureImpl implements Infrastructure {
         ArrayList<Dependency> allDependencies = new ArrayList<Dependency>();
         for (LinkedHashMap<String, ResourceReferenceImpl> referenceLinkedHashMap : resourceReferences.values()) {
             for (ResourceReferenceImpl resourceReference : referenceLinkedHashMap.values()) {
-                allDependencies.addAll(resourceReference.dependencies());
+                Collections.addAll(allDependencies,resourceReference.dependencies());
             }
         }
         return allDependencies;
@@ -215,7 +215,6 @@ public class InfrastructureImpl implements Infrastructure {
             for (String resourceId : referenceLinkedHashMap.keySet()) {
                 resourceMap.put(resourceId, referenceLinkedHashMap.get(resourceId).adapt(resourceType));
             }
-            //resourceMap.putAll(referenceLinkedHashMap);
         }
         return resourceMap;
 
@@ -247,9 +246,9 @@ public class InfrastructureImpl implements Infrastructure {
 
     @Override
     public <T extends ResourceDeclaration> T getResource(ResourceReference<T> reference) {
-        AbstractResourceDeclaration declaration = resourceDeclarationMap.get(reference);
+        ResourceDeclaration declaration = resourceDeclarationMap.get(reference);
         if(declaration!=null){
-            return (T) declaration.self();
+            return (T) declaration;
         }
         return null;
     }
@@ -269,11 +268,6 @@ public class InfrastructureImpl implements Infrastructure {
         ResourceDeclaration m_declaration;
 
         boolean m_value;
-
-        public ConditionImpl(ResourceDeclaration declaration, boolean conditionValue) {
-            this.m_declaration = declaration;
-            this.m_value = conditionValue;
-        }
 
         public ConditionImpl(ResourceDeclaration declaration){
             this.m_declaration = declaration;
@@ -325,12 +319,11 @@ public class InfrastructureImpl implements Infrastructure {
         }
 
         @Override
-        public ResourceReference<T> adapt(Class clazz) {
-            System.out.println(resourceType.getName() + clazz.getName());
+        public ResourceReference adapt(Class clazz) {
             if (clazz.equals(resourceType)) {
                 return this;
             } else
-                return null;
+                return null;       
         }
 
         @Override
@@ -344,17 +337,17 @@ public class InfrastructureImpl implements Infrastructure {
         }
 
         @Override
-        public List<Dependency> dependencies() {
+        public Dependency[] dependencies() {
             ArrayList<Dependency> dependencies = new ArrayList<Dependency>();
             dependencies.addAll(this.requiredDependency);
-            return dependencies;
+            return dependencies.toArray(new Dependency[dependencies.size()]);
         }
 
         @Override
-        public List<Dependency> providings() {
+        public Dependency[] providings() {
             ArrayList<Dependency> providings = new ArrayList<Dependency>();
             providings.addAll(this.providedDependency);
-            return providings;
+            return providings.toArray(new Dependency[providings.size()]);
         }
 
         public void addRequired(Dependency dependency){

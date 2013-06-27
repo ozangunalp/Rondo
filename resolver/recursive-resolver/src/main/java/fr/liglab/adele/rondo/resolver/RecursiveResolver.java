@@ -3,9 +3,7 @@ package fr.liglab.adele.rondo.resolver;
 import fr.liglab.adele.rondo.infra.deployment.DependencyResolutionException;
 import fr.liglab.adele.rondo.infra.deployment.DeploymentPlan;
 import fr.liglab.adele.rondo.infra.deployment.DeploymentResolver;
-import fr.liglab.adele.rondo.infra.model.Dependency;
-import fr.liglab.adele.rondo.infra.model.Infrastructure;
-import fr.liglab.adele.rondo.infra.model.ResourceReference;
+import fr.liglab.adele.rondo.infra.model.*;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -32,7 +30,6 @@ public class RecursiveResolver implements DeploymentResolver {
         List<ResourceReference> resourceReferences = infrastructure.getResourceReferences();
         Iterator<ResourceReference> iterator = resourceReferences.iterator();
         ResourceReference resourceReference = iterator.next();
-
         while(!resolvedSet.containsAll(resourceReferences)){
             System.out.println("Resolving: " + resourceReference);
             resolve(resourceReference, resolvedSet, unresolvedList);
@@ -48,9 +45,8 @@ public class RecursiveResolver implements DeploymentResolver {
 
     public void resolve(ResourceReference resourceReference, Set<ResourceReference> resolved, List<ResourceReference> unresolved) throws DependencyResolutionException {
         System.out.println("\t"+resourceReference);
-        List<Dependency> dependencies = resourceReference.dependencies();
         unresolved.add(resourceReference);
-        for (Dependency dependency : dependencies) {
+        for (Dependency dependency : resourceReference.dependencies()) {
             ResourceReference provider = dependency.provider();
             if(!resolved.contains(provider)){
                 if(unresolved.contains(provider)){
