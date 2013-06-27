@@ -53,6 +53,7 @@
             <modules>
                 <module>resolver/simple-resolver</module>
                 <module>resolver/recursive-resolver</module>
+                <module>resolver/jgrapht-resolver</module>
             </modules>
         </profile>
 
