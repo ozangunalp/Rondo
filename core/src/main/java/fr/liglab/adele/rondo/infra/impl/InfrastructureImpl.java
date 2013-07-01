@@ -108,8 +108,8 @@ public class InfrastructureImpl implements Infrastructure {
         }
         String resourceId = resource.id();
         if (map.containsKey(resourceId)) {
-            // TODO should throw some exception
-            return this;
+            ResourceReferenceImpl resourceReference = map.get(resourceId);
+            resourceDeclarationMap.put(resourceReference,resource);
         } else {
             ResourceReferenceImpl<T> reference = new ResourceReferenceImpl<T>(interfaze, resource.id());
             map.put(resource.id(), reference);
