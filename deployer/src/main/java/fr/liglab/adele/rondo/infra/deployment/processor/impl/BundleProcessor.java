@@ -91,20 +91,34 @@ public class BundleProcessor extends DefaultResourceProcessor {
 
         @Override
         public void prepare() throws DeploymentException {
-            // prepare cache directory
-            File directory = (File) this.get("working.dir");
-            cacheDirectory = new File(directory, "bundle-" + m_bundleDef.id());
-            cacheDirectory.mkdirs();
-            // first find the resource corresponding to bundle declaration
             Resource bundle = findBundle(m_bundleDef);
-            if (bundle != null) {  // if you found it download & verify it from bundle-location
-                String bundleLocation = bundle.getMetadata().get("bundle-location", String.class);
-                File initialBundleFile = this.downloadAndVerifyBundle(cacheDirectory, m_bundleDef, bundleLocation);
-                if(initialBundleFile!= null){
-                    this.initialBundleState = new ResourceState(initialBundleFile,bundle);
+
+            if(m_bundleDef.source()!=null){
+                // prepare cache directory
+                File directory = (File) this.get("working.dir");
+                cacheDirectory = new File(directory, "bundle-" + m_bundleDef.id());
+                cacheDirectory.mkdirs();
+                // first find the resource corresponding to bundle declaration
+                if (bundle != null) {  // if you found it download & verify it from bundle-location
+                    String bundleLocation = bundle.getMetadata().get("bundle-location", String.class);
+                    File initialBundleFile = this.downloadAndVerifyBundle(cacheDirectory, m_bundleDef, bundleLocation);
+                    if(initialBundleFile!= null){
+                        this.initialBundleState = new ResourceState(initialBundleFile,bundle);
+                    }
+                } else if (this.initialBundleState==null) { // if you don't, download & verify it from bundle declaration source
+                    this.cachedBundle = this.downloadAndVerifyBundle(cacheDirectory, m_bundleDef, m_bundleDef.source());
                 }
-            } else if (this.initialBundleState==null) { // if you don't, download & verify it from bundle declaration source
-                this.cachedBundle = this.downloadAndVerifyBundle(cacheDirectory, m_bundleDef, m_bundleDef.source());
+            } else {
+                // we only check for the bundle
+                if(bundle==null){
+                    throw new DeploymentException("Any source was given, cannot find corresponding bundle");
+                }
+                Version version = bundle.getMetadata().get(Constants.BUNDLE_VERSION_ATTRIBUTE, Version.class);
+                if(m_bundleDef.version()!=null && !version.equals(Version.parseVersion(m_bundleDef.version()))){
+                    throw new DeploymentException("Any source was given, given bundle-version doesn't correspond to the found bundle. found: "
+                            +version.toString()+ " expected: "+m_bundleDef.version());
+                }
+                this.initialBundleState = new ResourceState(null,bundle);
             }
         }
 
@@ -123,7 +137,6 @@ public class BundleProcessor extends DefaultResourceProcessor {
                 Map<String, Object> updateParams = new HashMap<String, Object>();
                 if(initialBundleState!=null){
                     bundle = m_everest.process(new DefaultRequest(Action.READ, initialBundleState.getPath(), null));
-                    //bundle = initialBundleState.getResourceUsing(m_everest);
                     Version version = bundle.getMetadata().get(Constants.BUNDLE_VERSION_ATTRIBUTE, Version.class);
                     if(m_bundleDef.version()!=null && !version.equals(Version.parseVersion(m_bundleDef.version()))){
                         updateParams.put("update",true);
@@ -145,6 +158,7 @@ public class BundleProcessor extends DefaultResourceProcessor {
                 // Bundle was already installed or just installed, try to update to given state
                 updateParams.put("newState", m_bundleDef.state());
                 Path canonicalPath = bundle.getCanonicalPath();
+                System.out.println(canonicalPath.toString()+" "+updateParams);
                 bundle = m_everest.process(new DefaultRequest(Action.UPDATE, canonicalPath, updateParams));
                 if (bundle == null) {
                     throw new DeploymentException("Error on resource updating on path: " + canonicalPath);
