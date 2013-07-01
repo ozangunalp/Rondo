@@ -125,11 +125,7 @@ public class InfrastructureProcessor {
      * Deployer bundle stopping
      */
     public void stop() {
-        for (ServiceRegistration registeredInfrastructure : registeredInfrastructures.values()) {
-            if(registeredInfrastructure!=null){
-                registeredInfrastructure.unregister();
-            }
-        }
+        // ignored
     }
 
     /**
