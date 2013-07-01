@@ -167,6 +167,8 @@ public class DeploymentTransactionImpl implements DeploymentTransaction {
         } else {
             throw new DeploymentException("Already terminated");
         }
+        m_participants.clear();
+        m_variables.clear();
     }
 
     @Override

@@ -53,8 +53,13 @@ public class DeploymentCoordinatorImpl implements DeploymentCoordinator {
     }
 
     @Override
-    public DeploymentTransaction getTransaction() { //TODO
-        //
+    public DeploymentTransaction getTransaction() {
+        Thread currentThread = Thread.currentThread();
+        for (DeploymentTransactionImpl deploymentTransaction : m_transactions.values()) {
+            if(deploymentTransaction.getThread().equals(currentThread)){
+                return  deploymentTransaction;
+            }
+        }
         return null;
     }
 
